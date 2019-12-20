@@ -1,0 +1,2 @@
+DELETE from cotos_electric_ext_standard.customer_contract;
+DELETE from cotos_electric_ext_standard.contract;

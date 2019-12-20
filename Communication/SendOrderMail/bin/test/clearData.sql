@@ -1,0 +1,11 @@
+DELETE from mail_address_information;
+DELETE from entry_content_high_pressure;
+DELETE from entry_content_low_pressure;
+DELETE from unit_price_high_pressure;
+DELETE from unit_price_low_pressure;
+DELETE from electric_expert_contract;
+DELETE from electric_dealer_contract;
+DELETE from client_information;
+DELETE from important_point_explainer;
+DELETE from contract_electric_attached_file;
+DELETE from contract_electric;
