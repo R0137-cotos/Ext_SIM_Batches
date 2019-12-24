@@ -37,11 +37,6 @@ Log.Info "商品グループマスタID：${PRODUCT_GRP_MASTER_ID}" >> ${LOG_FIL
 Log.Info "宛先メールアドレスリスト：${MAIL_ADDRESS_LIST}" >> ${LOG_FILE_PATH}
 
 ################################################
-### ディレクトリ作成
-################################################
-mkdir -p ${DIR_PATH}
-
-################################################
 ### 処理実行
 ################################################
 SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -jar ${IFS_JAR_PATH}/${BATCH_PG_BTCOSI005} "${DIR_PATH}" "${FILE_NAME}" "${PRODUCT_GRP_MASTER_ID}" "${MAIL_ADDRESS_LIST}" > ${PROCESS_LOG_FILE_PATH}
