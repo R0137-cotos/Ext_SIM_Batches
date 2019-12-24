@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import jp.co.ricoh.cotos.BatchConstants;
 import lombok.extern.log4j.Log4j;
 
 /**
@@ -32,22 +31,9 @@ public class DynamicProductConfig {
 
 		if (null == productDiv) {
 			log.info("商材切替：標準");
-			return batchStepComponentMap.get(BatchConstants.ProductDiv.BASE.toString());
+			return batchStepComponentMap.get("BASE");
 		}
 
-		switch (productDiv) {
-		case "EDW":
-			log.info("商材切替：EDW");
-			return batchStepComponentMap.get(BatchConstants.ProductDiv.EDW.toString());
-		case "CSP":
-			log.info("商材切替：CSP");
-			return batchStepComponentMap.get(BatchConstants.ProductDiv.CSP.toString());
-		case "ROC":
-			log.info("商材切替：ROC");
-			return batchStepComponentMap.get(BatchConstants.ProductDiv.ROC.toString());
-		default:
-			log.info("商材切替：標準");
-			return batchStepComponentMap.get(BatchConstants.ProductDiv.BASE.toString());
-		}
+		return batchStepComponentMap.get(productDiv);
 	}
 }

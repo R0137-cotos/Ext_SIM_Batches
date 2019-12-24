@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
+import jp.co.ricoh.cotos.dto.SendOrderMailDto;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 
 @Component
 @RequiredArgsConstructor
@@ -23,26 +23,14 @@ public class BatchComponent {
 	/**
 	 * バッチ処理
 	 * @return
+	 * @throws Exception 
 	 */
-	public boolean execute(String[] args) {
+	public void execute(String[] args) throws Exception {
+		// パラメータチェック
+		SendOrderMailDto dto = baseComponent.paramCheck(args);
 
-		baseComponent.paramCheck(args);
-
-		val dataList = baseComponent.getDataList(args[0]);
-
-		dataList.stream().forEach(d -> {
-			IBatchStepComponent component = this.getComponentInstance(d);
-
-			component.dataCheck(dataList);
-
-			component.beforeProcess(null);
-
-			component.process(null);
-
-			component.afterProcess(null);
-		});
-
-		return true;
+		IBatchStepComponent component = this.getComponentInstance("SIM");
+		component.process(dto);
 	}
 
 	/**

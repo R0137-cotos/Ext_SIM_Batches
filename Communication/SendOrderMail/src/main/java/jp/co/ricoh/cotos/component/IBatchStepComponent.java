@@ -1,16 +1,19 @@
 package jp.co.ricoh.cotos.component;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 
-public interface IBatchStepComponent {
+import jp.co.ricoh.cotos.dto.SendOrderMailDto;
 
+public interface IBatchStepComponent {
 
 	/**
 	 * パラメーターチェック処理
 	 * ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
 	 * @return
+	 * @throws FileAlreadyExistsException 
 	 */
-	public void paramCheck(String[] args);
+	public SendOrderMailDto paramCheck(String[] args);
 
 	/**
 	 * 処理データ取得
@@ -30,17 +33,18 @@ public interface IBatchStepComponent {
 	 * 事前処理
 	 * @return
 	 */
-	public boolean beforeProcess(Object param);
+	public void beforeProcess(Object param);
 
 	/**
 	 * プロセス
 	 * @return
+	 * @throws Exception 
 	 */
-	public boolean process(Object param);
+	public void process(SendOrderMailDto dto) throws Exception;
 
 	/**
 	 * 事後処理
 	 * @return
 	 */
-	public boolean afterProcess(Object param);
+	public void afterProcess(Object param);
 }

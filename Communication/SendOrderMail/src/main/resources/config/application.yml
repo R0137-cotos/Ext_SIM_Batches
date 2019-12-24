@@ -26,6 +26,11 @@ spring:
   messages:
     basename: Messages
     defaultEncoding: UTF-8
+  # メール設定
+  mail:
+    default-encoding: UTF-8
+    host: shipyard.cotos.ricoh.co.jp
+    port: 1025
 cotos:
   mom:
     system:
@@ -47,3 +52,6 @@ cotos:
       dispAuthorization: X-Cotos-Disp-Authorization
       contentType: Content-type
       filename: filename
+  # Fromメールアドレス
+  mail:
+    fromMailAddress: test@example.com
