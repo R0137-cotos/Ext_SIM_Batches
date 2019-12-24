@@ -5,20 +5,11 @@ public class BatchConstants {
 	/**
 	 * バッチ名称
 	 */
-	public static final String BATCH_NAME = "バッチテンプレートバッチ";
+	public static final String BATCH_NAME = "SIMベンダーオーダーメール送信バッチ";
 
 	/**
 	 * バッチパラメーター
 	 */
-	public static final String BATCH_PARAMETER_LIST_NAME = "パラメーター1/パラメーター2";
+	public static final String BATCH_PARAMETER_LIST_NAME = "連携ファイル配置先ディレクトリ/連携ファイル名/商品グループマスタID/宛先メールアドレス";
 
-	/**
-	 * 商材
-	 */
-	public enum ProductDiv {
-		BASE, // COTOS標準
-		EDW, // EMPOWERING DIGITAL WORKPLACES（旧RSI：リコースマートインテグレーション）
-		CSP, // サイバーセキュリティパック
-		ROC, // リコーワンストップクラウド
-	}
 }

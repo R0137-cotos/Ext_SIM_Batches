@@ -35,6 +35,11 @@ public class JobComponent {
 			log.error(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
 			System.exit(1);
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.fatal("SIMベンダーオーダーメール送信処理に失敗しました。");
+			System.exit(1);
+
 		} catch (Throwable e) {
 			e.printStackTrace();
 			log.fatal(messageUtil.createMessageInfo("BatchCannotCompleteByUnexpectedError", new String[] { BatchConstants.BATCH_NAME }).getMsg());
