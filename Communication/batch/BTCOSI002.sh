@@ -1,6 +1,6 @@
 #!/bin/bash
 ################################################
-### バッチID: BTCOSI005
+### バッチID: BTCOSI002
 ### 機能名：  [SB]オーダーメール送信
 ################################################
 
@@ -9,10 +9,10 @@ BATCH_BASE_PATH=$(cd $(dirname $0);cd ../..;pwd)
 source ${BATCH_BASE_PATH}/config.sh
 
 # ログファイルパス
-LOG_FILE_PATH="${LOG_DIR}/BTCOSI005.log"
+LOG_FILE_PATH="${LOG_DIR}/BTCOSI002.log"
 PROCESS_LOG_FILE_PATH="${LOG_DIR}/SendOrderMail.log"
 
-Log.Info "BTCOSI005:[SB]オーダーメール送信を開始します。" >> ${LOG_FILE_PATH}
+Log.Info "BTCOSI002:[SB]オーダーメール送信を開始します。" >> ${LOG_FILE_PATH}
 
 ################################################
 ### パラメーター設定
@@ -39,11 +39,11 @@ Log.Info "宛先メールアドレスリスト：${MAIL_ADDRESS_LIST}" >> ${LOG_
 ################################################
 ### 処理実行
 ################################################
-SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -jar ${IFS_JAR_PATH}/${BATCH_PG_BTCOSI005} "${DIR_PATH}" "${FILE_NAME}" "${PRODUCT_GRP_MASTER_ID}" "${MAIL_ADDRESS_LIST}" > ${PROCESS_LOG_FILE_PATH}
+SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -jar ${IFS_JAR_PATH}/${BATCH_PG_BTCOSI002} "${DIR_PATH}" "${FILE_NAME}" "${PRODUCT_GRP_MASTER_ID}" "${MAIL_ADDRESS_LIST}" > ${PROCESS_LOG_FILE_PATH}
 
 if [  $? != 0 ]; then
-  Log.Error "BTCOSI005:[SB]オーダーメール送信に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
+  Log.Error "BTCOSI002:[SB]オーダーメール送信に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
   exit 1
 fi
 
-Log.Info "BTCOSI005:[SB]オーダーメール送信が完了しました。" >> ${LOG_FILE_PATH}
+Log.Info "BTCOSI002:[SB]オーダーメール送信が完了しました。" >> ${LOG_FILE_PATH}
