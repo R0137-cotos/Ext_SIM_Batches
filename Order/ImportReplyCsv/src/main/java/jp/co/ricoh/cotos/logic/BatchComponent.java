@@ -26,6 +26,12 @@ public class BatchComponent {
 	 */
 	public void execute(String[] args) throws Exception {
 
+		// パラメータチェック
+		baseComponent.paramCheck(args);
+
+		IBatchStepComponent component = this.getComponentInstance("SIM");
+		component.process(args);
+
 	}
 
 	/**

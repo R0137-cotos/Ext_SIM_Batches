@@ -16,3 +16,9 @@ spring:
         default_schema: cotos_st_1
 cotos:
   authentication: https://st-api-1.cotos.ricoh.co.jp/auth/api/auth
+  # 契約APIURL
+  contract:
+    url: https://st-api-1.cotos.ricoh.co.jp/contract/api
+  # 手配APIURL
+  arrangement:
+    url: https://st-api-1.cotos.ricoh.co.jp/arrangement/api

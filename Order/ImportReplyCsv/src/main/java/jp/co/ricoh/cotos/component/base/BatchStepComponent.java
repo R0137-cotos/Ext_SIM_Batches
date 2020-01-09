@@ -1,13 +1,22 @@
 package jp.co.ricoh.cotos.component.base;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import jp.co.ricoh.cotos.BatchConstants;
+import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
+import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
-import jp.co.ricoh.cotos.commonlib.repository.master.ProductGrpMasterRepository;
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
 
 @Component("BASE")
@@ -15,9 +24,6 @@ public class BatchStepComponent implements IBatchStepComponent {
 
 	@Autowired
 	CheckUtil checkUtil;
-
-	@Autowired
-	ProductGrpMasterRepository productGrpMasterRepository;
 
 	/**
 	 * パラメーターチェック処理
@@ -27,6 +33,21 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 */
 	@Override
 	public final void paramCheck(String[] args) {
+
+		// バッチパラメーターのチェックを実施
+		if (null == args || args.length != 2) {
+			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ParameterEmptyError", new String[] { BatchConstants.BATCH_PARAMETER_LIST_NAME }));
+		}
+
+		File csvFile = Paths.get(args[0], args[1]).toFile();
+
+		if (!csvFile.getParentFile().exists()) {
+			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "DirectoryNotFoundError"));
+		}
+		if (!csvFile.exists()) {
+			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileNotFoundError"));
+		}
+
 	}
 
 	/**
@@ -53,7 +74,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 	}
 
 	@Override
-	public void process(Object param) {
+	public void process(String[] params)throws JsonProcessingException, FileNotFoundException, IOException{
 		// データ加工等の処理を実施
 	}
 

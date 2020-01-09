@@ -1,7 +1,11 @@
 package jp.co.ricoh.cotos.component;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface IBatchStepComponent {
 
@@ -38,7 +42,7 @@ public interface IBatchStepComponent {
 	 * @return
 	 * @throws Exception 
 	 */
-	public void process(Object param);
+	public void process(String[] params)throws JsonProcessingException, FileNotFoundException, IOException;
 
 	/**
 	 * 事後処理

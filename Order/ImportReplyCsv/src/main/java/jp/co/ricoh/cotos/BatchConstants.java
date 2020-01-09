@@ -10,6 +10,6 @@ public class BatchConstants {
 	/**
 	 * バッチパラメーター
 	 */
-	public static final String BATCH_PARAMETER_LIST_NAME = "";
+	public static final String BATCH_PARAMETER_LIST_NAME = "ファイルディレクトリ/ファイル名";
 
 }
