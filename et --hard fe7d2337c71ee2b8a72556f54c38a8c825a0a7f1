@@ -1,0 +1,126 @@
+[33mcommit 1d644dca339e9d10d5d3f330fbc753d9e99b1901[m[33m ([m[1;36mHEAD -> [m[1;32mfeature/5080[m[33m)[m
+Merge: fe7d233 ab6e226
+Author: YamazakiTakumi <yamazaki-takumi@softcomm.co.jp>
+Date:   Fri Jan 10 16:39:44 2020 +0900
+
+    Merge branch 'develop' of https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches into feature/5080
+
+[33mcommit fe7d2337c71ee2b8a72556f54c38a8c825a0a7f1[m
+Author: YamazakiTakumi <yamazaki-takumi@softcomm.co.jp>
+Date:   Fri Jan 10 16:38:45 2020 +0900
+
+    手配更新以外
+
+[33mcommit ab6e2260d494b8ad970cd95922bd5c5af1ef04fe[m[33m ([m[1;31morigin/develop[m[33m)[m
+Merge: 08fc925 5267dc5
+Author: TakumiYamazaki <takumi.yamazaki@jp.ricoh.com>
+Date:   Thu Jan 9 14:04:52 2020 +0900
+
+    Merge pull request #6 from yamauchi/feature/5037_2
+    
+    5037 リプライCSV取込バッチ作成
+
+[33mcommit 5267dc50ba3e5ee07f049a4c210aaf5ecf834279[m
+Author: yamauchi <yasutaka.yamauchi@jrits.ricoh.co.jp>
+Date:   Thu Jan 9 13:38:13 2020 +0900
+
+    起動シェル作成
+
+[33mcommit 0f22521d9fde0d9778b400ad3576505ce9bf5165[m
+Author: yamauchi <yasutaka.yamauchi@jrits.ricoh.co.jp>
+Date:   Thu Jan 9 11:09:25 2020 +0900
+
+    リプライCSV取込バッチ作成
+
+[33mcommit 08fc925533eeeb7d420e8c12c28865fdaf205d3d[m
+Merge: 4350bbf 86c5362
+Author: yamauchi <yasutaka.yamauchi@jrits.ricoh.co.jp>
+Date:   Tue Jan 7 10:35:57 2020 +0900
+
+    Merge pull request #5 from TakumiYamazaki/feature/5080
+    
+    #5080 オーダーCSV作成Batch用ベース作成
+
+[33mcommit 86c536257975bf8e9cbc1fe3c8ce03907b31b6a2[m[33m ([m[1;31myamazaki/feature/5080[m[33m)[m
+Author: YamazakiTakumi <yamazaki-takumi@softcomm.co.jp>
+Date:   Tue Jan 7 10:21:48 2020 +0900
+
+    オーダーCSV作成Batch用テンプレート作成
+
+[33mcommit 4350bbf6426dfbf43e8caae0be09321a5ef86d9b[m[33m ([m[1;32mdevelop[m[33m)[m
+Merge: ef4254c 1d17452
+Author: TakumiYamazaki <takumi.yamazaki@jp.ricoh.com>
+Date:   Thu Dec 26 12:52:04 2019 +0900
+
+    Merge pull request #4 from yamauchi/feature/5037
+    
+    5037 リプライファイル取込バッチ プロジェクト作成
+
+[33mcommit 1d17452bf5d2b5d8b931c251336777f52af15fd9[m
+Author: yamauchi <yasutaka.yamauchi@jrits.ricoh.co.jp>
+Date:   Thu Dec 26 12:44:28 2019 +0900
+
+    リプライファイル取込バッチ プロジェクト作成
+
+[33mcommit ef4254c31d17b5037fcfef95390db787c3b812f3[m
+Merge: 4e13361 56ad09a
+Author: TakumiYamazaki <takumi.yamazaki@jp.ricoh.com>
+Date:   Tue Dec 24 13:26:46 2019 +0900
+
+    Merge pull request #3 from yamauchi/feature/4990_3
+    
+    4990　オーダーメール送信起動シェル作成
+
+[33mcommit 56ad09a6432f0f9ed7090e4cd915aff9b614bccb[m
+Author: yamauchi <yasutaka.yamauchi@jrits.ricoh.co.jp>
+Date:   Tue Dec 24 13:22:09 2019 +0900
+
+    無駄な処理排除
+
+[33mcommit 429e62f68768529678fa25cb714bb05ffdabaf09[m
+Author: yamauchi <yasutaka.yamauchi@jrits.ricoh.co.jp>
+Date:   Tue Dec 24 13:20:44 2019 +0900
+
+    オーダーメール送信起動シェル作成
+
+[33mcommit 4e133610e1fc5a0208ab4f73a8057d53f0fb95c9[m
+Merge: 8b58c55 5ddb099
+Author: TakumiYamazaki <takumi.yamazaki@jp.ricoh.com>
+Date:   Tue Dec 24 12:56:41 2019 +0900
+
+    Merge pull request #2 from yamauchi/feature/4990_2
+    
+    4990 ベンダーオーダーメール送信バッチ
+
+[33mcommit 5ddb09950afed810af400f00d6df760ad3226c63[m
+Author: yamauchi <yasutaka.yamauchi@jrits.ricoh.co.jp>
+Date:   Tue Dec 24 12:28:07 2019 +0900
+
+    ベンダーオーダーメール送信バッチ
+
+[33mcommit 8b58c55400a5c75dcffb241a5a55fcaf5e409b6c[m
+Merge: c8ececa c94e05d
+Author: TakumiYamazaki <takumi.yamazaki@jp.ricoh.com>
+Date:   Fri Dec 20 16:02:08 2019 +0900
+
+    Merge pull request #1 from yamauchi/feature/4990
+    
+    4990 オーダーメール送信バッチプロジェクト作成(バッチテンプレートコピー)
+
+[33mcommit c94e05dbe0108bde61d1965635cd725724b3e6db[m
+Author: yamauchi <yasutaka.yamauchi@jrits.ricoh.co.jp>
+Date:   Fri Dec 20 15:55:31 2019 +0900
+
+    不要ファイル削除
+
+[33mcommit 9ae9222383d814294e9cc22ebe6a6349808ab0a6[m
+Author: yamauchi <yasutaka.yamauchi@jrits.ricoh.co.jp>
+Date:   Fri Dec 20 15:17:54 2019 +0900
+
+    オーダーメール送信バッチプロジェクト作成
+
+[33mcommit c8ececa87329cf192360dd0d1d906ca42ae08573[m[33m ([m[1;31morigin/master[m[33m, [m[1;32mmaster[m[33m)[m
+Author: yamauchi <yasutaka.yamauchi@jrits.ricoh.co.jp>
+Date:   Fri Dec 20 14:50:11 2019 +0900
+
+    プルリク テンプレート
