@@ -37,7 +37,7 @@ public class JobComponent {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.fatal("リプライCSV取込処理に失敗しました。");
+			log.fatal("オーダーCSV作成処理に失敗しました。");
 			System.exit(1);
 
 		} catch (Throwable e) {

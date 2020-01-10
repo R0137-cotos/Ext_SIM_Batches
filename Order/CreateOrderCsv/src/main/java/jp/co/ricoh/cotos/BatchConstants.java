@@ -5,7 +5,7 @@ public class BatchConstants {
 	/**
 	 * バッチ名称
 	 */
-	public static final String BATCH_NAME = "リプライCSV取込バッチ";
+	public static final String BATCH_NAME = "オーダーCSV作成バッチ";
 
 	/**
 	 * バッチパラメーター

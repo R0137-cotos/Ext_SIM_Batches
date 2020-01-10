@@ -1,5 +1,9 @@
 package jp.co.ricoh.cotos.logic;
 
+import java.util.List;
+
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -7,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
+import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
+import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -21,15 +27,23 @@ public class BatchComponent {
 
 	/**
 	 * バッチ処理
+	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
+	@Transactional
 	public void execute(String[] args) throws Exception {
+		// パラメータチェック
+		CreateOrderCsvDto dto = baseComponent.paramCheck(args);
 
+		IBatchStepComponent component = this.getComponentInstance("SIM");
+		List<CreateOrderCsvDataDto> orderDataList = component.getDataList();
+		component.process(dto, orderDataList);
 	}
 
 	/**
 	 * 商材切替
+	 * 
 	 * @param productDiv
 	 * @return IBatchStepComponent
 	 */
