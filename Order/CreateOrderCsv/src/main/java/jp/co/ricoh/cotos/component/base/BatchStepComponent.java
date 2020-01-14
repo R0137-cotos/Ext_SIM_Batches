@@ -64,16 +64,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 		}
 		String[] paramList = BatchConstants.BATCH_PARAMETER_LIST_NAME.split("/");
 
-		File csvFile = Paths.get(args[0], args[1]).toFile();
-		if (csvFile.exists()) {
-			throw new FileAlreadyExistsException(csvFile.getAbsolutePath());
-		}
-
-		if (!csvFile.getParentFile().exists()) {
-			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "DirectoryNotFoundError"));
-		}
-
-		String operationDate = args[2];
+		String operationDate = args[0];
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		try {
 			sdf.setLenient(false);
@@ -82,6 +73,16 @@ public class BatchStepComponent implements IBatchStepComponent {
 			log.fatal("処理年月日が不正です。");
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ParameterEmptyError", new String[] { paramList[0] }));
 		}
+
+		File csvFile = Paths.get(args[1], args[2] + "_" + args[0] + ".csv").toFile();
+		if (csvFile.exists()) {
+			throw new FileAlreadyExistsException(csvFile.getAbsolutePath());
+		}
+
+		if (!csvFile.getParentFile().exists()) {
+			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "DirectoryNotFoundError"));
+		}
+
 		dto.setCsvFile(csvFile);
 		dto.setOperationDate(operationDate);
 		return dto;
@@ -118,8 +119,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 	}
 
 	@Override
-	public boolean process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
-		return false;
+	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
 		// データ加工等の処理を実施
 	}
 

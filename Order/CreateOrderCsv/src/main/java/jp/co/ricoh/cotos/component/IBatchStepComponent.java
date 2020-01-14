@@ -6,10 +6,6 @@ import java.nio.file.NoSuchFileException;
 import java.text.ParseException;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
-import org.springframework.data.jpa.repository.Modifying;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
@@ -56,7 +52,7 @@ public interface IBatchStepComponent {
 	 * @throws FileAlreadyExistsException
 	 * @throws Exception
 	 */
-	public boolean process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException;
+	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException;
 
 	/**
 	 * 事後処理
