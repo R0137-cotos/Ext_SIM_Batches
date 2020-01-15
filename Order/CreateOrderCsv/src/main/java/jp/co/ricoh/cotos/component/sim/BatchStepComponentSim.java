@@ -142,7 +142,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				List<String> headerList = new ArrayList<>();
 				InputStream in = this.getClass().getClassLoader().getResourceAsStream(headerFilePath);
 				String header = IOUtils.toString(in, "UTF-8");
-				System.out.println(header);
 				headerList.add(header);
 				headerList.addAll(outputList);
 				try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(dto.getCsvFile())))) {
