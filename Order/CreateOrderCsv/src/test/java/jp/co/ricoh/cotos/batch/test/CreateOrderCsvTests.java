@@ -204,7 +204,6 @@ public class CreateOrderCsvTests extends TestBase {
 
 	@Test
 	public void パラメータ不正_存在しないディレクトリ() throws IOException {
-		テストデータ作成("createOrderTestSuccessDate.sql");
 		Files.deleteIfExists(Paths.get("output/dummy/result_initial.csv"));
 
 		try {
@@ -212,5 +211,15 @@ public class CreateOrderCsvTests extends TestBase {
 			Assert.fail("CSVファイルが書き込めないのに異常終了しなかった");
 		} catch (ExitException e) {
 		}
+	}
+
+	@Test
+	public void パラメータ不正_処理年月日不正() throws IOException {
+		try {
+			jobComponent.run(new String[] { "不正データ", outputPath, "result_initial.csv" });
+			Assert.fail("処理年月日のフォーマットが不正なのに異常終了しなかった");
+		} catch (ExitException e) {
+		}
+
 	}
 }

@@ -10,6 +10,6 @@ public class BatchConstants {
 	/**
 	 * バッチパラメーター
 	 */
-	public static final String BATCH_PARAMETER_LIST_NAME = "";
+	public static final String BATCH_PARAMETER_LIST_NAME = "処理年月日/ディレクトリ名/ファイル名";
 
 }

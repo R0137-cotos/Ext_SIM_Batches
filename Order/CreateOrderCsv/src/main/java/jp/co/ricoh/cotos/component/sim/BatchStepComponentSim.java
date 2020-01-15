@@ -66,26 +66,33 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Override
 	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
 		log.info("SIM独自処理");
-
-		// 取得したデータを出力データのみに設定
-		List<FindCreateOrderCsvDataDto> findOrderDataList = new ArrayList<>();
 		Date operationDate = batchUtil.changeDate(dto.getOperationDate());
+		orderDataList = orderDataList.stream().filter(o -> {
+			int orderCsvCreationStatus = 1;
+			try {
+				orderCsvCreationStatus = batchUtil.getOrderCsvCreationStatus(o.getExtendsParameter());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return orderCsvCreationStatus == 0;
+		}).filter(o -> {
+			// 処理年月日 + 最短納期日を取得
+			Date shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), o.getShortestDeliveryDate(), false);
+			return shortBusinessDay.compareTo(o.getConclusionPreferredDate()) > -1;
+		}).collect(Collectors.toList());
 
-		Map<String, List<CreateOrderCsvDataDto>> ContractNumberGroupingMap = orderDataList.stream().collect(Collectors.groupingBy(order -> order.getContractNumber(), Collectors.mapping(order -> order, Collectors.toList())));
+		if (0 == orderDataList.size()) {
+			log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "オーダーCSV作成" }).getMsg());
+		} else {
+			// 取得したデータを出力データのみに設定
+			List<FindCreateOrderCsvDataDto> findOrderDataList = new ArrayList<>();
+			//		Date operationDate = batchUtil.changeDate(dto.getOperationDate());
 
-		ContractNumberGroupingMap.entrySet().stream().forEach(orderDataMap -> {
-			IntStream.range(0, orderDataMap.getValue().size()).forEach(i -> {
-				CreateOrderCsvDataDto orderData = orderDataMap.getValue().get(i);
-				// 処理年月日 + 最短納期日を取得
-				Date shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), orderData.getShortestDeliveryDate(), false);
-				// 拡張項目よりオーダーCSV作成状態を取得
-				int orderCsvCreationStatus = 1;
-				try {
-					orderCsvCreationStatus = batchUtil.getOrderCsvCreationStatus(orderData.getExtendsParameter());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				if (shortBusinessDay.compareTo(orderData.getConclusionPreferredDate()) > -1 && orderCsvCreationStatus == 0) {
+			Map<String, List<CreateOrderCsvDataDto>> ContractNumberGroupingMap = orderDataList.stream().collect(Collectors.groupingBy(order -> order.getContractNumber(), Collectors.mapping(order -> order, Collectors.toList())));
+
+			ContractNumberGroupingMap.entrySet().stream().forEach(orderDataMap -> {
+				IntStream.range(0, orderDataMap.getValue().size()).forEach(i -> {
+					CreateOrderCsvDataDto orderData = orderDataMap.getValue().get(i);
 					int itemQuantity = Integer.parseInt(orderData.getQuantity());
 
 					IntStream.range(0, itemQuantity).forEach(k -> {
@@ -113,15 +120,13 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 						findOrderDataList.add(orderCsvEntity);
 					});
-				}
-			});
-		});
 
-		List<Long> successIdList = new ArrayList<>();
-		List<Long> failedIdList = new ArrayList<>();
-		if (0 == findOrderDataList.size()) {
-			log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "オーダーCSV作成" }).getMsg());
-		} else {
+				});
+			});
+
+			List<Long> successIdList = new ArrayList<>();
+			List<Long> failedIdList = new ArrayList<>();
+
 			Map<Long, List<FindCreateOrderCsvDataDto>> OrderDataIdGroupingMap = findOrderDataList.stream().collect(Collectors.groupingBy(findOrderData -> findOrderData.getContractIdTemp(), Collectors.mapping(findOrderData -> findOrderData, Collectors.toList())));
 			CsvMapper mapper = new CsvMapper();
 			CsvSchema schemaWithOutHeader = mapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true).schemaFor(FindCreateOrderCsvDataDto.class).withoutHeader().withColumnSeparator(',').withLineSeparator("\r\n").withNullValue("\"\"");

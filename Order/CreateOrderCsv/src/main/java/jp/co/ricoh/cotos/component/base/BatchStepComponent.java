@@ -48,7 +48,6 @@ public class BatchStepComponent implements IBatchStepComponent {
 		if (null == args || args.length != 3) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ParameterEmptyError", new String[] { BatchConstants.BATCH_PARAMETER_LIST_NAME }));
 		}
-		String[] paramList = BatchConstants.BATCH_PARAMETER_LIST_NAME.split("/");
 
 		String operationDate = args[0];
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -56,8 +55,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 			sdf.setLenient(false);
 			sdf.parse(operationDate);
 		} catch (ParseException pe) {
-			log.fatal("処理年月日のフォーマットは[yyyyMMdd]です。");
-			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ParameterEmptyError", new String[] { paramList[0] }));
+			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "BatchParameterFormatError", new String[] { "yyyyMMdd" }));
 		}
 
 		File csvFile = Paths.get(args[1], args[2]).toFile();
