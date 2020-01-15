@@ -11,7 +11,12 @@ public class CreateOrderCsvDto {
 	 * ファイル
 	 */
 	private File csvFile;
-	
+
+	/**
+	 * 仮置きファイル
+	 */
+	private File tmpFile;
+
 	/**
 	 * 処理日
 	 */

@@ -1,28 +1,27 @@
 SELECT
-  rownum as id,
---data.contract_number as contract_number,
-  data.contract_id as contract_id_temp,
-  data.immutable_cont_ident_number as contract_number,
-  data.quantity as quantity,
-  data.ricoh_item_code as ricoh_item_code,
-  data.item_contract_name as item_contract_name,
-  data.conclusion_preferred_date as conclusion_preferred_date,
-  data.shortest_delivery_date as shortest_delivery_date,
-  data.pic_name as pic_name,
-  data.pic_name_kana as pic_name_kana,
-  data.post_number as post_number,
-  data.address as address,
-  data.company_name as company_name,
-  data.office_name as office_name,
-  data.pic_phone_number as pic_phone_number,
-  data.pic_fax_number as pic_fax_number,
-  data.pic_mail_address as pic_mail_address,
-  data.extends_parameter as extends_parameter
+  rownum AS id,
+  data.contract_id AS contract_id_temp,
+  data.immutable_cont_ident_number AS contract_number,
+  data.quantity AS quantity,
+  data.ricoh_item_code AS ricoh_item_code,
+  data.item_contract_name AS item_contract_name,
+  data.conclusion_preferred_date AS conclusion_preferred_date,
+  data.shortest_delivery_date AS shortest_delivery_date,
+  data.pic_name AS pic_name,
+  data.pic_name_kana AS pic_name_kana,
+  data.post_number AS post_number,
+  data.address AS address,
+  data.company_name AS company_name,
+  data.office_name AS office_name,
+  data.pic_phone_number AS pic_phone_number,
+  data.pic_fax_number AS pic_fax_number,
+  data.pic_mail_address AS pic_mail_address,
+  data.extends_parameter AS extends_parameter,
+  data.contract_detail_id AS contract_detail_id
 FROM
  (
   SELECT
---	cont.contract_number,                              --Œ_–ñ.”Ô†
-	cont.id as contract_id,
+	cont.id AS contract_id,                            --Œ_–ñ.Œ_–ñID
 	cont.immutable_cont_ident_number,                  --Œ_–ñ.P‹vŒ_–ñ¯•Ê”Ô†
 	detail.quantity,                                   --Œ_–ñ–¾×.”—Ê
 	item.ricoh_item_code,                              --•ií(Œ_–ñ—p).ƒŠƒR[•iíƒR[ƒh
@@ -37,11 +36,12 @@ FROM
 	CONCAT(
 		location.office_name,                          --İ’uæ(Œ_–ñ—p).–‹ÆŠ–¼
 		location.pic_dept_name                         --İ’uæ(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–Ò•”
-	) as office_name,
+	) AS office_name,
 	location.pic_phone_number,                         --İ’uæ(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–Ò“d˜b”Ô†
 	location.pic_fax_number,                           --İ’uæ(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–ÒFAX”Ô†
 	customer.pic_mail_address,                         --ŒÚ‹q(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–Òƒ[ƒ‹ƒAƒhƒŒƒX
-	detail.extends_parameter                           --Œ_–ñ–¾×.Šg’£€–Ú
+	detail.extends_parameter,                          --Œ_–ñ–¾×.Šg’£€–Ú
+	detail.id AS contract_detail_id                             --Œ_–ñ–¾×.ID
   FROM contract cont                                                 --Œ_–ñ
   INNER JOIN contract_detail detail                                  --Œ_–ñ–¾×
           ON detail.contract_id = cont.id

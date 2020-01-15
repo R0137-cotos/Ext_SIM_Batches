@@ -14,16 +14,16 @@ import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
 public interface IBatchStepComponent {
 
 	/**
-	 * パラメーターチェック処理 ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
-	 * 
+	 * パラメーターチェック処理
+	 * ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
 	 * @return
 	 * @throws FileAlreadyExistsException
 	 */
 	public CreateOrderCsvDto paramCheck(String[] args) throws FileAlreadyExistsException;
 
 	/**
-	 * 処理データ取得 ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
-	 * 
+	 * 処理データ取得
+	 * ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
 	 * @param searchParam
 	 *            処理データ取得用パラメーター
 	 * @return 処理データリスト

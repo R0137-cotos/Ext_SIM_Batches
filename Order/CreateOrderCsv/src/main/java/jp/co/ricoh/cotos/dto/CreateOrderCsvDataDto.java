@@ -13,7 +13,7 @@ public class CreateOrderCsvDataDto {
 
 	@Id
 	private long id;
-	
+
 	/**
 	 * 契約ID
 	 */
@@ -93,9 +93,14 @@ public class CreateOrderCsvDataDto {
 	 * 担当者メールアドレス
 	 */
 	private String picMailAddress;
-	
+
 	/**
 	 * 拡張項目
 	 */
-	private String extends_parameter;
+	private String extendsParameter;
+
+	/**
+	 * 契約明細ID
+	 */
+	private Long contractDetailId;
 }

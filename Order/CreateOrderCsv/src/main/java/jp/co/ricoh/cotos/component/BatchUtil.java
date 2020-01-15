@@ -96,8 +96,7 @@ public class BatchUtil {
 	}
 
 	public int getOrderCsvCreationStatus(String extendsParameter) throws JsonProcessingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode node = mapper.readTree(extendsParameter);
+		JsonNode node = om.readTree(extendsParameter);
 		return node.get("orderCsvCreationStatus").asInt();
 	}
 }

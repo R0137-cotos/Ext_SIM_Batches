@@ -17,6 +17,12 @@ public class FindCreateOrderCsvDataDto {
 	 */
 	@JsonIgnore
 	private long contractIdTemp;
+	
+	/**
+	 * 契約明細ID
+	 */
+	@JsonIgnore
+	private long contractDetailId;
 
 	/**
 	 * 契約No

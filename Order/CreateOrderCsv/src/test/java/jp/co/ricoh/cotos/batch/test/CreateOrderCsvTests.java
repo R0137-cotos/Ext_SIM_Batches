@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementPicWorkerEmpRepository;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementWorkRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
-import jp.co.ricoh.cotos.commonlib.repository.contract.ContractRepository;
 import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
 import jp.co.ricoh.cotos.logic.JobComponent;
@@ -41,7 +39,7 @@ public class CreateOrderCsvTests extends TestBase {
 
 	final private String outputPath = "output/";
 
-	final private String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"20181019\"}";
+	final private String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"20191018\"}";
 
 	final private String dummySuccessExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"\"}";
 
@@ -52,9 +50,6 @@ public class CreateOrderCsvTests extends TestBase {
 
 	@Autowired
 	BatchMomInfoProperties batchProperty;
-
-	@Autowired
-	ContractRepository contractRepository;
 
 	@Autowired
 	ContractDetailRepository contractDetailRepository;
@@ -106,12 +101,12 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_CSVファイルを出力できること() throws IOException {
 		テストデータ作成("createOrderTestSuccessDate.sql");
-		fileDeleate(outputPath + "result_initial_20181019.csv");
+		fileDeleate(outputPath + "result_initial.csv");
 
-		jobComponent.run(new String[] { "20181019", outputPath, "result_initial" });
+		jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv" });
 
 		ArrangementWork arrangementWork1 = arrangementWorkRepository.findOne(1L);
 		ArrangementWork arrangementWork2 = arrangementWorkRepository.findOne(2L);
@@ -132,16 +127,20 @@ public class CreateOrderCsvTests extends TestBase {
 		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail21.getExtendsParameter());
 		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail22.getExtendsParameter());
 
-		fileDeleate(outputPath + "result_initial_20181019.csv");
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
-	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_CSVファイルを出力しないこと() throws IOException {
 		テストデータ作成("createOrderTestFailedDate.sql");
-		fileDeleate(outputPath + "result_initial_20181019.csv");
+		fileDeleate(outputPath + "result_initial.csv");
 
-		jobComponent.run(new String[] { "20181019", outputPath, "result_initial" });
+		jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv" });
 
 		ArrangementWork arrangementWork3 = arrangementWorkRepository.findOne(3L);
 		ArrangementWork arrangementWork4 = arrangementWorkRepository.findOne(4L);
@@ -173,7 +172,7 @@ public class CreateOrderCsvTests extends TestBase {
 		} catch (Exception e) {
 		}
 
-		fileDeleate(outputPath + "result_initial_20181019.csv");
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
@@ -186,20 +185,20 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 既存ファイルに上書きできないこと() throws IOException {
 		テストデータ作成("createOrderTestSuccessDate.sql");
-		fileDeleate(outputPath + "duplicate_20181019.csv");
-		if (!Files.exists(Paths.get("output/duplicate_20181019.csv"))) {
-			Files.createFile(Paths.get("output/duplicate_20181019.csv"));
+		fileDeleate(outputPath + "duplicate.csv");
+		if (!Files.exists(Paths.get("output/duplicate.csv"))) {
+			Files.createFile(Paths.get("output/duplicate.csv"));
 		}
 		try {
-			jobComponent.run(new String[] { "20181019", outputPath, "duplicate" });
+			jobComponent.run(new String[] { "20191018", outputPath, "duplicate.csv" });
 			Assert.fail("既存ファイルがあるのに異常終了しなかった");
 		} catch (ExitException e) {
-			fileDeleate(outputPath + "duplicate_20181019.csv");
+			fileDeleate(outputPath + "duplicate.csv");
 		}
-		fileDeleate(outputPath + "duplicate_20181019.csv");
+		fileDeleate(outputPath + "duplicate.csv");
 	}
 
 	@Test
@@ -208,7 +207,7 @@ public class CreateOrderCsvTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/dummy/result_initial.csv"));
 
 		try {
-			jobComponent.run(new String[] { "20181019", outputPath + "dummy", "result_initial" });
+			jobComponent.run(new String[] { "20191018", outputPath + "dummy", "result_initial.csv" });
 			Assert.fail("CSVファイルが書き込めないのに異常終了しなかった");
 		} catch (ExitException e) {
 		}

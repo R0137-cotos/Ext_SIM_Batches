@@ -7,9 +7,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,10 +18,7 @@ import jp.co.ricoh.cotos.BatchConstants;
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
-import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
-import jp.co.ricoh.cotos.commonlib.repository.contract.ContractRepository;
-import jp.co.ricoh.cotos.commonlib.repository.master.ProductGrpMasterRepository;
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
@@ -39,18 +34,9 @@ public class BatchStepComponent implements IBatchStepComponent {
 	@Autowired
 	DBUtil dbUtil;
 
-	@Autowired
-	BusinessDayUtil businessDayUtil;
-
-	@Autowired
-	ContractRepository contractRepository;
-
-	@Autowired
-	ProductGrpMasterRepository productGrpMasterRepository;
-
 	/**
-	 * パラメーターチェック処理 ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
-	 * 
+	 * パラメーターチェック処理
+	 * ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
 	 * @return
 	 * @throws FileAlreadyExistsException
 	 */
@@ -70,11 +56,11 @@ public class BatchStepComponent implements IBatchStepComponent {
 			sdf.setLenient(false);
 			sdf.parse(operationDate);
 		} catch (ParseException pe) {
-			log.fatal("処理年月日が不正です。");
+			log.fatal("処理年月日のフォーマットは[yyyyMMdd]です。");
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ParameterEmptyError", new String[] { paramList[0] }));
 		}
 
-		File csvFile = Paths.get(args[1], args[2] + "_" + args[0] + ".csv").toFile();
+		File csvFile = Paths.get(args[1], args[2]).toFile();
 		if (csvFile.exists()) {
 			throw new FileAlreadyExistsException(csvFile.getAbsolutePath());
 		}
@@ -82,15 +68,25 @@ public class BatchStepComponent implements IBatchStepComponent {
 		if (!csvFile.getParentFile().exists()) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "DirectoryNotFoundError"));
 		}
+		
+		File tmpFile = Paths.get(args[1], "temp.csv").toFile();
+		if (tmpFile.exists()) {
+			throw new FileAlreadyExistsException(tmpFile.getAbsolutePath());
+		}
+
+		if (!tmpFile.getParentFile().exists()) {
+			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "DirectoryNotFoundError"));
+		}
 
 		dto.setCsvFile(csvFile);
+		dto.setTmpFile(tmpFile);
 		dto.setOperationDate(operationDate);
 		return dto;
 	}
 
 	/**
-	 * 処理データ取得 ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
-	 * 
+	 * 処理データ取得
+	 * ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
 	 * @param searchParam
 	 *            処理データ取得用パラメーター
 	 * @return 処理データリスト
@@ -98,11 +94,9 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 */
 	@Override
 	public final List<CreateOrderCsvDataDto> getDataList() {
-
-		Map<String, Object> sqlParams = new HashMap<>();
 		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<>();
 
-		orderDataList = dbUtil.loadFromSQLFile("sql/findOrderData.sql", CreateOrderCsvDataDto.class, sqlParams);
+		orderDataList = dbUtil.loadFromSQLFile("sql/findOrderData.sql", CreateOrderCsvDataDto.class);
 
 		return orderDataList;
 	}
