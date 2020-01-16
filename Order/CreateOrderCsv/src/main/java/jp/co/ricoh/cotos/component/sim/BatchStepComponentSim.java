@@ -66,6 +66,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Override
 	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
 		log.info("SIM独自処理");
+		// 取得したデータを出力データのみに設定
 		Date operationDate = batchUtil.changeDate(dto.getOperationDate());
 		orderDataList = orderDataList.stream().filter(o -> {
 			int orderCsvCreationStatus = 1;
@@ -84,7 +85,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		if (0 == orderDataList.size()) {
 			log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "オーダーCSV作成" }).getMsg());
 		} else {
-			// 取得したデータを出力データのみに設定
 			List<FindCreateOrderCsvDataDto> findOrderDataList = new ArrayList<>();
 			Map<String, List<CreateOrderCsvDataDto>> contractNumberGroupingMap = orderDataList.stream().collect(Collectors.groupingBy(order -> order.getContractNumber(), Collectors.mapping(order -> order, Collectors.toList())));
 
