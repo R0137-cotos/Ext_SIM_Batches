@@ -86,11 +86,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		} else {
 			// 取得したデータを出力データのみに設定
 			List<FindCreateOrderCsvDataDto> findOrderDataList = new ArrayList<>();
-			//		Date operationDate = batchUtil.changeDate(dto.getOperationDate());
+			Map<String, List<CreateOrderCsvDataDto>> contractNumberGroupingMap = orderDataList.stream().collect(Collectors.groupingBy(order -> order.getContractNumber(), Collectors.mapping(order -> order, Collectors.toList())));
 
-			Map<String, List<CreateOrderCsvDataDto>> ContractNumberGroupingMap = orderDataList.stream().collect(Collectors.groupingBy(order -> order.getContractNumber(), Collectors.mapping(order -> order, Collectors.toList())));
-
-			ContractNumberGroupingMap.entrySet().stream().forEach(orderDataMap -> {
+			contractNumberGroupingMap.entrySet().stream().forEach(orderDataMap -> {
 				IntStream.range(0, orderDataMap.getValue().size()).forEach(i -> {
 					CreateOrderCsvDataDto orderData = orderDataMap.getValue().get(i);
 					int itemQuantity = Integer.parseInt(orderData.getQuantity());

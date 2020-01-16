@@ -66,7 +66,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 		if (!csvFile.getParentFile().exists()) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "DirectoryNotFoundError"));
 		}
-		
+
 		File tmpFile = Paths.get(args[1], "temp.csv").toFile();
 		if (tmpFile.exists()) {
 			throw new FileAlreadyExistsException(tmpFile.getAbsolutePath());
