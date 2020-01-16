@@ -139,23 +139,18 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					failedIdList.add(map.getKey());
 				}
 			});
-			try {
-				// ヘッダーファイルとのマージ
-				List<String> outputList = Files.readAllLines(dto.getTmpFile().toPath(), Charset.forName("UTF-8"));
-				List<String> headerList = new ArrayList<>();
-				InputStream in = this.getClass().getClassLoader().getResourceAsStream(headerFilePath);
-				String header = IOUtils.toString(in, "UTF-8");
-				headerList.add(header);
-				headerList.addAll(outputList);
-				try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(dto.getCsvFile())))) {
-					headerList.stream().forEach(s -> pw.print(s + "\r\n"));
-				}
-				Files.deleteIfExists(dto.getTmpFile().toPath());
-			} catch (Exception e) {
-				Files.deleteIfExists(dto.getTmpFile().toPath());
-				successIdList.stream().forEach(successId -> failedIdList.add(successId));
-				successIdList.clear();
+			// ヘッダーファイルとのマージ
+			List<String> outputList = Files.readAllLines(dto.getTmpFile().toPath(), Charset.forName("UTF-8"));
+			List<String> headerList = new ArrayList<>();
+			InputStream in = this.getClass().getClassLoader().getResourceAsStream(headerFilePath);
+			String header = IOUtils.toString(in, "UTF-8");
+			headerList.add(header);
+			headerList.addAll(outputList);
+			try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(dto.getCsvFile())))) {
+				headerList.stream().forEach(s -> pw.print(s + "\r\n"));
 			}
+			Files.deleteIfExists(dto.getTmpFile().toPath());
+
 			// 出力成功
 			if (!successIdList.isEmpty()) {
 

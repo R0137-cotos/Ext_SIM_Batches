@@ -53,7 +53,10 @@ FROM
           ON location.contract_id = cont.id
   INNER JOIN customer_contract customer                              --顧客(契約用)
           ON customer.contract_id = cont.id
-  WHERE cont.workflow_status = '3'
+  INNER JOIN product_master pm                                       --商品マスタ
+          ON pm.id = item.product_master_id
+  WHERE pm.product_class_div = 'SIM'
+    AND cont.workflow_status = '3'
     AND item.cost_type != '1'
  ) data
 ORDER BY id

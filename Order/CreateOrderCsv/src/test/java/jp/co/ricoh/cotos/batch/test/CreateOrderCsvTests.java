@@ -146,23 +146,30 @@ public class CreateOrderCsvTests extends TestBase {
 		ArrangementWork arrangementWork3 = arrangementWorkRepository.findOne(3L);
 		ArrangementWork arrangementWork4 = arrangementWorkRepository.findOne(4L);
 		ArrangementWork arrangementWork5 = arrangementWorkRepository.findOne(5L);
+		ArrangementWork arrangementWork6 = arrangementWorkRepository.findOne(6L);
 		ArrangementPicWorkerEmp arrangementPicWorkerEmp3 = arrangementPicWorkerEmpRepository.findOne(3L);
 		ArrangementPicWorkerEmp arrangementPicWorkerEmp4 = arrangementPicWorkerEmpRepository.findOne(4L);
 		ArrangementPicWorkerEmp arrangementPicWorkerEmp5 = arrangementPicWorkerEmpRepository.findOne(5L);
+		ArrangementPicWorkerEmp arrangementPicWorkerEmp6 = arrangementPicWorkerEmpRepository.findOne(6L);
 		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
 		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
 		ContractDetail contractDetail41 = contractDetailRepository.findOne(41L);
 		ContractDetail contractDetail42 = contractDetailRepository.findOne(42L);
 		ContractDetail contractDetail51 = contractDetailRepository.findOne(51L);
 		ContractDetail contractDetail52 = contractDetailRepository.findOne(52L);
+		ContractDetail contractDetail61 = contractDetailRepository.findOne(61L);
+		ContractDetail contractDetail62 = contractDetailRepository.findOne(62L);
+		
 
 		try {
 			Assert.assertEquals("更新者が変更されていないこと", "229692", arrangementPicWorkerEmp3.getMomEmployeeId());
 			Assert.assertEquals("更新者が変更されていないこと", "229692", arrangementPicWorkerEmp4.getMomEmployeeId());
 			Assert.assertEquals("更新者が変更されていないこと", "229692", arrangementPicWorkerEmp5.getMomEmployeeId());
+			Assert.assertEquals("更新者が変更されていないこと", "229692", arrangementPicWorkerEmp6.getMomEmployeeId());
 			Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork3.getWorkflowStatus());
 			Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork4.getWorkflowStatus());
 			Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork5.getWorkflowStatus());
+			Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork6.getWorkflowStatus());
 
 			Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail31.getExtendsParameter());
 			Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail32.getExtendsParameter());
@@ -170,6 +177,8 @@ public class CreateOrderCsvTests extends TestBase {
 			Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
 			Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail51.getExtendsParameter());
 			Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail52.getExtendsParameter());
+			Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail61.getExtendsParameter());
+			Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail62.getExtendsParameter());
 		} catch (Exception e) {
 		}
 
