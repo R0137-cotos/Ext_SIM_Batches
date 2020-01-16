@@ -17,7 +17,8 @@ export LOG_DIR=/var/log/cotos/Ext_SIM_Batches${BATCH_BASE_SUFFIX}
 ### バッチJava実行モジュール パス
 ################################################
 export BATCH_BASE_PATH=${BASE_DIR_PATH}/Ext_SIM_Batches${BATCH_BASE_SUFFIX}
-export ACCOUNTING_JAR_PATH=${BATCH_BASE_PATH}/Communication
+export COMMUNICATION_JAR_PATH=${BATCH_BASE_PATH}/Communication
+export ORDER_JAR_PATH=${BATCH_BASE_PATH}/Order
 
 ################################################
 ### バッチJava実行モジュール名
