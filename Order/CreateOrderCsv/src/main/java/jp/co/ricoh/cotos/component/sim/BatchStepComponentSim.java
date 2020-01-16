@@ -1,10 +1,45 @@
 package jp.co.ricoh.cotos.component.sim;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jp.co.ricoh.cotos.commonlib.logic.mail.CommonSendMail;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.dataformat.csv.CsvGenerator;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
+import jp.co.ricoh.cotos.commonlib.db.DBUtil;
+import jp.co.ricoh.cotos.commonlib.entity.arrangement.Arrangement;
+import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
+import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
+import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
+import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementRepository;
+import jp.co.ricoh.cotos.component.BatchUtil;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
+import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
+import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
+import jp.co.ricoh.cotos.dto.FindCreateOrderCsvDataDto;
 import lombok.extern.log4j.Log4j;
 
 @Component("SIM")
@@ -12,10 +47,153 @@ import lombok.extern.log4j.Log4j;
 public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Autowired
-	CommonSendMail commonSendMail;
+	ArrangementRepository arrangementRepository;
+
+	@Autowired
+	BatchUtil batchUtil;
+
+	@Autowired
+	MessageUtil messageUtil;
+
+	@Autowired
+	DBUtil dbUtil;
+
+	@Autowired
+	BusinessDayUtil businessDayUtil;
+
+	private static final String headerFilePath = "file/header.csv";
 
 	@Override
-	public void process(Object param) {
+	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
 		log.info("SIM独自処理");
+		// 取得したデータを出力データのみに設定
+		Date operationDate = batchUtil.changeDate(dto.getOperationDate());
+		orderDataList = orderDataList.stream().filter(o -> {
+			int orderCsvCreationStatus = 1;
+			try {
+				orderCsvCreationStatus = batchUtil.getOrderCsvCreationStatus(o.getExtendsParameter());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return orderCsvCreationStatus == 0;
+		}).filter(o -> {
+			// 処理年月日 + 最短納期日を取得
+			Date shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), o.getShortestDeliveryDate(), false);
+			return shortBusinessDay.compareTo(o.getConclusionPreferredDate()) > -1;
+		}).collect(Collectors.toList());
+
+		if (0 == orderDataList.size()) {
+			log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "オーダーCSV作成" }).getMsg());
+		} else {
+			List<FindCreateOrderCsvDataDto> findOrderDataList = new ArrayList<>();
+			Map<String, List<CreateOrderCsvDataDto>> contractNumberGroupingMap = orderDataList.stream().collect(Collectors.groupingBy(order -> order.getContractNumber(), Collectors.mapping(order -> order, Collectors.toList())));
+
+			contractNumberGroupingMap.entrySet().stream().forEach(orderDataMap -> {
+				IntStream.range(0, orderDataMap.getValue().size()).forEach(i -> {
+					CreateOrderCsvDataDto orderData = orderDataMap.getValue().get(i);
+					int itemQuantity = Integer.parseInt(orderData.getQuantity());
+
+					IntStream.range(0, itemQuantity).forEach(k -> {
+						FindCreateOrderCsvDataDto orderCsvEntity = new FindCreateOrderCsvDataDto();
+						orderCsvEntity.setContractIdTemp(orderData.getContractIdTemp());
+						orderCsvEntity.setContractDetailId(orderData.getContractDetailId());
+						orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%03d", i + 1));
+						orderCsvEntity.setRicohItemCode(orderData.getRicohItemCode());
+						orderCsvEntity.setItemContractName(orderData.getItemContractName());
+						orderCsvEntity.setOrderDate(operationDate);
+						orderCsvEntity.setConclusionPreferredDate(orderData.getConclusionPreferredDate());
+						orderCsvEntity.setPicName(orderData.getPicName());
+						orderCsvEntity.setPicNameKana(orderData.getPicNameKana());
+						orderCsvEntity.setPostNumber(orderData.getPostNumber());
+						orderCsvEntity.setAddress(orderData.getAddress());
+						orderCsvEntity.setCompanyName(orderData.getCompanyName());
+						orderCsvEntity.setOfficeName(orderData.getOfficeName());
+						orderCsvEntity.setPicPhoneNumber(orderData.getPicPhoneNumber());
+						orderCsvEntity.setPicFaxNumber(orderData.getPicFaxNumber());
+						orderCsvEntity.setLineNumber("");
+						orderCsvEntity.setSerialNumber("");
+						orderCsvEntity.setDeliveryExpectedDate("");
+						orderCsvEntity.setInvoiceNumber("");
+						orderCsvEntity.setRemarks("");
+
+						findOrderDataList.add(orderCsvEntity);
+					});
+
+				});
+			});
+
+			List<Long> successIdList = new ArrayList<>();
+			List<Long> failedIdList = new ArrayList<>();
+
+			Map<Long, List<FindCreateOrderCsvDataDto>> OrderDataIdGroupingMap = findOrderDataList.stream().collect(Collectors.groupingBy(findOrderData -> findOrderData.getContractIdTemp(), Collectors.mapping(findOrderData -> findOrderData, Collectors.toList())));
+			CsvMapper mapper = new CsvMapper();
+			CsvSchema schemaWithOutHeader = mapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true).schemaFor(FindCreateOrderCsvDataDto.class).withoutHeader().withColumnSeparator(',').withLineSeparator("\r\n").withNullValue("\"\"");
+
+			// CSV出力
+			OrderDataIdGroupingMap.entrySet().stream().sorted(Entry.comparingByKey()).forEach(map -> {
+				try {
+					mapper.writer(schemaWithOutHeader).writeValues(Files.newBufferedWriter(dto.getTmpFile().toPath(), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.APPEND)).write(map.getValue());
+					successIdList.add(map.getKey());
+				} catch (Exception e) {
+					log.error(messageUtil.createMessageInfo("BatchCannotCreateFiles", new String[] { String.format("オーダーCSV作成") }).getMsg(), e);
+					failedIdList.add(map.getKey());
+				}
+			});
+			// ヘッダーファイルとのマージ
+			List<String> outputList = Files.readAllLines(dto.getTmpFile().toPath(), Charset.forName("UTF-8"));
+			List<String> headerList = new ArrayList<>();
+			InputStream in = this.getClass().getClassLoader().getResourceAsStream(headerFilePath);
+			String header = IOUtils.toString(in, "UTF-8");
+			headerList.add(header);
+			headerList.addAll(outputList);
+			try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(dto.getCsvFile())))) {
+				headerList.stream().forEach(s -> pw.print(s + "\r\n"));
+			}
+			Files.deleteIfExists(dto.getTmpFile().toPath());
+
+			// 出力成功
+			if (!successIdList.isEmpty()) {
+
+				Map<String, Object> successMap = new HashMap<>();
+				String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"" + dto.getOperationDate() + "\"}";
+				List<Long> contractDetailIdList = orderDataList.stream().filter(o -> successIdList.contains(o.getContractIdTemp())).map(o -> o.getContractDetailId()).collect(Collectors.toList());
+
+				successMap.put("extendsParam", successExtendsParameter);
+				successMap.put("idList", contractDetailIdList);
+				dbUtil.execute("sql/updateExtendsParameter.sql", successMap);
+				List<Long> arrangementWorkIdList = new ArrayList<>();
+				successIdList.stream().forEach(ContractId -> {
+					Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(ContractId, 0);
+					if (arrangement != null) {
+						List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
+						arrangementWorkList.stream().forEach(arrangementWorkId -> arrangementWorkIdList.add(arrangementWorkId.getId()));
+					}
+				});
+				// 手配担当者登録APIを実行
+				try {
+					batchUtil.callAssignWorker(arrangementWorkIdList);
+				} catch (Exception arrangementError) {
+					log.fatal(String.format("担当者登録に失敗しました。"));
+					arrangementError.printStackTrace();
+				}
+				// 手配業務受付APIを実行
+				try {
+					batchUtil.callAcceptWorkApi(arrangementWorkIdList);
+				} catch (Exception arrangementError) {
+					log.fatal(String.format("ステータスの変更に失敗しました。"));
+					arrangementError.printStackTrace();
+				}
+			}
+			// 出力失敗
+			if (!failedIdList.isEmpty()) {
+				Map<String, Object> failedMap = new HashMap<>();
+				String failedExtendsParameter = "{\"orderCsvCreationStatus\":\"2\",\"orderCsvCreationDate\":\"\"}";
+				List<Long> contractDetailIdList = orderDataList.stream().filter(o -> failedIdList.contains(o.getContractIdTemp())).map(o -> o.getContractDetailId()).collect(Collectors.toList());
+
+				failedMap.put("extendsParam", failedExtendsParameter);
+				failedMap.put("idList", contractDetailIdList);
+				dbUtil.execute("sql/updateExtendsParameter.sql", failedMap);
+			}
+		}
 	}
 }
