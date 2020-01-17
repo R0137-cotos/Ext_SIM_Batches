@@ -1,0 +1,43 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.9.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+group = 'jp.co.ricoh.cotos'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven { url 'https://mygithub.ritscm.xyz/raw/cotos/LibsRepo/develop/repository/CommonLibs' }
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.9.1')
+	compile('jp.co.ricoh.cotos:common-libraries:0.0.322')
+	compile group: 'com.ibm.icu', name: 'icu4j', version: '63.1'
+	compile fileTree(dir: 'libs', include: '*.jar')
+
+	runtime('org.springframework.boot:spring-boot-devtools')
+	runtime('com.h2database:h2')
+	runtime files('libs/ojdbc7.jar')
+
+	compileOnly 'org.projectlombok:lombok:1.16.18'
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.dbunit:dbunit:2.5.4')
+	testCompileOnly 'org.projectlombok:lombok:1.16.18'
+}
