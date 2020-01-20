@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -122,6 +121,17 @@ public class BatchApplicationTests extends TestBase {
 			} else if ("31".equals(accounting.getFfmDataPtn())) {
 				transferTargetList.add(accounting);
 			}
+			if (accounting.getContractId() == 3) {
+				Assert.fail("対象外データ（計上年月日＞計上処理日）が抽出されています。");
+			} else if (accounting.getContractId() == 4) {
+				Assert.fail("対象外データ（費用種別!=月額(2or4)）が抽出されています。");
+			} else if (accounting.getContractId() == 5) {
+				Assert.fail("対象外データ（ランニング区分!=ランニング(2)）が抽出されています。");
+			} else if (accounting.getContractId() == 6) {
+				Assert.fail("対象外データ（ライフサイクル状態!=締結中(6)）が抽出されています。");
+			} else if (accounting.getContractId() == 7) {
+				Assert.fail("対象外データ（商品種類区分=CSP）が抽出されています。");
+			}
 		}
 
 		// 全データ共通のチェック
@@ -144,7 +154,6 @@ public class BatchApplicationTests extends TestBase {
 		transferTargetList.forEach(target -> {
 			データ作成区分_31_振替の個別チェック(target);
 		});
-
 	}
 
 	@Test
@@ -179,15 +188,11 @@ public class BatchApplicationTests extends TestBase {
 				StringUtils.equals(accounting.getFfmClientCd(), contract.getBillingCustomerSpCode()));
 
 		// 84 代直区分（販売店データリンク・売上用）
+		// ※SIMは商流区分=1のみ
 		switch (contract.getCommercialFlowDiv()) {
 		case "1":
 			Assert.assertTrue("代直区分（販売店データリンク・売上用）が商流区分が1の場合2(直売)と同じであること",
 					StringUtils.equals(accounting.getFfmDistType(), "2"));
-			break;
-		case "2":
-		case "3":
-			Assert.assertTrue("代直区分（販売店データリンク・売上用）が商流区分が2または3の場合は1(代売)と同じであること",
-					StringUtils.equals(accounting.getFfmDistType(), "1"));
 			break;
 		default:
 			Assert.fail("代直区分（販売店データリンク・売上用）が不正です");
@@ -195,18 +200,11 @@ public class BatchApplicationTests extends TestBase {
 		}
 
 		// 94 RJ売上単価
+		// ※SIMは商流区分=1のみ
 		switch (contract.getCommercialFlowDiv()) {
 		case "1":
 			Assert.assertTrue("商流区分が1の場合、RJ売上単価が契約明細.単価と同じであること",
 					accounting.getFfmRjSalesPrice().compareTo(contractDetail.getUnitPrice()) == 0);
-			break;
-		case "2":
-			Assert.assertTrue("商流区分が2の場合、RJ売上単価が品種（契約用）.母店売価(接点店仕切)と同じであること",
-					accounting.getFfmRjSalesPrice().compareTo(itemContract.getMotherStorePrice()) == 0);
-			break;
-		case "3":
-			Assert.assertTrue("商流区分が3の場合、RJ売上単価が品種（契約用）.RJ仕切価格と同じであること",
-					accounting.getFfmRjSalesPrice().compareTo(itemContract.getRjDividingPrice()) == 0);
 			break;
 		default:
 			Assert.fail("RJ売上単価が不正です");
@@ -214,20 +212,11 @@ public class BatchApplicationTests extends TestBase {
 		}
 
 		// 96 RJ売上金額
+		// ※SIMは商流区分=1のみ
 		switch (contract.getCommercialFlowDiv()) {
 		case "1":
 			Assert.assertTrue("商流区分が1の場合、RJ売上金額が契約明細.金額と同じであること",
 					accounting.getFfmRjSalesAmt().compareTo(contractDetail.getAmountSummary()) == 0);
-			break;
-		case "2":
-			Assert.assertTrue("商流区分が2の場合、RJ売上金額が品種（契約用）.母店売価(接点店仕切)*契約明細.数量と同じであること",
-					accounting.getFfmRjSalesPrice().compareTo(itemContract.getMotherStorePrice()
-							.multiply(new BigDecimal(contractDetail.getQuantity()))) == 0);
-			break;
-		case "3":
-			Assert.assertTrue("商流区分が3の場合、RJ売上金額が品種（契約用）.RJ仕切価格*契約明細.数量と同じであること",
-					accounting.getFfmRjSalesPrice().compareTo(itemContract.getRjDividingPrice()
-							.multiply(new BigDecimal(contractDetail.getQuantity()))) == 0);
 			break;
 		default:
 			Assert.fail("RJ売上金額が不正です");
@@ -274,10 +263,9 @@ public class BatchApplicationTests extends TestBase {
 				.compareTo(消費税額計算_端数四捨五入(accounting.getFfmRCostAmt(), taxRate.getCodeValue())) == 0);
 
 		// 134 納品書要否区分
+		// ※SIMは商流区分=1のみ
 		if (StringUtils.equals(contract.getCommercialFlowDiv(), "1")) {
 			Assert.assertTrue("134 納品書要否区分が0(固定)であること", StringUtils.equals(accounting.getFfmBillOutputFlg(), "0"));
-		} else {
-			Assert.assertTrue("134 納品書要否区分が1(固定)であること", StringUtils.equals(accounting.getFfmBillOutputFlg(), "1"));
 		}
 
 		// 135 納品書出力パターン
@@ -333,7 +321,6 @@ public class BatchApplicationTests extends TestBase {
 		// 83 振替先振替金額
 		Assert.assertTrue("振替先振替金額が品種明細(契約用).原価であること", itemDetailContractList.stream()
 				.anyMatch(idc -> accounting.getFfmTrnsPrice().compareTo(idc.getPrice()) == 0));
-
 	}
 
 	private void 課金計上テーブル登録データ共通チェック(Accounting accounting) throws ParseException {

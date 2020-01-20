@@ -1,6 +1,5 @@
 package jp.co.ricoh.cotos.batch.exec.step;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,7 +47,8 @@ public class AccountingExecutionParameterCreate {
 	@Autowired
 	AccountingCreateSimRunningUtil appUtil;
 
-	public Accounting createParameter(SalesCalcResultWorkForCspRunning work, String baseDate, Date execDate, CommonMasterDetail tax) {
+	public Accounting createParameter(SalesCalcResultWorkForCspRunning work, String baseDate, Date execDate,
+			CommonMasterDetail tax) {
 
 		Accounting entity = new Accounting();
 
@@ -69,11 +69,13 @@ public class AccountingExecutionParameterCreate {
 		// 7 商流区分
 		// －－－＜参考＞－－－
 		// １：直売，２：代売＿接点店、３：代売＿母店＿接点店"
+		// ※SIMは直売のみ
 		entity.setDealerFlow(work.getCommercialFlowDiv());
 
 		// 8 費用種別
 		// －－－＜参考＞－－－
 		// 初期費:1, 月額(定額):2, 年額:3,月額(従量):4"
+		// ※SIMは月額(定額):2,月額(従量):4のみ (従量も存在しないので、実質月額(定額)のみ)
 		entity.setCostType(work.getCostType());
 
 		// 9 品種区分
@@ -234,19 +236,15 @@ public class AccountingExecutionParameterCreate {
 		// 【ＣＯＴＯＳ契約】.商流区分の値により下記を設定
 		// 商流区分=１ →2(直売)
 		// 商流区分=2 or 3 →1(代売)
+		// ※SIMは商流区分=1のみ
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
 			switch (work.getCommercialFlowDiv()) {
 			case "1":
 				entity.setFfmDistType("2");
 				break;
-			case "2":
-			case "3":
-				entity.setFfmDistType("1");
-				break;
 			default:
 				break;
 			}
-
 		}
 
 		// 85 売上数量
@@ -265,16 +263,11 @@ public class AccountingExecutionParameterCreate {
 		// 商流区分=１：契約明細.単価を設定
 		// 商流区分=２ ：品種（契約用）.母店売価(接点店仕切)
 		// 商流区分=３ ：品種（契約用）.RJ仕切価格
+		// ※SIMは商流区分=1のみ
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
 			switch (work.getCommercialFlowDiv()) {
 			case "1":
 				entity.setFfmRjSalesPrice(work.getUnitPrice());
-				break;
-			case "2":
-				entity.setFfmRjSalesPrice(work.getMotherStorePrice());
-				break;
-			case "3":
-				entity.setFfmRjSalesPrice(work.getRjDividingPrice());
 				break;
 			default:
 				break;
@@ -287,16 +280,11 @@ public class AccountingExecutionParameterCreate {
 		// "商流区分=１：契約明細.金額
 		// 商流区分=２ ：品種（契約用）.母店売価(接点店仕切)*契約明細.数量
 		// 商流区分=３ ：品種（契約用）.RJ仕切価格*契約明細.数量
+		// ※SIMは商流区分=1のみ
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
 			switch (work.getCommercialFlowDiv()) {
 			case "1":
 				entity.setFfmRjSalesAmt(work.getAmountSummary());
-				break;
-			case "2":
-				entity.setFfmRjSalesAmt(work.getMotherStorePrice().multiply(new BigDecimal(work.getQuantity())));
-				break;
-			case "3":
-				entity.setFfmRjSalesAmt(work.getRjDividingPrice().multiply(new BigDecimal(work.getQuantity())));
 				break;
 			default:
 				break;
@@ -389,11 +377,10 @@ public class AccountingExecutionParameterCreate {
 		// 契約.商流区分の値により下記を設定
 		// 商流区分=１ ：直売:""0""固定
 		// それ以外：代売:""1""固定
+		// SIMは商流区分=1のみ
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
 			if (StringUtils.equals(work.getCommercialFlowDiv(), "1")) {
 				entity.setFfmBillOutputFlg("0");
-			} else {
-				entity.setFfmBillOutputFlg("1");
 			}
 		}
 
@@ -427,12 +414,15 @@ public class AccountingExecutionParameterCreate {
 			entity.setFfmThisBillingCnt(1);
 		}
 
-		// 147 コメント１ 恒久契約識別番号　＋　顧客の企業名（カナ）を半角カナ変換
+		// 146 カウンター
+
+		// 147 コメント１ 恒久契約識別番号 ＋ 顧客の企業名（カナ）を半角カナ変換
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
-			String halfWidthCompanyKana = Optional.ofNullable(work.getCompanyNameKana()).filter(s -> StringUtils.isNotEmpty(s)).map(s -> {
-				Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
-				return transliterator.transliterate(s);
-			}).orElse("");
+			String halfWidthCompanyKana = Optional.ofNullable(work.getCompanyNameKana())
+					.filter(s -> StringUtils.isNotEmpty(s)).map(s -> {
+						Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
+						return transliterator.transliterate(s);
+					}).orElse("");
 			entity.setFfmOutputComment1(work.getImmutableContIdentNumber() + halfWidthCompanyKana);
 		}
 		// 148 コメント２
