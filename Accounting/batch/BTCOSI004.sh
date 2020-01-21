@@ -10,7 +10,7 @@ source ${BATCH_BASE_PATH}/config.sh
 
 # ログファイルパス
 LOG_FILE_PATH="${LOG_DIR}/BTCOSI004.log"
-PROCESS_LOG_FILE_PATH="${LOG_DIR}/AccountingCreateCspRunnging.log"
+PROCESS_LOG_FILE_PATH="${LOG_DIR}/AccountingCreateSimRunnging.log"
 
 Log.Info "BTCOSI004:計上データ作成（SIMランニング分）を開始します。" >> ${LOG_FILE_PATH}
 
