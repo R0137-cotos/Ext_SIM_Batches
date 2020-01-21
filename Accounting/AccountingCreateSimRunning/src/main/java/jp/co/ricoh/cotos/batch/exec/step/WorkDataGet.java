@@ -61,7 +61,7 @@ public class WorkDataGet {
 		init();
 
 		try {
-			this.salesCalcResultWorkForSimRunningList = findSalesCalcResultWorkForCspRunningList(this.baseDate);
+			this.salesCalcResultWorkForSimRunningList = findSalesCalcResultWorkForSimRunningList(this.baseDate);
 		} catch (Exception e) {
 			List<ErrorInfo> error = checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "CannotIdentify", new String[] { "契約データ作成用データ" });
 			error.stream().forEach(errorInfo -> log.fatal(errorInfo.getErrorId() + ":" + errorInfo.getErrorMessage(), e));
@@ -77,7 +77,7 @@ public class WorkDataGet {
 	 * 
 	 * @return
 	 */
-	private List<SalesCalcResultWorkForCspRunning> findSalesCalcResultWorkForCspRunningList(String baseDate) {
+	private List<SalesCalcResultWorkForCspRunning> findSalesCalcResultWorkForSimRunningList(String baseDate) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("baseDate", baseDate);
 		List<SalesCalcResultWorkForCspRunning> findSalesCalcResultWorkForCspRunningList = dbUtil.loadFromSQLFile(SQL_SALES_CALC_RESULT_WORK_FIND, SalesCalcResultWorkForCspRunning.class, params);

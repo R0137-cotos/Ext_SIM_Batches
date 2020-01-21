@@ -316,7 +316,13 @@ public class BatchApplicationTests extends TestBase {
 		Assert.assertTrue("作成データパターンが31(固定)であること", StringUtils.equals(accounting.getFfmDataPtn(), "31"));
 
 		// 47 振替先課所コード
-		Assert.assertNull("振替先課所コードがNullであること", accounting.getFfmTrnsLocationCd());
+		if (accounting.getFfmTrnsLocationCd() == null) {
+			Assert.assertTrue("振替先課所コードが'MoM組織情報提供マスタ.CUBIC部門コードであること", orgMasterList.stream()
+					.anyMatch(oml -> oml.getCubicOrgId() == null));
+		} else {
+			Assert.assertTrue("振替先課所コードが'MoM組織情報提供マスタ.CUBIC部門コードであること", orgMasterList.stream()
+					.anyMatch(oml -> accounting.getFfmTrnsLocationCd().equals(oml.getCubicOrgId())));
+		}
 
 		// 83 振替先振替金額
 		Assert.assertTrue("振替先振替金額が品種明細(契約用).原価であること", itemDetailContractList.stream()

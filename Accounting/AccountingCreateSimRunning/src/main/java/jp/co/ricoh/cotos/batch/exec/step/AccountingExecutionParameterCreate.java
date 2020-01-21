@@ -164,8 +164,7 @@ public class AccountingExecutionParameterCreate {
 
 		// 47 振替先課所コード(データ作成区分:振替の場合のみ設定)
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.振替.getCode())) {
-			// entity.setFfmTrnsLocationCd(work.getTransToServiceOrgCode());
-			entity.setFfmTrnsLocationCd("");
+			entity.setFfmTrnsLocationCd(work.getTransToServiceOrgCode());
 		}
 
 		// 48 振替先社員コード
