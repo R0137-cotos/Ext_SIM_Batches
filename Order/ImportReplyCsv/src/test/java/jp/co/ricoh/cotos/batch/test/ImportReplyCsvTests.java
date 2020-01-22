@@ -36,11 +36,11 @@ public class ImportReplyCsvTests extends TestBase {
 
 	static String extendsParameterContractId10 = "{\"extendsParameterList\":[{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"8981200012345678911\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"CIC202001070001002\"},{\"id\":4,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"8981200012345678912\",\"device\":\"追加1\",\"invoiceNumber\":\"CIC202001070001003\"},{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"8981200012345678910\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"CIC202001070001001\"}]}";
 	static String extendsParameterContractId20 = "{\"extendsParameterList\":[{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"8981200012345678911\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"CIC202001080001002\"},{\"id\":4,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"8981200012345678912\",\"device\":\"追加1\",\"invoiceNumber\":\"CIC202001080001003\"},{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"8981200012345678910\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"CIC202001080001001\"}]}";
-	static String expectedExtendsParameterContractId10 = "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345671　8981200012345678911　CIC202001070001002\r\n"
-			+ "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345672　8981200012345678912　CIC202001070001003\r\n"
+	static String expectedExtendsParameterContractId10 = "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345671　8981200012345678911　CIC202001070001002" + System.lineSeparator()
+			+ "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345672　8981200012345678912　CIC202001070001003" + System.lineSeparator()
 			+ "データSIM Type-C 2GB　　　　　　　　　　　　　　　　　08012345670　8981200012345678910　CIC202001070001001";
-	static String expectedExtendsParameterContractId20 = "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345671　8981200012345678911　CIC202001080001002\r\n"
-			+ "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345672　8981200012345678912　CIC202001080001003\r\n"
+	static String expectedExtendsParameterContractId20 = "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345671　8981200012345678911　CIC202001080001002" + System.lineSeparator()
+			+ "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345672　8981200012345678912　CIC202001080001003" + System.lineSeparator()
 			+ "データSIM Type-C 2GB　　　　　　　　　　　　　　　　　08012345670　8981200012345678910　CIC202001080001001";
 
 	@Autowired

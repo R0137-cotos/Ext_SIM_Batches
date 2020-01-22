@@ -155,7 +155,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				for (ExtendsParameterDto ex : updatedExtendsParameterList) {
 					// 一行目でなければ、改行コードを入れる
 					if (!isFirstRow) {
-						exStr += "\r\n";
+						exStr += System.lineSeparator();
 					}
 
 					// 商品名は33文字で表示する
