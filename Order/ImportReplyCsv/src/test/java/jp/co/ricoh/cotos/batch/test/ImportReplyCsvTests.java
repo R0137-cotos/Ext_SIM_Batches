@@ -67,8 +67,7 @@ public class ImportReplyCsvTests extends TestBase {
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
 		String jwt = createJwt.execute();
-		CotosAuthenticationDetails principal = new CotosAuthenticationDetails(batchProperty.getMomEmpId(), "sid", null,
-				null, jwt, true, true, null);
+		CotosAuthenticationDetails principal = new CotosAuthenticationDetails(batchProperty.getMomEmpId(), "sid", null, null, jwt, true, true, null);
 		Authentication auth = new PreAuthenticatedAuthenticationToken(principal, null, null);
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		context = injectContext;
@@ -97,8 +96,7 @@ public class ImportReplyCsvTests extends TestBase {
 		Contract contract10 = contractRepository.findOne(10L);
 		ProductContract product1001 = productContractRepository.findOne(1001L);
 		Assert.assertEquals("売上可能に更新されていること", WorkflowStatus.売上可能, contract10.getWorkflowStatus());
-		Assert.assertEquals("拡張項目繰返が設定されていること", extendsParameterContractId10,
-				product1001.getExtendsParameterIterance());
+		Assert.assertEquals("拡張項目繰返が設定されていること", extendsParameterContractId10, product1001.getExtendsParameterIterance());
 		Assert.assertEquals("拡張項目が設定されていること", expectedExtendsParameterContractId10, product1001.getExtendsParameter());
 		Arrangement arrangement1 = arrangementRepository.findByContractIdAndDisengagementFlg(contract10.getId(), 0);
 		Assert.assertEquals("手配完了に更新されていること", Arrangement.WorkflowStatus.手配完了, arrangement1.getWorkflowStatus());
@@ -136,8 +134,7 @@ public class ImportReplyCsvTests extends TestBase {
 		Contract contract20 = contractRepository.findOne(20L);
 		ProductContract product2001 = productContractRepository.findOne(2001L);
 		Assert.assertEquals("売上可能に更新されていること", WorkflowStatus.売上可能, contract20.getWorkflowStatus());
-		Assert.assertEquals("拡張項目繰返が設定されていること", extendsParameterContractId20,
-				product2001.getExtendsParameterIterance());
+		Assert.assertEquals("拡張項目繰返が設定されていること", extendsParameterContractId20, product2001.getExtendsParameterIterance());
 		Assert.assertEquals("拡張項目が設定されていること", expectedExtendsParameterContractId20, product2001.getExtendsParameter());
 		Arrangement arrangement2 = arrangementRepository.findByContractIdAndDisengagementFlg(contract20.getId(), 0);
 		Assert.assertEquals("手配完了に更新されていること", Arrangement.WorkflowStatus.手配完了, arrangement2.getWorkflowStatus());
