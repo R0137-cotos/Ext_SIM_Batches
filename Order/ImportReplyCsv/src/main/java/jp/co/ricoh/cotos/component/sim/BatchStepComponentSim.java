@@ -78,7 +78,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 		File csvFile = Paths.get(args[0], args[1]).toFile();
 
-		//CSV読込
+		// CSV読込
 		CsvMapper mapper = new CsvMapper();
 		mapper.setTimeZone(objectMapper.getDeserializationConfig().getTimeZone());
 		CsvSchema schema = CsvSchema.emptySchema().withoutHeader();
@@ -91,12 +91,12 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			return;
 		}
 
-		//枝番削除した契約番号をキーとしたMap
+		// 枝番削除した契約番号をキーとしたMap
 		Map<String, List<ReplyOrderDto>> contractNumberGroupingMap = csvlist.stream().collect(Collectors.groupingBy(dto -> substringContractNumber(dto.getContractId()), Collectors.mapping(dto -> dto, Collectors.toList())));
-		//枝番削除した契約番号のリスト
+		// 枝番削除した契約番号のリスト
 		List<String> contractNumberList = contractNumberGroupingMap.entrySet().stream().map(map -> map.getKey()).map(c -> substringContractNumber(c)).collect(Collectors.toList());
 
-		//対象契約取得
+		// 対象契約取得
 		Map<String, Object> queryParams = new HashMap<>();
 		StringJoiner joiner = new StringJoiner("','", "'", "'").setEmptyValue("");
 		contractNumberList.stream().forEach(conNumLst -> joiner.add(conNumLst));
@@ -108,13 +108,14 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			Contract contract = contractMap.getValue();
 			List<ProductContract> productContractList = contractMap.getValue().getProductContractList();
 			List<ReplyOrderDto> replyOrderList = contractNumberGroupingMap.get(contractMap.getKey());
-			//サービス開始希望日を設定
+			// サービス開始希望日を設定
 			contract.setServiceTermStart(batchUtil.changeDate(replyOrderList.get(0).getDeliveryExpectedDate()));
 
-			//商品コードでグルーピング
+			// 商品コードでグルーピング
 			Map<String, List<ReplyOrderDto>> replyOrderProductGroupingMap = replyOrderList.stream().collect(Collectors.groupingBy(dto -> dto.getRicohItemCode(), Collectors.mapping(dto -> dto, Collectors.toList())));
 
-			//拡張項目繰り返しを設定
+			// 拡張項目繰り返しを設定
+			// 拡張項目を設定
 			for (ProductContract p : productContractList) {
 				String extendsParameterIterance = p.getExtendsParameterIterance();
 				Function<String, List<ExtendsParameterDto>> readJsonFunc = batchUtil.Try(x -> batchUtil.readJson(x), (error, x) -> null);
@@ -145,10 +146,36 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					log.fatal(String.format("契約ID=%dの商品拡張項目登録に失敗しました。", contract.getId()));
 					return;
 				}
+
+				// 拡張項目設定
+				// 拡張項目設定文字列
+				String exStr = "";
+				// 一行目か
+				boolean isFirstRow = true;
+				for (ExtendsParameterDto ex : updatedExtendsParameterList) {
+					// 一行目でなければ、改行コードを入れる
+					if (!isFirstRow) {
+						exStr += System.lineSeparator();
+					}
+
+					// 商品名は33文字で表示する
+					// 33文字未満の場合、末尾に全角スペースを追加する
+					String productName = ex.getProductName();
+					if (productName != null) {
+						while (productName.length() < 33) {
+							productName += "　";
+						}
+					}
+					exStr += productName + "　" + ex.getLineNumber() + "　" + ex.getSerialNumber() + "　" + ex.getInvoiceNumber();
+
+					// 1ループ目以降は、一行目でない
+					isFirstRow = false;
+				}
+				p.setExtendsParameter(exStr);
 			}
 			contract.setProductContractList(productContractList);
 
-			//契約更新
+			// 契約更新
 			try {
 				batchUtil.callUpdateContract(contract);
 			} catch (Exception updateError) {
@@ -156,7 +183,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				updateError.printStackTrace();
 				return;
 			}
-			//手配完了
+			// 手配完了
 			Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(contract.getId(), 0);
 			List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
 			arrangementWorkList.stream().forEach(work -> {
@@ -169,7 +196,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 			});
 		});
-		//エンティティ(contract)に対して値を更新すると、エンティティマネージャーが更新対象とみなしてしまい、排他制御に引っかかる
+		// エンティティ(contract)に対して値を更新すると、エンティティマネージャーが更新対象とみなしてしまい、排他制御に引っかかる
 		em.clear();
 	}
 

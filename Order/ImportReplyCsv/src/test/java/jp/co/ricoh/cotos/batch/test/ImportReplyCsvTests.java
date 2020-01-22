@@ -36,6 +36,12 @@ public class ImportReplyCsvTests extends TestBase {
 
 	static String extendsParameterContractId10 = "{\"extendsParameterList\":[{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"8981200012345678911\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"CIC202001070001002\"},{\"id\":4,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"8981200012345678912\",\"device\":\"追加1\",\"invoiceNumber\":\"CIC202001070001003\"},{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"8981200012345678910\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"CIC202001070001001\"}]}";
 	static String extendsParameterContractId20 = "{\"extendsParameterList\":[{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"8981200012345678911\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"CIC202001080001002\"},{\"id\":4,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"8981200012345678912\",\"device\":\"追加1\",\"invoiceNumber\":\"CIC202001080001003\"},{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"8981200012345678910\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"CIC202001080001001\"}]}";
+	static String expectedExtendsParameterContractId10 = "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345671　8981200012345678911　CIC202001070001002" + System.lineSeparator()
+			+ "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345672　8981200012345678912　CIC202001070001003" + System.lineSeparator()
+			+ "データSIM Type-C 2GB　　　　　　　　　　　　　　　　　08012345670　8981200012345678910　CIC202001070001001";
+	static String expectedExtendsParameterContractId20 = "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345671　8981200012345678911　CIC202001080001002" + System.lineSeparator()
+			+ "データSIM Type-C 5GB　　　　　　　　　　　　　　　　　08012345672　8981200012345678912　CIC202001080001003" + System.lineSeparator()
+			+ "データSIM Type-C 2GB　　　　　　　　　　　　　　　　　08012345670　8981200012345678910　CIC202001080001001";
 
 	@Autowired
 	BatchMomInfoProperties batchProperty;
@@ -90,7 +96,8 @@ public class ImportReplyCsvTests extends TestBase {
 		Contract contract10 = contractRepository.findOne(10L);
 		ProductContract product1001 = productContractRepository.findOne(1001L);
 		Assert.assertEquals("売上可能に更新されていること", WorkflowStatus.売上可能, contract10.getWorkflowStatus());
-		Assert.assertEquals("拡張項目が設定されていること", extendsParameterContractId10, product1001.getExtendsParameterIterance());
+		Assert.assertEquals("拡張項目繰返が設定されていること", extendsParameterContractId10, product1001.getExtendsParameterIterance());
+		Assert.assertEquals("拡張項目が設定されていること", expectedExtendsParameterContractId10, product1001.getExtendsParameter());
 		Arrangement arrangement1 = arrangementRepository.findByContractIdAndDisengagementFlg(contract10.getId(), 0);
 		Assert.assertEquals("手配完了に更新されていること", Arrangement.WorkflowStatus.手配完了, arrangement1.getWorkflowStatus());
 
@@ -113,7 +120,7 @@ public class ImportReplyCsvTests extends TestBase {
 	}
 
 	@Test
-	@Ignore //APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_リプライCSV取込_拡張項目読込失敗() {
 
 		テストデータ作成("sql/insertTestDataExtendsParameterError.sql");
@@ -127,14 +134,15 @@ public class ImportReplyCsvTests extends TestBase {
 		Contract contract20 = contractRepository.findOne(20L);
 		ProductContract product2001 = productContractRepository.findOne(2001L);
 		Assert.assertEquals("売上可能に更新されていること", WorkflowStatus.売上可能, contract20.getWorkflowStatus());
-		Assert.assertEquals("拡張項が設定されていること", extendsParameterContractId20, product2001.getExtendsParameterIterance());
+		Assert.assertEquals("拡張項目繰返が設定されていること", extendsParameterContractId20, product2001.getExtendsParameterIterance());
+		Assert.assertEquals("拡張項目が設定されていること", expectedExtendsParameterContractId20, product2001.getExtendsParameter());
 		Arrangement arrangement2 = arrangementRepository.findByContractIdAndDisengagementFlg(contract20.getId(), 0);
 		Assert.assertEquals("手配完了に更新されていること", Arrangement.WorkflowStatus.手配完了, arrangement2.getWorkflowStatus());
 
 	}
 
 	@Test
-	@Ignore //APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_リプライCSV取込_契約更新失敗() {
 
 		テストデータ作成("sql/insertTestDataUpdateError.sql");
