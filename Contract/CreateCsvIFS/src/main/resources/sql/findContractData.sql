@@ -1,31 +1,32 @@
 with key_view as
 (
 select
- 'N' as nforce_upd_flg,
+  'N' as nforce_upd_flg,
   co.id as contract_id,
-  detail.id as contract_detail_id
+  detail.id as contract_detail_id,
+  detail.quantity as quantity,
+  detail.extends_parameter as extends_parameter,
+  pc.extends_parameter_iterance as extends_parameter_iterance
  from
   contract co,
   contract_detail detail,
   product_contract pc,
   product_master pm
  where
-  co.lifecycle_status in ('6', '7', '8')
+  co.lifecycle_status = '6'
  and
   co.id = detail.contract_id
  and
   co.id = pc.contract_id
  and
   pc.product_master_id = pm.id
-{{#productClassDiv}}
  and
-  pm.product_class_div = :productClassDiv
-{{/productClassDiv}}
+  pm.product_class_div IN :productClassDiv
 )
 select
  rownum as id,
  rownum as nmigarate_keyword3,
- row_number() over(partition by tmp.contract_id order by tmp.contract_detail_id) as np_service_no,
+ null as np_service_no,
  tmp.*
 from
 (
@@ -33,7 +34,7 @@ select
  kv.contract_id as contract_id,
  kv.contract_detail_id as contract_detail_id,
  kv.nforce_upd_flg as nforce_upd_flg,
- kv.nforce_upd_flg as nprocess_mode_flg,
+ 'N' as nprocess_mode_flg,
  customer.company_name as ncontract_sheet_no,
  null as ntask_force_no,
  null as nitem_no,
@@ -165,14 +166,17 @@ select
  null as nop_warehouse_first,
  item.ricoh_item_code as ricoh_item_code,
  ifs.contract_no_header as contract_no_header,
- null as sequence_no
+ null as sequence_no,
+ kv.quantity as quantity,
+ kv.extends_parameter as extends_parameter,
+ kv.extends_parameter_iterance as extends_parameter_iterance
 from
  key_view kv,
  contract co,
  customer_contract customer,
  item_contract item,
+ item_master im,
  ifs_csv_master ifs,
- equipment_comp_master ecm,
  contract_equipment ce
 where
  kv.contract_id = co.id
@@ -183,17 +187,11 @@ and
 and
  ifs.product_master_id = item.product_master_id
 and
- item.ifs_linkage_flg <> 0
+ item.item_master_id = im.id
+and
+ im.ifs_linkage_flg = 1
 and
  co.ifs_linkage_csv_create_status = 0
-and
- item.item_master_id = ecm.item_master_id(+)
-and
- ecm.service_machine_flg(+) = 1
-and
- ecm.equipment_code = ce.equipment_code(+)
-and
- ecm.service_machine_flg = ce.service_machine_flg(+)
 and
  co.id = ce.contract_id(+)
 order by contract_id, contract_detail_id

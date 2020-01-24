@@ -48,7 +48,7 @@ public class BatchApplicationTests extends TestBase {
 	@AfterClass
 	public static void exit() throws Exception {
 		if (null != context) {
-			context.getBean(DBConfig.class).clearData();
+			//context.getBean(DBConfig.class).clearData();
 			context.stop();
 		}
 	}
@@ -57,28 +57,28 @@ public class BatchApplicationTests extends TestBase {
 	public void 正常系_CSVファイルを出力できること() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractData.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
-		Files.deleteIfExists(Paths.get("output/CSP_result_20181228.csv"));
-		Files.deleteIfExists(Paths.get("output/tmp_CSP_result_20181228.csv"));
-		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "CSP" });
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "CSP_result_20181228.csv"));
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/all/all.csv"));
 		Assert.assertArrayEquals(expected, actuals);
 
 		List<Contract> contractList = new ArrayList<>();
 		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
-		Assert.assertEquals("5件の契約が作成済みになっていること", 5, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
-		Assert.assertEquals("5件の契約の作成日時が設定されていること", 5, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
-		Files.deleteIfExists(Paths.get("output/CSP_result_20181228.csv"));
-		Files.deleteIfExists(Paths.get("output/tmp_CSP_result_20181228.csv"));
+		Assert.assertEquals("7件の契約が作成済みになっていること", 7, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
+		Assert.assertEquals("7件の契約の作成日時が設定されていること", 7, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 	}
 
 	@Test
 	public void 正常系_商品種類区分一致なし_CSVファイルを出力されないこと() throws IOException {
-		Files.deleteIfExists(Paths.get("output/CSP_result_20181228.csv"));
-		Files.deleteIfExists(Paths.get("output/tmp_CSP_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 		context.getBean(DBConfig.class).initTargetTestData("flgE/InsertContractData.sql");
-		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "CSP" });
+		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
 		Assert.assertEquals("処理対象データがないのでファイルが作成されていないこと", 0, checkFileExistence());
 
@@ -99,21 +99,21 @@ public class BatchApplicationTests extends TestBase {
 
 	@Test
 	public void 既存ファイルに上書きできないこと() throws IOException {
-		if (!Files.exists(Paths.get("output/CSP_duplicate_20181228.csv"))) {
-			Files.createFile(Paths.get("output/CSP_duplicate_20181228.csv"));
+		if (!Files.exists(Paths.get("output/SIM_duplicate_20181228.csv"))) {
+			Files.createFile(Paths.get("output/SIM_duplicate_20181228.csv"));
 		}
 		try {
-			BatchApplication.main(new String[] { "duplicate_20181228.csv", "output", "CSP" });
+			BatchApplication.main(new String[] { "duplicate_20181228.csv", "output", "SIM" });
 			Assert.fail("既存ファイルがあるのに異常終了しなかった");
 		} catch (ExitException e) {
 		}
-		Files.deleteIfExists(Paths.get("output/CSP_duplicate_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/SIM_duplicate_20181228.csv"));
 	}
 
 	@Test
 	public void パラメータ不正_実行日付() throws IOException {
 		try {
-			BatchApplication.main(new String[] { "param.csv", "output", "2018/12/23", "CSP" });
+			BatchApplication.main(new String[] { "param.csv", "output", "2018/12/23", "SIM" });
 			Assert.fail("パラメータが不正なのに異常終了しなかった");
 		} catch (ExitException e) {
 		}
@@ -122,10 +122,10 @@ public class BatchApplicationTests extends TestBase {
 	@Test
 	public void パラメータ不正_存在しないディレクトリ() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractData.sql");
-		Files.deleteIfExists(Paths.get("output/dummy/CSP_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/dummy/SIM_result_20181228.csv"));
 
 		try {
-			BatchApplication.main(new String[] { "result_20181228.csv", outputPath + "dummy", "CSP" });
+			BatchApplication.main(new String[] { "result_20181228.csv", outputPath + "dummy", "SIM" });
 			Assert.fail("CSVファイルが書き込めないのに異常終了しなかった");
 		} catch (ExitException e) {
 		}
@@ -134,7 +134,7 @@ public class BatchApplicationTests extends TestBase {
 	@Test
 	public void ゼロパディング() {
 		String num = ifsCsvCreateUtil.paddingZero("1");
-		Assert.assertEquals("ゼロ埋めできてること", "000000001", num);
+		Assert.assertEquals("ゼロ埋めできてること", "0001", num);
 	}
 
 	@Test

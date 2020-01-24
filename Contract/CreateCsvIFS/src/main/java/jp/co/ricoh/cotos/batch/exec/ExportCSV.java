@@ -11,37 +11,33 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
+import jp.co.ricoh.cotos.batch.entity.ExtendsParameterIteranceDto;
 import jp.co.ricoh.cotos.batch.entity.IFSCsvDto;
 import jp.co.ricoh.cotos.batch.entity.IFSDto;
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
-import jp.co.ricoh.cotos.commonlib.dto.result.CommonMasterDetailResult;
-import jp.co.ricoh.cotos.commonlib.dto.result.CommonMasterResult;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.IfsLinkageCsvCreateStatus;
-import jp.co.ricoh.cotos.commonlib.entity.contract.GeneratedNumber;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
-import jp.co.ricoh.cotos.commonlib.logic.csv.CsvUtil;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractRepository;
 import lombok.extern.log4j.Log4j;
@@ -64,12 +60,6 @@ public class ExportCSV {
 
 	@Autowired
 	ContractRepository contractRepository;
-
-	@Autowired
-	CsvUtil csvUtil;
-
-	@Autowired
-	ResourceLoader resourceLoader;
 
 	private static final String headerFilePath = "file/header.csv";
 
@@ -100,40 +90,42 @@ public class ExportCSV {
 
 		List<Long> contractIdList = ifsDto.stream().map(ifs -> Long.valueOf(ifs.getContractId())).collect(Collectors.toList());
 
-		Map<Long, List<IFSDto>> contractIdGroupingMap = ifsDto.stream().collect(Collectors.groupingBy(ifs -> (Long.valueOf(ifs.getContractId())), Collectors.mapping(ifs -> ifs, Collectors.toList())));
-		contractIdGroupingMap = contractIdGroupingMap.entrySet().stream().sorted(Entry.comparingByKey()).collect(Collectors.toMap(Entry::getKey, Entry::getValue, (v1, v2) -> v1, TreeMap::new));
-
-		CommonMasterResult commonMasterResult = iFSCsvCreateUtil.getRicohItemCodeCommonMasterResult();
-		List<CommonMasterDetailResult> commonMasterDetailList = commonMasterResult.getCommonMasterDetailResultList();
-
 		try {
 
 			List<IFSCsvDto> iFSCsvDtoList = new ArrayList<>();
 
-			contractIdGroupingMap.entrySet().stream().forEach(map -> {
-
-				List<IFSDto> ifsDtoList = map.getValue().stream().sorted(Comparator.comparing(IFSDto::getContractDetailId)).collect(Collectors.toList());
-				ifsDtoList.stream().forEach(ifs -> ifs.setNpServiceCode(commonMasterDetailList.stream().filter(master -> ifs.getRicohItemCode().equals(master.getCodeValue())).findFirst().get().getDataArea1()));
-				if ("CSP".equals(productClassDiv)) {
-					long sequenceNo = dbUtil.loadSingleFromSQLFile("sql/nextContractIdForCspSequence.sql", GeneratedNumber.class).getGeneratedNumber();
-					ifsDtoList.stream().forEach(ifs -> ifs.setSequenceNo(sequenceNo));
+			for (IFSDto dto : ifsDto) {
+				List<ExtendsParameterIteranceDto> extendsParameterList = null;
+				if (Objects.nonNull(dto.getExtendsParameterIterance())) {
+					Function<String, List<ExtendsParameterIteranceDto>> readJsonFunc = iFSCsvCreateUtil.Try(x -> iFSCsvCreateUtil.readJson(x), (error, x) -> null);
+					extendsParameterList = readJsonFunc.apply(dto.getExtendsParameterIterance());
+					extendsParameterList = extendsParameterList.stream().filter(o -> o.getProductCode().equals(dto.getRicohItemCode())).collect(Collectors.toList());
 				}
-			});
+				int npServiceNo = 1;
+				if (!(CollectionUtils.isEmpty(iFSCsvDtoList)) && iFSCsvDtoList.get(iFSCsvDtoList.size() - 1).getContractId().equals(dto.getContractNoHeader() + iFSCsvCreateUtil.paddingZero(dto.getContractId()))) {
+					npServiceNo = Integer.parseInt(iFSCsvDtoList.get(iFSCsvDtoList.size() - 1).getNpServiceNo()) + 1;
+				}
+				for (int i = 0; i < dto.getQuantity(); i++) {
+					IFSCsvDto csvDto = new IFSCsvDto();
+					BeanUtils.copyProperties(dto, csvDto);
 
-			ifsDto.forEach(dto -> {
-				IFSCsvDto csvDto = new IFSCsvDto();
-				BeanUtils.copyProperties(dto, csvDto);
-				if (null != dto.getSequenceNo()) {
-					csvDto.setContractId(dto.getContractNoHeader() + iFSCsvCreateUtil.paddingZero(dto.getSequenceNo()));
-				} else {
 					csvDto.setContractId(dto.getContractNoHeader() + iFSCsvCreateUtil.paddingZero(dto.getContractId()));
-				}
-				csvDto.setNothMechLineNo(String.valueOf(Long.valueOf(dto.getContractDetailId()) * (-1)));
-				csvDto.setNendUserPerson(csvDto.getNendUserPerson().replaceAll(" ", "　"));
-				csvDto.setNuserPerson(csvDto.getNuserPerson().replaceAll(" ", "　"));
-				iFSCsvDtoList.add(csvDto);
 
-			});
+					csvDto.setNothMechLineNo(String.valueOf(Long.valueOf(dto.getContractDetailId()) * (-1)));
+					csvDto.setNendUserPerson(csvDto.getNendUserPerson().replaceAll(" ", "　"));
+					csvDto.setNuserPerson(csvDto.getNuserPerson().replaceAll(" ", "　"));
+
+					if (!CollectionUtils.isEmpty(extendsParameterList)) {
+						csvDto.setNinvPartNo(extendsParameterList.get(i).getLineNumber());
+						csvDto.setNserialNo(extendsParameterList.get(i).getSerialNumber());
+						csvDto.setNnote(extendsParameterList.get(i).getDevice());
+					}
+					csvDto.setNpServiceNo(Integer.toString(npServiceNo));
+					npServiceNo++;
+
+					iFSCsvDtoList.add(csvDto);
+				}
+			}
 
 			CsvMapper mapper = new CsvMapper();
 			CsvSchema schema = mapper.schemaFor(IFSCsvDto.class).withoutHeader().withColumnSeparator(',').withLineSeparator("\r\n").withoutQuoteChar();
@@ -155,7 +147,6 @@ public class ExportCSV {
 			updateContractIfsLinkage(contractIdList, IfsLinkageCsvCreateStatus.作成エラー);
 			throw e;
 		}
-
 		return true;
 	}
 

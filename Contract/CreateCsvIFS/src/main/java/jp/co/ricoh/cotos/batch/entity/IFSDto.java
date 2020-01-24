@@ -436,5 +436,14 @@ public class IFSDto {
 
 	/** シーケンスによる契約No */
 	private Long sequenceNo;
+	
+	/** 数量 */
+	private int quantity;
+	
+	/** 拡張項目 */
+	private String extendsParameter;
+	
+	/** 拡張項目繰返 */
+	private String extendsParameterIterance;
 
 }
