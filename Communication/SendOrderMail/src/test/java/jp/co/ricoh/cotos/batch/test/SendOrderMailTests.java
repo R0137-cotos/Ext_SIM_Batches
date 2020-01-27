@@ -2,6 +2,7 @@ package jp.co.ricoh.cotos.batch.test;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import jp.co.ricoh.cotos.security.CreateJwt;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@org.junit.Ignore
+@Ignore
 public class SendOrderMailTests extends TestBase {
 
 	static ConfigurableApplicationContext context;
