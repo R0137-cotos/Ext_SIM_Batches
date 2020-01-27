@@ -16,6 +16,7 @@ import jp.co.ricoh.cotos.security.CreateJwt;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@org.junit.Ignore
 public class SendOrderMailTests extends TestBase {
 
 	static ConfigurableApplicationContext context;
