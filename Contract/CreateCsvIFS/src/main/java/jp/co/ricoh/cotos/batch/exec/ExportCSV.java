@@ -11,11 +11,14 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,6 +37,8 @@ import jp.co.ricoh.cotos.batch.entity.ExtendsParameterIteranceDto;
 import jp.co.ricoh.cotos.batch.entity.IFSCsvDto;
 import jp.co.ricoh.cotos.batch.entity.IFSDto;
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
+import jp.co.ricoh.cotos.commonlib.dto.result.CommonMasterDetailResult;
+import jp.co.ricoh.cotos.commonlib.dto.result.CommonMasterResult;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.IfsLinkageCsvCreateStatus;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
@@ -90,9 +95,20 @@ public class ExportCSV {
 
 		List<Long> contractIdList = ifsDto.stream().map(ifs -> Long.valueOf(ifs.getContractId())).collect(Collectors.toList());
 
+		Map<Long, List<IFSDto>> contractIdGroupingMap = ifsDto.stream().collect(Collectors.groupingBy(ifs -> (Long.valueOf(ifs.getContractId())), Collectors.mapping(ifs -> ifs, Collectors.toList())));
+		contractIdGroupingMap = contractIdGroupingMap.entrySet().stream().sorted(Entry.comparingByKey()).collect(Collectors.toMap(Entry::getKey, Entry::getValue, (v1, v2) -> v1, TreeMap::new));
+
+		CommonMasterResult commonMasterResult = iFSCsvCreateUtil.getRicohItemCodeCommonMasterResult();
+		List<CommonMasterDetailResult> commonMasterDetailList = commonMasterResult.getCommonMasterDetailResultList();
+
 		try {
 
 			List<IFSCsvDto> iFSCsvDtoList = new ArrayList<>();
+
+			contractIdGroupingMap.entrySet().stream().forEach(map -> {
+				List<IFSDto> ifsDtoList = map.getValue().stream().sorted(Comparator.comparing(IFSDto::getContractDetailId)).collect(Collectors.toList());
+				ifsDtoList.stream().forEach(ifs -> ifs.setNpServiceCode(commonMasterDetailList.stream().filter(master -> ifs.getRicohItemCode().equals(master.getCodeValue())).findFirst().get().getDataArea1()));
+			});
 
 			for (IFSDto dto : ifsDto) {
 				List<ExtendsParameterIteranceDto> extendsParameterList = null;
@@ -102,7 +118,7 @@ public class ExportCSV {
 					extendsParameterList = extendsParameterList.stream().filter(o -> o.getProductCode().equals(dto.getRicohItemCode())).collect(Collectors.toList());
 				}
 				int npServiceNo = 1;
-				if (!(CollectionUtils.isEmpty(iFSCsvDtoList)) && iFSCsvDtoList.get(iFSCsvDtoList.size() - 1).getContractId().equals(dto.getContractNoHeader() + iFSCsvCreateUtil.paddingZero(dto.getContractId()))) {
+				if (CollectionUtils.isNotEmpty(iFSCsvDtoList) && iFSCsvDtoList.get(iFSCsvDtoList.size() - 1).getContractId().equals(dto.getContractNoHeader() + iFSCsvCreateUtil.paddingZero(dto.getContractId()))) {
 					npServiceNo = Integer.parseInt(iFSCsvDtoList.get(iFSCsvDtoList.size() - 1).getNpServiceNo()) + 1;
 				}
 				for (int i = 0; i < dto.getQuantity(); i++) {

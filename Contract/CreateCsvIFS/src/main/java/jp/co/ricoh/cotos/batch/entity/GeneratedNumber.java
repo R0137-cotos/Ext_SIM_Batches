@@ -20,8 +20,8 @@ public class GeneratedNumber {
 	 * numberだとOracleの予約後と重複するのでgeneratedNumberに。
 	 */
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "csv_ifs_contract_csp_seq")
-	@SequenceGenerator(name = "csv_ifs_contract_csp_seq", sequenceName = "csv_ifs_contract_csp_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "csv_ifs_contract_sim_seq")
+	@SequenceGenerator(name = "csv_ifs_contract_sim_seq", sequenceName = "csv_ifs_contract_sim_seq", allocationSize = 1)
 	private long generatedNumber;
 
 }
