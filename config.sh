@@ -24,7 +24,7 @@ export ORDER_JAR_PATH=${BATCH_BASE_PATH}/Order
 ### バッチJava実行モジュール名
 ################################################
 # BTCOSI001 [SB]オーダーCSV作成
-export BATCH_PG_BTCOSI001=CreateOrderCsvFile-0.0.1-SNAPSHOT.jar
+export BATCH_PG_BTCOSI001=CreateOrderCsv-0.0.1-SNAPSHOT.jar
 
 # BTCOSI002 [SB]オーダーメール送信
 export BATCH_PG_BTCOSI002=SendOrderMail-0.0.1-SNAPSHOT.jar
