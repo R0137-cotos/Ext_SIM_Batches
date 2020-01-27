@@ -14,3 +14,8 @@ spring:
         use_sql_comments: true
         format_sql: true
         default_schema: cotos_dev_sim
+cotos:
+  authentication: https://dev-api-6.cotos.ricoh.co.jp/auth/api/auth
+  # 手配APIURL
+  arrangement:
+    url: https://dev-api-6.cotos.ricoh.co.jp/arrangement/api
