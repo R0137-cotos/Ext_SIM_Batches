@@ -1,7 +1,5 @@
 package jp.co.ricoh.cotos.dto;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -17,7 +15,7 @@ public class FindCreateOrderCsvDataDto {
 	 */
 	@JsonIgnore
 	private long contractIdTemp;
-	
+
 	/**
 	 * 契約明細ID
 	 */
@@ -46,13 +44,13 @@ public class FindCreateOrderCsvDataDto {
 	 * オーダー日
 	 */
 	@JsonProperty("オーダー日")
-	private Date orderDate;
+	private String orderDate;
 
 	/**
 	 * 納入希望日
 	 */
 	@JsonProperty("納入希望日")
-	private Date conclusionPreferredDate;
+	private String conclusionPreferredDate;
 
 	/**
 	 * 氏名(漢字)
