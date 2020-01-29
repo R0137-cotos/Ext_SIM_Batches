@@ -37,6 +37,6 @@ export BATCH_PG_BTCOSI003=ImportReplyCsv-0.0.1-SNAPSHOT.jar
 # BTCOSI004 計上データ作成(SIMランニング分)
 export BATCH_PG_BTCOSI004=AccountingCreateSimRunning-0.0.1-SNAPSHOT.jar
 
-# BTCOSI005 
+# BTCOSI005 [RUCCS]IFSその他機器情報CSV作成
 export BATCH_PG_BTCOSI005=CreateCsvIFS-0.0.1-SNAPSHOT.jar
 
