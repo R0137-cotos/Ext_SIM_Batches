@@ -100,8 +100,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%03d", i + 1));
 						orderCsvEntity.setRicohItemCode(orderData.getRicohItemCode());
 						orderCsvEntity.setItemContractName(orderData.getItemContractName());
-						orderCsvEntity.setOrderDate(operationDate);
-						orderCsvEntity.setConclusionPreferredDate(orderData.getConclusionPreferredDate());
+						orderCsvEntity.setOrderDate(batchUtil.changeFormatString(operationDate));
+						orderCsvEntity.setConclusionPreferredDate(batchUtil.changeFormatString(orderData.getConclusionPreferredDate()));
 						orderCsvEntity.setPicName(orderData.getPicName());
 						orderCsvEntity.setPicNameKana(orderData.getPicNameKana());
 						orderCsvEntity.setPostNumber(orderData.getPostNumber());
