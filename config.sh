@@ -20,6 +20,7 @@ export BATCH_BASE_PATH=${BASE_DIR_PATH}/Ext_SIM_Batches${BATCH_BASE_SUFFIX}
 export COMMUNICATION_JAR_PATH=${BATCH_BASE_PATH}/Communication
 export ORDER_JAR_PATH=${BATCH_BASE_PATH}/Order
 export ACCOUNTING_JAR_PATH=${BATCH_BASE_PATH}/Accounting
+export CONTRACT_JAR_PATH=${BATCH_BASE_PATH}/Contract
 
 ################################################
 ### バッチJava実行モジュール名
@@ -35,3 +36,7 @@ export BATCH_PG_BTCOSI003=ImportReplyCsv-0.0.1-SNAPSHOT.jar
 
 # BTCOSI004 計上データ作成(SIMランニング分)
 export BATCH_PG_BTCOSI004=AccountingCreateSimRunning-0.0.1-SNAPSHOT.jar
+
+# BTCOSI005 
+export BATCH_PG_BTCOSI005=CreateCsvIFS-0.0.1-SNAPSHOT.jar
+
