@@ -20,7 +20,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
-import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementPicWorkerEmp;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork.WorkflowStatus;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
@@ -111,15 +110,11 @@ public class CreateOrderCsvTests extends TestBase {
 
 		ArrangementWork arrangementWork1 = arrangementWorkRepository.findOne(1L);
 		ArrangementWork arrangementWork2 = arrangementWorkRepository.findOne(2L);
-		ArrangementPicWorkerEmp arrangementPicWorkerEmp1 = arrangementPicWorkerEmpRepository.findOne(1L);
-		ArrangementPicWorkerEmp arrangementPicWorkerEmp2 = arrangementPicWorkerEmpRepository.findOne(2L);
 		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
 		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
 		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
 		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
 
-		Assert.assertEquals("更新者が更新されていること", "COTOS_BATCH_USER", arrangementPicWorkerEmp1.getMomEmployeeId());
-		Assert.assertEquals("更新者が更新されていること", "COTOS_BATCH_USER", arrangementPicWorkerEmp2.getMomEmployeeId());
 		Assert.assertEquals("作業状況が作業中に更新されていること", WorkflowStatus.作業中, arrangementWork1.getWorkflowStatus());
 		Assert.assertEquals("作業状況が作業中に更新されていること", WorkflowStatus.作業中, arrangementWork2.getWorkflowStatus());
 
@@ -147,10 +142,6 @@ public class CreateOrderCsvTests extends TestBase {
 		ArrangementWork arrangementWork4 = arrangementWorkRepository.findOne(4L);
 		ArrangementWork arrangementWork5 = arrangementWorkRepository.findOne(5L);
 		ArrangementWork arrangementWork6 = arrangementWorkRepository.findOne(6L);
-		ArrangementPicWorkerEmp arrangementPicWorkerEmp3 = arrangementPicWorkerEmpRepository.findOne(3L);
-		ArrangementPicWorkerEmp arrangementPicWorkerEmp4 = arrangementPicWorkerEmpRepository.findOne(4L);
-		ArrangementPicWorkerEmp arrangementPicWorkerEmp5 = arrangementPicWorkerEmpRepository.findOne(5L);
-		ArrangementPicWorkerEmp arrangementPicWorkerEmp6 = arrangementPicWorkerEmpRepository.findOne(6L);
 		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
 		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
 		ContractDetail contractDetail41 = contractDetailRepository.findOne(41L);
@@ -159,13 +150,8 @@ public class CreateOrderCsvTests extends TestBase {
 		ContractDetail contractDetail52 = contractDetailRepository.findOne(52L);
 		ContractDetail contractDetail61 = contractDetailRepository.findOne(61L);
 		ContractDetail contractDetail62 = contractDetailRepository.findOne(62L);
-		
 
 		try {
-			Assert.assertEquals("更新者が変更されていないこと", "229692", arrangementPicWorkerEmp3.getMomEmployeeId());
-			Assert.assertEquals("更新者が変更されていないこと", "229692", arrangementPicWorkerEmp4.getMomEmployeeId());
-			Assert.assertEquals("更新者が変更されていないこと", "229692", arrangementPicWorkerEmp5.getMomEmployeeId());
-			Assert.assertEquals("更新者が変更されていないこと", "229692", arrangementPicWorkerEmp6.getMomEmployeeId());
 			Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork3.getWorkflowStatus());
 			Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork4.getWorkflowStatus());
 			Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork5.getWorkflowStatus());
@@ -195,7 +181,7 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 既存ファイルに上書きできないこと() throws IOException {
 		テストデータ作成("createOrderTestSuccessDate.sql");
 		fileDeleate(outputPath + "duplicate.csv");
