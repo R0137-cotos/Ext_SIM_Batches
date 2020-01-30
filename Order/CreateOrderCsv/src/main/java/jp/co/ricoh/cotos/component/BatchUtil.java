@@ -101,7 +101,7 @@ public class BatchUtil {
 	 * @return Strinｇ型の日付
 	 */
 	public String changeFormatString(Date date) {
-		return new SimpleDateFormat("yyyy/MM/dd").format(date);
+		return new SimpleDateFormat("yyyyMMdd").format(date);
 	}
 
 	public int getOrderCsvCreationStatus(String extendsParameter) throws JsonProcessingException, IOException {
