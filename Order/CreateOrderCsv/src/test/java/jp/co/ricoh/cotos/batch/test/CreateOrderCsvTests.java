@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementPicWorkerEmp;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork.WorkflowStatus;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
@@ -111,23 +112,32 @@ public class CreateOrderCsvTests extends TestBase {
 		ArrangementWork arrangementWork1 = arrangementWorkRepository.findOne(1L);
 		ArrangementWork arrangementWork2 = arrangementWorkRepository.findOne(2L);
 		ArrangementWork arrangementWork3 = arrangementWorkRepository.findOne(3L);
+		ArrangementWork arrangementWork4 = arrangementWorkRepository.findOne(4L);
+		ArrangementPicWorkerEmp arrangementPicWorkerEmp4 = arrangementPicWorkerEmpRepository.findOne(4L);
 		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
 		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
 		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
 		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
 		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
 		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
+		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
 
 		Assert.assertEquals("作業状況が作業中に更新されていること", WorkflowStatus.作業中, arrangementWork1.getWorkflowStatus());
 		Assert.assertEquals("作業状況が作業中に更新されていること", WorkflowStatus.作業中, arrangementWork2.getWorkflowStatus());
 		Assert.assertEquals("作業状況が作業中に更新されていること", WorkflowStatus.作業中, arrangementWork3.getWorkflowStatus());
+		Assert.assertEquals("作業状況が作業中に更新されていること", WorkflowStatus.作業中, arrangementWork4.getWorkflowStatus());
 
+		Assert.assertEquals("更新者が変更されていないこと", "00229692", arrangementPicWorkerEmp4.getMomEmployeeId());
+		
 		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail11.getExtendsParameter());
 		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail12.getExtendsParameter());
 		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail21.getExtendsParameter());
 		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail22.getExtendsParameter());
 		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail31.getExtendsParameter());
 		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail42.getExtendsParameter());
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial.csv"));

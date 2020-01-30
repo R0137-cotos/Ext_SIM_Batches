@@ -28,6 +28,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.csv.CsvGenerator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.google.common.base.Objects;
 
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.Arrangement;
@@ -178,7 +179,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					if (arrangement != null) {
 						List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
 						arrangementWorkList.stream().forEach(arrangementWork -> {
-							arrangementWorkIdListAssign.add(arrangementWork.getId());
+							if(arrangementWork.getArrangementPicWorkerEmp() == null) {
+								arrangementWorkIdListAssign.add(arrangementWork.getId());
+							}
 							if (arrangementWork.getWorkflowStatus() == WorkflowStatus.受付待ち) {
 								arrangementWorkIdListAccept.add(arrangementWork.getId());
 							}
