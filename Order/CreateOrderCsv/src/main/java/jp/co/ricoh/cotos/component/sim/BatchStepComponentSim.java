@@ -119,6 +119,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						orderCsvEntity.setOfficeName(orderData.getOfficeName());
 						orderCsvEntity.setPicPhoneNumber(orderData.getPicPhoneNumber());
 						orderCsvEntity.setPicFaxNumber(orderData.getPicFaxNumber());
+						orderCsvEntity.setPicMailAddress(orderData.getPicMailAddress());
 						orderCsvEntity.setLineNumber("");
 						orderCsvEntity.setSerialNumber("");
 						orderCsvEntity.setDeliveryExpectedDate("");
