@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
-import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
 import lombok.Setter;
 
 @Component
@@ -61,11 +60,10 @@ public class BatchUtil {
 	 * @param arrangementWorkIdList
 	 *            手配業務IDリスト
 	 */
-	public void callAssignWorker(List<Long> arrangementWorkIdList) {
+	public void callAssignWorker(List<Long> arrangementWorkIdList, ContractPicSaEmp contractPicSaEmp) {
 		if (CollectionUtils.isEmpty(arrangementWorkIdList))
 			return;
-		CotosAuthenticationDetails userInfo = (CotosAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		restForArrangement.postForObject(COTOS_ARRANGEMENT_URL + "/arrangementWork/assignWorker?workerMomEmpId=" + userInfo.getMomEmployeeId(), arrangementWorkIdList, Void.class);
+		restForArrangement.postForObject(COTOS_ARRANGEMENT_URL + "/arrangementWork/assignWorker?workerMomEmpId=" + contractPicSaEmp.getMomEmployeeId(), arrangementWorkIdList, Void.class);
 	}
 
 	/**
@@ -93,6 +91,17 @@ public class BatchUtil {
 		} catch (ParseException e1) {
 			return null;
 		}
+	}
+
+	/**
+	 * 日付のフォーマットを変更する
+	 * 
+	 * @param date
+	 *         日付
+	 * @return Strinｇ型の日付
+	 */
+	public String changeFormatString(Date date) {
+		return new SimpleDateFormat("yyyyMMdd").format(date);
 	}
 
 	public int getOrderCsvCreationStatus(String extendsParameter) throws JsonProcessingException, IOException {
