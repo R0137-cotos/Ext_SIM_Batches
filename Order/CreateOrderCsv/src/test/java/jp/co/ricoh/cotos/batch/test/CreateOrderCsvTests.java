@@ -101,7 +101,7 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_CSVファイルを出力できること() throws IOException {
 		テストデータ作成("createOrderTestSuccessDate.sql");
 		fileDeleate(outputPath + "result_initial.csv");
@@ -137,7 +137,7 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_CSVファイルを出力しないこと() throws IOException {
 		テストデータ作成("createOrderTestFailedDate.sql");
 		fileDeleate(outputPath + "result_initial.csv");
@@ -187,7 +187,7 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 既存ファイルに上書きできないこと() throws IOException {
 		テストデータ作成("createOrderTestSuccessDate.sql");
 		fileDeleate(outputPath + "duplicate.csv");
