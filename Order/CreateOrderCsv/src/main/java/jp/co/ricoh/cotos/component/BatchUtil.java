@@ -95,6 +95,17 @@ public class BatchUtil {
 		}
 	}
 
+	/**
+	 * 日付のフォーマットを変更する
+	 * 
+	 * @param date
+	 *         日付
+	 * @return Strinｇ型の日付
+	 */
+	public String changeFormatString(Date date) {
+		return new SimpleDateFormat("yyyyMMdd").format(date);
+	}
+
 	public int getOrderCsvCreationStatus(String extendsParameter) throws JsonProcessingException, IOException {
 		JsonNode node = om.readTree(extendsParameter);
 		return node.get("orderCsvCreationStatus").asInt();
