@@ -28,10 +28,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.csv.CsvGenerator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.google.common.base.Objects;
 
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.Arrangement;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
+import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork.WorkflowStatus;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
@@ -109,8 +111,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%03d", i + 1));
 						orderCsvEntity.setRicohItemCode(orderData.getRicohItemCode());
 						orderCsvEntity.setItemContractName(orderData.getItemContractName());
-						orderCsvEntity.setOrderDate(operationDate);
-						orderCsvEntity.setConclusionPreferredDate(orderData.getConclusionPreferredDate());
+						orderCsvEntity.setOrderDate(batchUtil.changeFormatString(operationDate));
+						orderCsvEntity.setConclusionPreferredDate(batchUtil.changeFormatString(orderData.getConclusionPreferredDate()));
 						orderCsvEntity.setPicName(orderData.getPicName());
 						orderCsvEntity.setPicNameKana(orderData.getPicNameKana());
 						orderCsvEntity.setPostNumber(orderData.getPostNumber());
@@ -171,22 +173,30 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				successMap.put("idList", contractDetailIdList);
 				dbUtil.execute("sql/updateExtendsParameter.sql", successMap);
 				successIdList.stream().forEach(ContractId -> {
-					List<Long> arrangementWorkIdList = new ArrayList<>();
+					List<Long> arrangementWorkIdListAssign = new ArrayList<>();
+					List<Long> arrangementWorkIdListAccept = new ArrayList<>();
 					Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(ContractId, 0);
 					if (arrangement != null) {
 						List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
-						arrangementWorkList.stream().forEach(arrangementWork -> arrangementWorkIdList.add(arrangementWork.getId()));
+						arrangementWorkList.stream().forEach(arrangementWork -> {
+							if(arrangementWork.getArrangementPicWorkerEmp() == null) {
+								arrangementWorkIdListAssign.add(arrangementWork.getId());
+							}
+							if (arrangementWork.getWorkflowStatus() == WorkflowStatus.受付待ち) {
+								arrangementWorkIdListAccept.add(arrangementWork.getId());
+							}
+						});
 					}
 					Contract contract = contractRepository.findOne(ContractId);
 					try {
-						batchUtil.callAssignWorker(arrangementWorkIdList, contract.getContractPicSaEmp());
+						batchUtil.callAssignWorker(arrangementWorkIdListAssign, contract.getContractPicSaEmp());
 					} catch (Exception arrangementError) {
 						log.fatal(String.format("担当者登録に失敗しました。"));
 						arrangementError.printStackTrace();
 					}
 					// 手配業務受付APIを実行
 					try {
-						batchUtil.callAcceptWorkApi(arrangementWorkIdList);
+						batchUtil.callAcceptWorkApi(arrangementWorkIdListAccept);
 					} catch (Exception arrangementError) {
 						log.fatal(String.format("ステータスの変更に失敗しました。"));
 						arrangementError.printStackTrace();
