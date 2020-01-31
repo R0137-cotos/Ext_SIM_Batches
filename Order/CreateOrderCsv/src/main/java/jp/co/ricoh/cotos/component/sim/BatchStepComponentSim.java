@@ -28,7 +28,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.csv.CsvGenerator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.google.common.base.Objects;
 
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.Arrangement;
@@ -164,7 +163,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 			// 出力成功
 			if (!successIdList.isEmpty()) {
-
+				// 事後処理（拡張項目）
 				Map<String, Object> successMap = new HashMap<>();
 				String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"" + dto.getOperationDate() + "\"}";
 				List<Long> contractDetailIdList = orderDataList.stream().filter(o -> successIdList.contains(o.getContractIdTemp())).map(o -> o.getContractDetailId()).collect(Collectors.toList());
@@ -172,6 +171,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				successMap.put("extendsParam", successExtendsParameter);
 				successMap.put("idList", contractDetailIdList);
 				dbUtil.execute("sql/updateExtendsParameter.sql", successMap);
+				// 事後処理（手配）
 				successIdList.stream().forEach(ContractId -> {
 					List<Long> arrangementWorkIdListAssign = new ArrayList<>();
 					List<Long> arrangementWorkIdListAccept = new ArrayList<>();
@@ -179,7 +179,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					if (arrangement != null) {
 						List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
 						arrangementWorkList.stream().forEach(arrangementWork -> {
-							if(arrangementWork.getArrangementPicWorkerEmp() == null) {
+							if (arrangementWork.getArrangementPicWorkerEmp() == null) {
 								arrangementWorkIdListAssign.add(arrangementWork.getId());
 							}
 							if (arrangementWork.getWorkflowStatus() == WorkflowStatus.受付待ち) {
@@ -188,6 +188,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						});
 					}
 					Contract contract = contractRepository.findOne(ContractId);
+					// 手配担当者登録APIを実行
 					try {
 						batchUtil.callAssignWorker(arrangementWorkIdListAssign, contract.getContractPicSaEmp());
 					} catch (Exception arrangementError) {
@@ -205,6 +206,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			}
 			// 出力失敗
 			if (!failedIdList.isEmpty()) {
+				// 事後処理（拡張項目）
 				Map<String, Object> failedMap = new HashMap<>();
 				String failedExtendsParameter = "{\"orderCsvCreationStatus\":\"2\",\"orderCsvCreationDate\":\"\"}";
 				List<Long> contractDetailIdList = orderDataList.stream().filter(o -> failedIdList.contains(o.getContractIdTemp())).map(o -> o.getContractDetailId()).collect(Collectors.toList());
