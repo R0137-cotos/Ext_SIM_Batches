@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 
 @Data
-@JsonPropertyOrder({ "契約No", "商品コード", "商品名", "オーダー日", "納入希望日", "氏名(漢字)", "氏名(カナ)", "郵便番号", "住所", "組織名", "部署名", "電話番号", "FAX番号", "担当者メールアドレス", "回線番号", "シリアル番号", "納入予定日", "送り状番号", "備考" })
+@JsonPropertyOrder({ "契約No", "商品コード", "商品名", "オーダー日", "納入希望日", "氏名(漢字)", "氏名(カナ)", "郵便番号", "住所", "組織名", "部署名", "電話番号", "FAX番号", "担当者メールアドレス", "回線番号", "ICCID", "納入予定日", "送り状番号", "備考" })
 public class FindCreateOrderCsvDataDto {
 
 	/**
@@ -113,9 +113,9 @@ public class FindCreateOrderCsvDataDto {
 	private String lineNumber;
 
 	/**
-	 * シリアル番号
+	 * ICCID
 	 */
-	@JsonProperty("シリアル番号")
+	@JsonProperty("ICCID")
 	private String serialNumber;
 
 	/**

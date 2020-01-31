@@ -129,7 +129,7 @@ public class CreateOrderCsvTests extends TestBase {
 		Assert.assertEquals("作業状況が作業中に更新されていること", WorkflowStatus.作業中, arrangementWork4.getWorkflowStatus());
 
 		Assert.assertEquals("更新者が変更されていないこと", "00229692", arrangementPicWorkerEmp4.getMomEmployeeId());
-		
+
 		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail11.getExtendsParameter());
 		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail12.getExtendsParameter());
 		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail21.getExtendsParameter());
