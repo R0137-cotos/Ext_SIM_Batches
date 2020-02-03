@@ -34,8 +34,8 @@ public class ImportReplyCsvTests extends TestBase {
 
 	static ConfigurableApplicationContext context;
 
-	static String extendsParameterContractId10 = "{\"extendsParameterList\":[{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"8981200012345678911\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"CIC202001070001002\"},{\"id\":4,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"8981200012345678912\",\"device\":\"追加1\",\"invoiceNumber\":\"CIC202001070001003\"},{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"8981200012345678910\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"CIC202001070001001\"}]}";
-	static String extendsParameterContractId20 = "{\"extendsParameterList\":[{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"8981200012345678911\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"CIC202001080001002\"},{\"id\":4,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"8981200012345678912\",\"device\":\"追加1\",\"invoiceNumber\":\"CIC202001080001003\"},{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"8981200012345678910\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"CIC202001080001001\"}]}";
+	static String extendsParameterContractId10 = "{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"8981200012345678910\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"CIC202001070001001\"},{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"8981200012345678911\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"CIC202001070001002\"},{\"id\":4,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"8981200012345678912\",\"device\":\"追加1\",\"invoiceNumber\":\"CIC202001070001003\"}]}";
+	static String extendsParameterContractId20 = "{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"8981200012345678910\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"CIC202001080001001\"},{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"8981200012345678911\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"CIC202001080001002\"},{\"id\":4,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"8981200012345678912\",\"device\":\"追加1\",\"invoiceNumber\":\"CIC202001080001003\"}]}";
 
 	@Autowired
 	BatchMomInfoProperties batchProperty;
@@ -90,14 +90,14 @@ public class ImportReplyCsvTests extends TestBase {
 		Contract contract10 = contractRepository.findOne(10L);
 		ProductContract product1001 = productContractRepository.findOne(1001L);
 		Assert.assertEquals("売上可能に更新されていること", WorkflowStatus.売上可能, contract10.getWorkflowStatus());
-		Assert.assertEquals("拡張項目が設定されていること", extendsParameterContractId10, product1001.getExtendsParameterIterance());
+		Assert.assertEquals("拡張項目繰返がIDの昇順で設定されていること", extendsParameterContractId10, product1001.getExtendsParameterIterance());
 		Arrangement arrangement1 = arrangementRepository.findByContractIdAndDisengagementFlg(contract10.getId(), 0);
 		Assert.assertEquals("手配完了に更新されていること", Arrangement.WorkflowStatus.手配完了, arrangement1.getWorkflowStatus());
 
 		Contract contract20 = contractRepository.findOne(20L);
 		ProductContract product2001 = productContractRepository.findOne(2001L);
 		Assert.assertEquals("売上可能に更新されていること", WorkflowStatus.売上可能, contract20.getWorkflowStatus());
-		Assert.assertEquals("売上可能に更新されていること", extendsParameterContractId20, product2001.getExtendsParameterIterance());
+		Assert.assertEquals("拡張項目繰返がIDの昇順で設定されていること", extendsParameterContractId20, product2001.getExtendsParameterIterance());
 		Arrangement arrangement2 = arrangementRepository.findByContractIdAndDisengagementFlg(contract20.getId(), 0);
 		Assert.assertEquals("手配完了に更新されていること", Arrangement.WorkflowStatus.手配完了, arrangement2.getWorkflowStatus());
 
