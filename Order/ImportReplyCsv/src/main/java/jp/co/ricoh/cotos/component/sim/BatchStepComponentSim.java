@@ -135,6 +135,11 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						updatedExtendsParameterList.add(targetList.get(i));
 					});
 				});
+				
+				// 拡張項目繰返への設定値をIDの昇順でソート
+				if(updatedExtendsParameterList != null) {
+					updatedExtendsParameterList.sort((a, b) -> (int)a.getId() - (int)b.getId());
+				}
 
 				Map<String, List<ExtendsParameterDto>> extendsParameterMap = new HashMap<>();
 				extendsParameterMap.put("extendsParameterList", updatedExtendsParameterList);
