@@ -93,8 +93,8 @@ public class AccountingExecution {
 		accountingRepository.save(this.accounting);
 
 		// 27 NSPユニークキー
-		// 契約.契約番号＋品種（契約用）.リコー品種コード＋計上ID
-		this.accounting.setFfmNspKey(this.accounting.getFfmContractDocNo() + this.accounting.getProductTypeCd() + this.accounting.getId());
+		// 契約.契約番号(頭3桁除去)＋品種（契約用）.リコー品種コード＋計上ID
+		this.accounting.setFfmNspKey(this.accounting.getFfmContractDocNo().substring(3) + this.accounting.getProductTypeCd() + this.accounting.getId());
 		accountingRepository.save(this.accounting);
 	}
 
