@@ -6,11 +6,11 @@
 
 {
 echo "HELO jp.ricoh.com"
-echo "MAIL FROM: bounce@cotos.ricoh.co.jp"
+echo "MAIL FROM: no-reply@cotos.ricoh.co.jp"
 echo "RCPT TO: fumihiko.komura@g.softbank.co.jp"
 echo "RCPT TO: masatoshi_kubo@jp.ricoh.com"
 echo "DATA"
-echo "From: bounce@cotos.ricoh.co.jp"
+echo "From: no-reply@cotos.ricoh.co.jp"
 echo "To: fumihiko.komura@g.softbank.co.jp"
 echo "CC: masatoshi_kubo@jp.ricoh.com"
 echo "Subject: =?UTF-8?B?POaWsOimjz7jgJDjg6rjgrPjg7zjg6Ljg5DjgqTjg6soU0lNKeOAkQ==?=`date "+%Y/%m/%d"`"
