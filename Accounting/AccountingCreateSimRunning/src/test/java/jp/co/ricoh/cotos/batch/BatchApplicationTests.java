@@ -183,10 +183,6 @@ public class BatchApplicationTests extends TestBase {
 		Assert.assertTrue("契約金額が契約明細.金額と同じであること",
 				accounting.getFfmContractPrice().compareTo(contractDetail.getAmountSummary()) == 0);
 
-		// 74 得意先コード
-		Assert.assertTrue("得意先コードが契約.得意先コードと同じであること",
-				StringUtils.equals(accounting.getFfmClientCd(), contract.getBillingCustomerSpCode()));
-
 		// 84 代直区分（販売店データリンク・売上用）
 		// ※SIMは商流区分=1のみ
 		switch (contract.getCommercialFlowDiv()) {
@@ -372,7 +368,7 @@ public class BatchApplicationTests extends TestBase {
 		// 27 NSPユニークキー
 		Assert.assertTrue("NSPユニークキーが契約.契約番号＋品種（契約用）.リコー品種コード＋計上IDと同じであること",
 				StringUtils.equals(accounting.getFfmNspKey(),
-						accounting.getFfmContractDocNo() + itemContract.getRicohItemCode() + accounting.getId()));
+						accounting.getFfmContractDocNo().substring(3) + itemContract.getRicohItemCode() + accounting.getId()));
 		// 28 案件番号
 		Assert.assertNull("案件番号がNullであること", accounting.getFfmProjectNo());
 		// 29 契約書番号
@@ -472,6 +468,9 @@ public class BatchApplicationTests extends TestBase {
 		ffmSalesTradeDate.set(Calendar.DAY_OF_MONTH, 1);
 		Assert.assertTrue("売上取引日が請求月（データ作成日）の月1日と同じであること", StringUtils.equals(accounting.getFfmSalesTradeDate(),
 				new SimpleDateFormat("yyyyMMdd").format(ffmSalesTradeDate.getTime())));
+		// 74 得意先コード
+		Assert.assertTrue("得意先コードが契約.得意先コードと同じであること",
+				StringUtils.equals(accounting.getFfmClientCd(), contract.getBillingCustomerSpCode()));
 		// 75 売上課所設定区分
 		Assert.assertNull("売上課所設定区分がNullであること", accounting.getFfmSalesLocationType());
 		// 76 売上課所コード
