@@ -213,9 +213,7 @@ public class AccountingExecutionParameterCreate {
 		entity.setFfmSalesTradeDate(new SimpleDateFormat("yyyyMMdd").format(ffmSalesTradeDate.getTime()));
 
 		// 74 得意先コード
-		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
-			entity.setFfmClientCd(work.getBillingCustomerSpCode());
-		}
+		entity.setFfmClientCd(work.getBillingCustomerSpCode());
 
 		// 75 売上課所設定区分
 		// 76 売上課所コード
