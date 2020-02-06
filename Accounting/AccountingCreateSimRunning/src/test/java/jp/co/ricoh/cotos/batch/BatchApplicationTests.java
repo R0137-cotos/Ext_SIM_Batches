@@ -372,7 +372,7 @@ public class BatchApplicationTests extends TestBase {
 		// 27 NSPユニークキー
 		Assert.assertTrue("NSPユニークキーが契約.契約番号＋品種（契約用）.リコー品種コード＋計上IDと同じであること",
 				StringUtils.equals(accounting.getFfmNspKey(),
-						accounting.getFfmContractDocNo() + itemContract.getRicohItemCode() + accounting.getId()));
+						accounting.getFfmContractDocNo().substring(3) + itemContract.getRicohItemCode() + accounting.getId()));
 		// 28 案件番号
 		Assert.assertNull("案件番号がNullであること", accounting.getFfmProjectNo());
 		// 29 契約書番号
