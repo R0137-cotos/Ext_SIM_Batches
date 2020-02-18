@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:oracle:thin:@dev-db.cotos.ricoh.co.jp:1521/pdb1
-    username: cotos_onsite
-    password: cotos_onsite
+    username: cotos_dev
+    password: cotos_dev
     driverClassName: oracle.jdbc.OracleDriver
     type: org.apache.tomcat.jdbc.pool.DataSource
     tomcat:
@@ -20,7 +20,7 @@ spring:
         show_sql: true
         use_sql_comments: true
         format_sql: true
-        default_schema: cotos_onsite
+        default_schema: cotos_dev
   jackson:
     time-zone: Asia/Tokyo
   messages:
@@ -37,7 +37,8 @@ cotos:
       momEmpId: COTOS_BATCH_USER
       operatorName: dummy_batch_operator
       operatorOrgName: dummy_batch_operator_org
-  authentication: https://dev-api.cotos.ricoh.co.jp/auth/api/auth
+    superUserId: SIM_AUTOARRANGEMENT_USER
+  authentication: https://dev-api-3.cotos.ricoh.co.jp/auth/api/auth
   auth:
     jwt:
       secretKey: cotosSecretKey

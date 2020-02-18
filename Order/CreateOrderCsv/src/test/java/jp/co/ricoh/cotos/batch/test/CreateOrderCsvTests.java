@@ -102,9 +102,9 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_CSVファイルを出力できること() throws IOException {
-		テストデータ作成("createOrderTestSuccessDate.sql");
+		テストデータ作成("createOrderTestSuccessData.sql");
 		fileDeleate(outputPath + "result_initial.csv");
 
 		jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv" });
@@ -147,9 +147,9 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_CSVファイルを出力しないこと() throws IOException {
-		テストデータ作成("createOrderTestFailedDate.sql");
+		テストデータ作成("createOrderTestFailedData.sql");
 		fileDeleate(outputPath + "result_initial.csv");
 
 		jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv" });
@@ -167,24 +167,57 @@ public class CreateOrderCsvTests extends TestBase {
 		ContractDetail contractDetail61 = contractDetailRepository.findOne(61L);
 		ContractDetail contractDetail62 = contractDetailRepository.findOne(62L);
 
-		try {
-			Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork3.getWorkflowStatus());
-			Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork4.getWorkflowStatus());
-			Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork5.getWorkflowStatus());
-			Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork6.getWorkflowStatus());
+		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork3.getWorkflowStatus());
+		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork4.getWorkflowStatus());
+		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork5.getWorkflowStatus());
+		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork6.getWorkflowStatus());
 
-			Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail31.getExtendsParameter());
-			Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail32.getExtendsParameter());
-			Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
-			Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
-			Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail51.getExtendsParameter());
-			Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail52.getExtendsParameter());
-			Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail61.getExtendsParameter());
-			Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail62.getExtendsParameter());
-		} catch (Exception e) {
-		}
+		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail31.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail51.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail52.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail61.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail62.getExtendsParameter());
 
 		fileDeleate(outputPath + "result_initial.csv");
+	}
+	
+	@Test
+	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	public void 正常系_CSVファイルを出力しないこと_処理日が祝日() throws IOException {
+		テストデータ作成("createOrderTestSuccessData.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		jobComponent.run(new String[] { "20191014", outputPath, "result_initial.csv" });
+		
+		ArrangementWork arrangementWork1 = arrangementWorkRepository.findOne(1L);
+		ArrangementWork arrangementWork2 = arrangementWorkRepository.findOne(2L);
+		ArrangementWork arrangementWork4 = arrangementWorkRepository.findOne(4L);
+		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
+		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
+		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
+		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
+		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
+		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
+
+		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork1.getWorkflowStatus());
+		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork2.getWorkflowStatus());
+		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork4.getWorkflowStatus());
+
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail11.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail12.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail21.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail22.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail31.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
+
+		//fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
@@ -197,9 +230,9 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 既存ファイルに上書きできないこと() throws IOException {
-		テストデータ作成("createOrderTestSuccessDate.sql");
+		テストデータ作成("createOrderTestSuccessData.sql");
 		fileDeleate(outputPath + "duplicate.csv");
 		if (!Files.exists(Paths.get("output/duplicate.csv"))) {
 			Files.createFile(Paths.get("output/duplicate.csv"));

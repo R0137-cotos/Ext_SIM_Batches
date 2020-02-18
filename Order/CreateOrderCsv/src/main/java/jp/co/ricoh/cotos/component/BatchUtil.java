@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
-import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
 import lombok.Setter;
 
 @Component
@@ -32,6 +31,9 @@ public class BatchUtil {
 
 	@Value("${cotos.arrangement.url}")
 	String COTOS_ARRANGEMENT_URL;
+
+	@Value("${cotos.mom.superUserId}")
+	String COTOS_MOM_SUPERUSERID;
 
 	@Autowired
 	ObjectMapper om;
@@ -60,10 +62,10 @@ public class BatchUtil {
 	 * @param arrangementWorkIdList
 	 *            手配業務IDリスト
 	 */
-	public void callAssignWorker(List<Long> arrangementWorkIdList, ContractPicSaEmp contractPicSaEmp) {
+	public void callAssignWorker(List<Long> arrangementWorkIdList) {
 		if (CollectionUtils.isEmpty(arrangementWorkIdList))
 			return;
-		restForArrangement.postForObject(COTOS_ARRANGEMENT_URL + "/arrangementWork/assignWorker?workerMomEmpId=" + contractPicSaEmp.getMomEmployeeId(), arrangementWorkIdList, Void.class);
+		restForArrangement.postForObject(COTOS_ARRANGEMENT_URL + "/arrangementWork/assignWorker?workerMomEmpId=" + COTOS_MOM_SUPERUSERID, arrangementWorkIdList, Void.class);
 	}
 
 	/**
