@@ -33,12 +33,12 @@ import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.Arrangement;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork.WorkflowStatus;
-import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementRepository;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementWorkRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractRepository;
+import jp.co.ricoh.cotos.commonlib.repository.master.NonBusinessDayCalendarMasterRepository;
 import jp.co.ricoh.cotos.component.BatchUtil;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
@@ -55,6 +55,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Autowired
 	ArrangementWorkRepository arrangementWorkRepository;
+
+	@Autowired
+	NonBusinessDayCalendarMasterRepository nonBusinessDayCalendarMasterRepository;
 
 	@Autowired
 	ContractRepository contractRepository;
@@ -78,142 +81,143 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		log.info("SIM独自処理");
 		// 取得したデータを出力データのみに設定
 		Date operationDate = batchUtil.changeDate(dto.getOperationDate());
-		orderDataList = orderDataList.stream().filter(o -> {
-			int orderCsvCreationStatus = 1;
-			try {
-				orderCsvCreationStatus = batchUtil.getOrderCsvCreationStatus(o.getExtendsParameter());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return orderCsvCreationStatus == 0;
-		}).filter(o -> {
-			// 処理年月日 + 最短納期日を取得
-			Date shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), o.getShortestDeliveryDate(), false);
-			return shortBusinessDay.compareTo(o.getConclusionPreferredDate()) > -1;
-		}).collect(Collectors.toList());
+		if (nonBusinessDayCalendarMasterRepository.findOne(operationDate) == null) {
+			orderDataList = orderDataList.stream().filter(o -> {
+				int orderCsvCreationStatus = 1;
+				try {
+					orderCsvCreationStatus = batchUtil.getOrderCsvCreationStatus(o.getExtendsParameter());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return orderCsvCreationStatus == 0;
+			}).filter(o -> {
+				// 処理年月日 + 最短納期日を取得
+				Date shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), o.getShortestDeliveryDate(), false);
+				return shortBusinessDay.compareTo(o.getConclusionPreferredDate()) > -1;
+			}).collect(Collectors.toList());
 
-		if (0 == orderDataList.size()) {
-			log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "オーダーCSV作成" }).getMsg());
-		} else {
-			List<FindCreateOrderCsvDataDto> findOrderDataList = new ArrayList<>();
-			Map<String, List<CreateOrderCsvDataDto>> contractNumberGroupingMap = orderDataList.stream().collect(Collectors.groupingBy(order -> order.getContractNumber(), Collectors.mapping(order -> order, Collectors.toList())));
+			if (0 == orderDataList.size()) {
+				log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "オーダーCSV作成" }).getMsg());
+			} else {
+				List<FindCreateOrderCsvDataDto> findOrderDataList = new ArrayList<>();
+				Map<String, List<CreateOrderCsvDataDto>> contractNumberGroupingMap = orderDataList.stream().collect(Collectors.groupingBy(order -> order.getContractNumber(), Collectors.mapping(order -> order, Collectors.toList())));
 
-			contractNumberGroupingMap.entrySet().stream().forEach(orderDataMap -> {
-				IntStream.range(0, orderDataMap.getValue().size()).forEach(i -> {
-					CreateOrderCsvDataDto orderData = orderDataMap.getValue().get(i);
-					int itemQuantity = Integer.parseInt(orderData.getQuantity());
+				contractNumberGroupingMap.entrySet().stream().forEach(orderDataMap -> {
+					IntStream.range(0, orderDataMap.getValue().size()).forEach(i -> {
+						CreateOrderCsvDataDto orderData = orderDataMap.getValue().get(i);
+						int itemQuantity = Integer.parseInt(orderData.getQuantity());
 
-					IntStream.range(0, itemQuantity).forEach(k -> {
-						FindCreateOrderCsvDataDto orderCsvEntity = new FindCreateOrderCsvDataDto();
-						orderCsvEntity.setContractIdTemp(orderData.getContractIdTemp());
-						orderCsvEntity.setContractDetailId(orderData.getContractDetailId());
-						orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%03d", i + 1));
-						orderCsvEntity.setRicohItemCode(orderData.getRicohItemCode());
-						orderCsvEntity.setItemContractName(orderData.getItemContractName());
-						orderCsvEntity.setOrderDate(batchUtil.changeFormatString(operationDate));
-						orderCsvEntity.setConclusionPreferredDate(batchUtil.changeFormatString(orderData.getConclusionPreferredDate()));
-						orderCsvEntity.setPicName(orderData.getPicName());
-						orderCsvEntity.setPicNameKana(orderData.getPicNameKana());
-						orderCsvEntity.setPostNumber(orderData.getPostNumber());
-						orderCsvEntity.setAddress(orderData.getAddress());
-						orderCsvEntity.setCompanyName(orderData.getCompanyName());
-						orderCsvEntity.setOfficeName(orderData.getOfficeName());
-						orderCsvEntity.setPicPhoneNumber(orderData.getPicPhoneNumber());
-						orderCsvEntity.setPicFaxNumber(orderData.getPicFaxNumber());
-						orderCsvEntity.setPicMailAddress(orderData.getPicMailAddress());
-						orderCsvEntity.setLineNumber("");
-						orderCsvEntity.setSerialNumber("");
-						orderCsvEntity.setDeliveryExpectedDate("");
-						orderCsvEntity.setInvoiceNumber("");
-						orderCsvEntity.setRemarks("");
+						IntStream.range(0, itemQuantity).forEach(k -> {
+							FindCreateOrderCsvDataDto orderCsvEntity = new FindCreateOrderCsvDataDto();
+							orderCsvEntity.setContractIdTemp(orderData.getContractIdTemp());
+							orderCsvEntity.setContractDetailId(orderData.getContractDetailId());
+							orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%03d", i + 1));
+							orderCsvEntity.setRicohItemCode(orderData.getRicohItemCode());
+							orderCsvEntity.setItemContractName(orderData.getItemContractName());
+							orderCsvEntity.setOrderDate(batchUtil.changeFormatString(operationDate));
+							orderCsvEntity.setConclusionPreferredDate(batchUtil.changeFormatString(orderData.getConclusionPreferredDate()));
+							orderCsvEntity.setPicName(orderData.getPicName());
+							orderCsvEntity.setPicNameKana(orderData.getPicNameKana());
+							orderCsvEntity.setPostNumber(orderData.getPostNumber());
+							orderCsvEntity.setAddress(orderData.getAddress());
+							orderCsvEntity.setCompanyName(orderData.getCompanyName());
+							orderCsvEntity.setOfficeName(orderData.getOfficeName());
+							orderCsvEntity.setPicPhoneNumber(orderData.getPicPhoneNumber());
+							orderCsvEntity.setPicFaxNumber(orderData.getPicFaxNumber());
+							orderCsvEntity.setPicMailAddress(orderData.getPicMailAddress());
+							orderCsvEntity.setLineNumber("");
+							orderCsvEntity.setSerialNumber("");
+							orderCsvEntity.setDeliveryExpectedDate("");
+							orderCsvEntity.setInvoiceNumber("");
+							orderCsvEntity.setRemarks("");
 
-						findOrderDataList.add(orderCsvEntity);
+							findOrderDataList.add(orderCsvEntity);
+						});
 					});
 				});
-			});
 
-			List<Long> successIdList = new ArrayList<>();
-			List<Long> failedIdList = new ArrayList<>();
+				List<Long> successIdList = new ArrayList<>();
+				List<Long> failedIdList = new ArrayList<>();
 
-			Map<Long, List<FindCreateOrderCsvDataDto>> OrderDataIdGroupingMap = findOrderDataList.stream().collect(Collectors.groupingBy(findOrderData -> findOrderData.getContractIdTemp(), Collectors.mapping(findOrderData -> findOrderData, Collectors.toList())));
-			CsvMapper mapper = new CsvMapper();
-			CsvSchema schemaWithOutHeader = mapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true).schemaFor(FindCreateOrderCsvDataDto.class).withoutHeader().withColumnSeparator(',').withLineSeparator("\r\n").withNullValue("\"\"");
+				Map<Long, List<FindCreateOrderCsvDataDto>> OrderDataIdGroupingMap = findOrderDataList.stream().collect(Collectors.groupingBy(findOrderData -> findOrderData.getContractIdTemp(), Collectors.mapping(findOrderData -> findOrderData, Collectors.toList())));
+				CsvMapper mapper = new CsvMapper();
+				CsvSchema schemaWithOutHeader = mapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true).schemaFor(FindCreateOrderCsvDataDto.class).withoutHeader().withColumnSeparator(',').withLineSeparator("\r\n").withNullValue("\"\"");
 
-			// CSV出力
-			OrderDataIdGroupingMap.entrySet().stream().sorted(Entry.comparingByKey()).forEach(map -> {
-				try {
-					mapper.writer(schemaWithOutHeader).writeValues(Files.newBufferedWriter(dto.getTmpFile().toPath(), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.APPEND)).write(map.getValue());
-					successIdList.add(map.getKey());
-				} catch (Exception e) {
-					log.error(messageUtil.createMessageInfo("BatchCannotCreateFiles", new String[] { String.format("オーダーCSV作成") }).getMsg(), e);
-					failedIdList.add(map.getKey());
-				}
-			});
-			// ヘッダーファイルとのマージ
-			List<String> outputList = Files.readAllLines(dto.getTmpFile().toPath(), Charset.forName("UTF-8"));
-			List<String> headerList = new ArrayList<>();
-			InputStream in = this.getClass().getClassLoader().getResourceAsStream(headerFilePath);
-			String header = IOUtils.toString(in, "UTF-8");
-			headerList.add(header);
-			headerList.addAll(outputList);
-			try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(dto.getCsvFile())))) {
-				headerList.stream().forEach(s -> pw.print(s + "\r\n"));
-			}
-			Files.deleteIfExists(dto.getTmpFile().toPath());
-
-			// 出力成功
-			if (!successIdList.isEmpty()) {
-				// 事後処理（拡張項目）
-				Map<String, Object> successMap = new HashMap<>();
-				String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"" + dto.getOperationDate() + "\"}";
-				List<Long> contractDetailIdList = orderDataList.stream().filter(o -> successIdList.contains(o.getContractIdTemp())).map(o -> o.getContractDetailId()).collect(Collectors.toList());
-
-				successMap.put("extendsParam", successExtendsParameter);
-				successMap.put("idList", contractDetailIdList);
-				dbUtil.execute("sql/updateExtendsParameter.sql", successMap);
-				// 事後処理（手配）
-				successIdList.stream().forEach(ContractId -> {
-					List<Long> arrangementWorkIdListAssign = new ArrayList<>();
-					List<Long> arrangementWorkIdListAccept = new ArrayList<>();
-					Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(ContractId, 0);
-					if (arrangement != null) {
-						List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
-						arrangementWorkList.stream().forEach(arrangementWork -> {
-							if (arrangementWork.getArrangementPicWorkerEmp() == null) {
-								arrangementWorkIdListAssign.add(arrangementWork.getId());
-							}
-							if (arrangementWork.getWorkflowStatus() == WorkflowStatus.受付待ち) {
-								arrangementWorkIdListAccept.add(arrangementWork.getId());
-							}
-						});
-					}
-					Contract contract = contractRepository.findOne(ContractId);
-					// 手配担当者登録APIを実行
+				// CSV出力
+				OrderDataIdGroupingMap.entrySet().stream().sorted(Entry.comparingByKey()).forEach(map -> {
 					try {
-						batchUtil.callAssignWorker(arrangementWorkIdListAssign, contract.getContractPicSaEmp());
-					} catch (Exception arrangementError) {
-						log.fatal(String.format("担当者登録に失敗しました。"));
-						arrangementError.printStackTrace();
-					}
-					// 手配業務受付APIを実行
-					try {
-						batchUtil.callAcceptWorkApi(arrangementWorkIdListAccept);
-					} catch (Exception arrangementError) {
-						log.fatal(String.format("ステータスの変更に失敗しました。"));
-						arrangementError.printStackTrace();
+						mapper.writer(schemaWithOutHeader).writeValues(Files.newBufferedWriter(dto.getTmpFile().toPath(), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.APPEND)).write(map.getValue());
+						successIdList.add(map.getKey());
+					} catch (Exception e) {
+						log.error(messageUtil.createMessageInfo("BatchCannotCreateFiles", new String[] { String.format("オーダーCSV作成") }).getMsg(), e);
+						failedIdList.add(map.getKey());
 					}
 				});
-			}
-			// 出力失敗
-			if (!failedIdList.isEmpty()) {
-				// 事後処理（拡張項目）
-				Map<String, Object> failedMap = new HashMap<>();
-				String failedExtendsParameter = "{\"orderCsvCreationStatus\":\"2\",\"orderCsvCreationDate\":\"\"}";
-				List<Long> contractDetailIdList = orderDataList.stream().filter(o -> failedIdList.contains(o.getContractIdTemp())).map(o -> o.getContractDetailId()).collect(Collectors.toList());
+				// ヘッダーファイルとのマージ
+				List<String> outputList = Files.readAllLines(dto.getTmpFile().toPath(), Charset.forName("UTF-8"));
+				List<String> headerList = new ArrayList<>();
+				InputStream in = this.getClass().getClassLoader().getResourceAsStream(headerFilePath);
+				String header = IOUtils.toString(in, "UTF-8");
+				headerList.add(header);
+				headerList.addAll(outputList);
+				try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(dto.getCsvFile())))) {
+					headerList.stream().forEach(s -> pw.print(s + "\r\n"));
+				}
+				Files.deleteIfExists(dto.getTmpFile().toPath());
 
-				failedMap.put("extendsParam", failedExtendsParameter);
-				failedMap.put("idList", contractDetailIdList);
-				dbUtil.execute("sql/updateExtendsParameter.sql", failedMap);
+				// 出力成功
+				if (!successIdList.isEmpty()) {
+					// 事後処理（拡張項目）
+					Map<String, Object> successMap = new HashMap<>();
+					String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"" + dto.getOperationDate() + "\"}";
+					List<Long> contractDetailIdList = orderDataList.stream().filter(o -> successIdList.contains(o.getContractIdTemp())).map(o -> o.getContractDetailId()).collect(Collectors.toList());
+
+					successMap.put("extendsParam", successExtendsParameter);
+					successMap.put("idList", contractDetailIdList);
+					dbUtil.execute("sql/updateExtendsParameter.sql", successMap);
+					// 事後処理（手配）
+					successIdList.stream().forEach(ContractId -> {
+						List<Long> arrangementWorkIdListAssign = new ArrayList<>();
+						List<Long> arrangementWorkIdListAccept = new ArrayList<>();
+						Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(ContractId, 0);
+						if (arrangement != null) {
+							List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
+							arrangementWorkList.stream().forEach(arrangementWork -> {
+								if (arrangementWork.getArrangementPicWorkerEmp() == null) {
+									arrangementWorkIdListAssign.add(arrangementWork.getId());
+								}
+								if (arrangementWork.getWorkflowStatus() == WorkflowStatus.受付待ち) {
+									arrangementWorkIdListAccept.add(arrangementWork.getId());
+								}
+							});
+						}
+						// 手配担当者登録APIを実行
+						try {
+							batchUtil.callAssignWorker(arrangementWorkIdListAssign);
+						} catch (Exception arrangementError) {
+							log.fatal(String.format("担当者登録に失敗しました。"));
+							arrangementError.printStackTrace();
+						}
+						// 手配業務受付APIを実行
+						try {
+							batchUtil.callAcceptWorkApi(arrangementWorkIdListAccept);
+						} catch (Exception arrangementError) {
+							log.fatal(String.format("ステータスの変更に失敗しました。"));
+							arrangementError.printStackTrace();
+						}
+					});
+				}
+				// 出力失敗
+				if (!failedIdList.isEmpty()) {
+					// 事後処理（拡張項目）
+					Map<String, Object> failedMap = new HashMap<>();
+					String failedExtendsParameter = "{\"orderCsvCreationStatus\":\"2\",\"orderCsvCreationDate\":\"\"}";
+					List<Long> contractDetailIdList = orderDataList.stream().filter(o -> failedIdList.contains(o.getContractIdTemp())).map(o -> o.getContractDetailId()).collect(Collectors.toList());
+
+					failedMap.put("extendsParam", failedExtendsParameter);
+					failedMap.put("idList", contractDetailIdList);
+					dbUtil.execute("sql/updateExtendsParameter.sql", failedMap);
+				}
 			}
 		}
 	}
