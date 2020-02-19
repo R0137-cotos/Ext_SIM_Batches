@@ -102,7 +102,7 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_CSVファイルを出力できること() throws IOException {
 		テストデータ作成("createOrderTestSuccessData.sql");
 		fileDeleate(outputPath + "result_initial.csv");
@@ -147,7 +147,7 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_CSVファイルを出力しないこと() throws IOException {
 		テストデータ作成("createOrderTestFailedData.sql");
 		fileDeleate(outputPath + "result_initial.csv");
@@ -185,7 +185,7 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 	
 	@Test
-	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_CSVファイルを出力しないこと_処理日が祝日() throws IOException {
 		テストデータ作成("createOrderTestSuccessData.sql");
 		fileDeleate(outputPath + "result_initial.csv");
@@ -217,7 +217,7 @@ public class CreateOrderCsvTests extends TestBase {
 		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
 		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
 
-		//fileDeleate(outputPath + "result_initial.csv");
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
@@ -230,7 +230,7 @@ public class CreateOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
+	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 既存ファイルに上書きできないこと() throws IOException {
 		テストデータ作成("createOrderTestSuccessData.sql");
 		fileDeleate(outputPath + "duplicate.csv");
