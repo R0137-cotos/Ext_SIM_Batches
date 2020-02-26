@@ -132,9 +132,9 @@ public class ExportCSV {
 					csvDto.setNuserPerson(csvDto.getNuserPerson().replaceAll(" ", "　"));
 
 					if (!CollectionUtils.isEmpty(extendsParameterList)) {
-						csvDto.setNinvPartNo(extendsParameterList.get(i).getLineNumber());
+						csvDto.setNhostName(extendsParameterList.get(i).getLineNumber());
 						csvDto.setNserialNo(extendsParameterList.get(i).getSerialNumber());
-						csvDto.setNnote(extendsParameterList.get(i).getDevice());
+						csvDto.setNconfigName(extendsParameterList.get(i).getDevice());
 					}
 					csvDto.setNpServiceNo(Integer.toString(npServiceNo));
 					npServiceNo++;
