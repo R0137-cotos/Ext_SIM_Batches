@@ -142,7 +142,7 @@ select
  null as nestablish_ss,
  null as nmaker_model_code,
  null as ninv_part_no,
- ce.equipment_no as nserial_no,
+ null as nserial_no,
  null as nhost_name,
  null as nconfig_name,
  null as nios_file_name,
