@@ -16,3 +16,5 @@ spring:
         default_schema: cotos_product
 cotos:
   authentication: https://api.cotos.ricoh.co.jp/auth/api/auth
+  arrangement:
+    url: https://api.cotos.ricoh.co.jp/arrangement/api
