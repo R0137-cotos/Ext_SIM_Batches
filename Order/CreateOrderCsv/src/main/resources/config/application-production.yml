@@ -17,4 +17,4 @@ spring:
 cotos:
   authentication: https://api.cotos.ricoh.co.jp/auth/api/auth
   arrangement:
-    url: https://dev-api.cotos.ricoh.co.jp/arrangement/api
+    url: https://api.cotos.ricoh.co.jp/arrangement/api
