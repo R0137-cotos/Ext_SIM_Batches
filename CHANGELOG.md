@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.0.10 (06/03/2020)
+- [**closed**] #5945 オーダーメール送信シェル修正 [#51](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/51)
+
+---
+
 ## v2.0.9 (03/03/2020)
 - [**closed**] #5373 [SIMベンダー]オーダーCSV作成 メール送信シェル追加 [#23](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/23)
 - [**closed**] 本番環境設定漏れ修正 [#49](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/49)
