@@ -37,7 +37,7 @@ public class JobComponent {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.fatal("SIMベンダーオーダーメール送信処理に失敗しました。");
+			log.fatal("デバイス空欄警告メール送信処理に失敗しました。");
 			System.exit(1);
 
 		} catch (Throwable e) {

@@ -1,25 +1,23 @@
 package jp.co.ricoh.cotos.component.base;
 
-import java.io.File;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Lists;
-
 import jp.co.ricoh.cotos.BatchConstants;
-import jp.co.ricoh.cotos.commonlib.entity.master.ProductGrpMaster;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.commonlib.repository.master.ProductGrpMasterRepository;
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
-import jp.co.ricoh.cotos.dto.SendOrderMailDto;
+import jp.co.ricoh.cotos.dto.SendDeviceBlankAlertMailDto;
 
 @Component("BASE")
 public class BatchStepComponent implements IBatchStepComponent {
@@ -37,39 +35,37 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 * @throws FileAlreadyExistsException 
 	 */
 	@Override
-	public final SendOrderMailDto paramCheck(String[] args) {
-		SendOrderMailDto dto = new SendOrderMailDto();
+	public final SendDeviceBlankAlertMailDto paramCheck(String[] args) {
+		SendDeviceBlankAlertMailDto dto = new SendDeviceBlankAlertMailDto();
 
+		String operationDate = null;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		// バッチパラメーターのチェックを実施
-		if (null == args || args.length != 4) {
+		if (null == args || args.length == 0) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(getSysdate());
+			calendar.add(Calendar.DAY_OF_MONTH, 14);
+			operationDate = sdf.format(calendar.getTime());
+		} else if (args.length > 1) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ParameterEmptyError", new String[] { BatchConstants.BATCH_PARAMETER_LIST_NAME }));
+		} else if (args.length == 1) {
+			operationDate = args[0];
+			try {
+				sdf.parse(operationDate);
+			} catch (ParseException pe) {
+				throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "IllegalFormatError", new String[] { "日付", "ｙｙｙMMｄｄ" }));
+			}
 		}
-
-		File csvFile = Paths.get(args[0], args[1]).toFile();
-		if (!csvFile.exists()) {
-			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileNotFoundError"));
-		}
-		long productGrpMasterId;
-		try {
-			productGrpMasterId = Long.parseLong(args[2]);
-		} catch (Exception e) {
-			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ArrangementInvalidParameterError", new String[] { "商品グループマスタID" }));
-		}
-
-		ProductGrpMaster productGrpMaster = productGrpMasterRepository.findOne(productGrpMasterId);
-		if (productGrpMaster == null) {
-			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "EntityCheckNotNullError", new String[] { "商品グループ情報" }));
-		}
-
-		List<String> mailAddressList = Lists.newArrayList(args[3].split(","));
-		if (args[3].isEmpty() || CollectionUtils.isEmpty(mailAddressList)) {
-			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ParameterEmptyError", new String[] { "メールアドレス" }));
-		}
-
-		dto.setCsvFile(csvFile.getAbsolutePath());
-		dto.setProductGrpMasterId(productGrpMasterId);
-		dto.setMailAddressList(mailAddressList);
+		dto.setDate(operationDate);
 		return dto;
+	}
+
+	/**
+	 * 日付取得
+	 * @return
+	 */
+	public Date getSysdate() {
+		return new Date();
 	}
 
 	/**
@@ -96,7 +92,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 	}
 
 	@Override
-	public void process(SendOrderMailDto dto) throws Exception {
+	public void process(SendDeviceBlankAlertMailDto dto) throws Exception {
 		// データ加工等の処理を実施
 	}
 

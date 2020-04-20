@@ -5,11 +5,11 @@ public class BatchConstants {
 	/**
 	 * バッチ名称
 	 */
-	public static final String BATCH_NAME = "SIMベンダーオーダーメール送信バッチ";
+	public static final String BATCH_NAME = "デバイス空欄警告メール送信バッチ";
 
 	/**
 	 * バッチパラメーター
 	 */
-	public static final String BATCH_PARAMETER_LIST_NAME = "連携ファイル配置先ディレクトリ/連携ファイル名/商品グループマスタID/宛先メールアドレス";
+	public static final String BATCH_PARAMETER_LIST_NAME = "日付";
 
 }

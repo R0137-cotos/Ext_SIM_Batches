@@ -3,7 +3,7 @@ package jp.co.ricoh.cotos.component;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 
-import jp.co.ricoh.cotos.dto.SendOrderMailDto;
+import jp.co.ricoh.cotos.dto.SendDeviceBlankAlertMailDto;
 
 public interface IBatchStepComponent {
 
@@ -13,7 +13,7 @@ public interface IBatchStepComponent {
 	 * @return
 	 * @throws FileAlreadyExistsException 
 	 */
-	public SendOrderMailDto paramCheck(String[] args);
+	public SendDeviceBlankAlertMailDto paramCheck(String[] args);
 
 	/**
 	 * 処理データ取得
@@ -40,7 +40,7 @@ public interface IBatchStepComponent {
 	 * @return
 	 * @throws Exception 
 	 */
-	public void process(SendOrderMailDto dto) throws Exception;
+	public void process(SendDeviceBlankAlertMailDto dto) throws Exception;
 
 	/**
 	 * 事後処理
