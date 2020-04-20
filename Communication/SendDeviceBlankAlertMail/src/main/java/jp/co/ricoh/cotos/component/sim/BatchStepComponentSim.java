@@ -36,7 +36,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		sqlParams.put("testdate", dto.getDate());
 		List<SearchMailTargetDto> serchMailTargetDtoList = dbUtil.loadFromSQLFile("sql/searchMailTargetList.sql", SearchMailTargetDto.class, sqlParams);
 		List<String> mailAddressList;
-		// 後は検索対象外のテストデータを作成するだけ★★★★★
 		try {
 			for (SearchMailTargetDto serchMailTargetDto : serchMailTargetDtoList) {
 				mailAddressList = new ArrayList<String>();
