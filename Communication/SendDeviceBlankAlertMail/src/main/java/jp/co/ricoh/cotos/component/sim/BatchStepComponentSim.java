@@ -1,9 +1,7 @@
 package jp.co.ricoh.cotos.component.sim;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.mail.MessagingException;
 
@@ -28,19 +26,11 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	CommonSendMail commonSendMail;
 
 	@Override
-	public void process(String serviceTermStart) throws Exception {
+	public void process(List<String> mailAddressList, SearchMailTargetDto serchMailTargetDto) throws Exception {
 		log.info("SIM独自処理");
 
-		Map<String, Object> sqlParams = new HashMap<String, Object>();
-		sqlParams.put("serviceTermStart", serviceTermStart);
-		List<SearchMailTargetDto> serchMailTargetDtoList = dbUtil.loadFromSQLFile("sql/searchMailTargetList.sql", SearchMailTargetDto.class, sqlParams);
-		List<String> mailAddressList;
 		try {
-			for (SearchMailTargetDto serchMailTargetDto : serchMailTargetDtoList) {
-				mailAddressList = new ArrayList<String>();
-				mailAddressList.add(serchMailTargetDto.getMailAddress());
-				commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), null);
-			}
+			commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), null);
 		} catch (MessagingException e) {
 			log.fatal("メール送信処理に失敗しました。");
 			throw new Exception(e);

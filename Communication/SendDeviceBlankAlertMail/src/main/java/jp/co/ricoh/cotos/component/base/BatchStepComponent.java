@@ -6,23 +6,30 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import jp.co.ricoh.cotos.BatchConstants;
+import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.commonlib.repository.master.ProductGrpMasterRepository;
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
+import jp.co.ricoh.cotos.dto.SearchMailTargetDto;
 
 @Component("BASE")
 public class BatchStepComponent implements IBatchStepComponent {
 
 	@Autowired
 	CheckUtil checkUtil;
+
+	@Autowired
+	DBUtil dbUtil;
 
 	@Autowired
 	ProductGrpMasterRepository productGrpMasterRepository;
@@ -74,9 +81,11 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 * @return 処理データリスト
 	 */
 	@Override
-	public final List<String> getDataList(String searchParam) {
-		// ファイル読み込み、SQL等で処理データリストを取得
-		return null;
+	public final List<SearchMailTargetDto> getDataList(String serviceTermStart) {
+		Map<String, Object> sqlParams = new HashMap<String, Object>();
+		sqlParams.put("serviceTermStart", serviceTermStart);
+		List<SearchMailTargetDto> serchMailTargetDtoList = dbUtil.loadFromSQLFile("sql/searchMailTargetList.sql", SearchMailTargetDto.class, sqlParams);
+		return serchMailTargetDtoList;
 	}
 
 	@Override
@@ -91,7 +100,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 	}
 
 	@Override
-	public void process(String serviceTermStart) throws Exception {
+	public void process(List<String> mailAddressList, SearchMailTargetDto serchMailTargetDto) throws Exception {
 		// データ加工等の処理を実施
 	}
 

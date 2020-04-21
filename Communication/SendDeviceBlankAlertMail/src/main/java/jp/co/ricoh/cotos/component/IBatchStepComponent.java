@@ -3,6 +3,8 @@ package jp.co.ricoh.cotos.component;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 
+import jp.co.ricoh.cotos.dto.SearchMailTargetDto;
+
 public interface IBatchStepComponent {
 
 	/**
@@ -19,7 +21,7 @@ public interface IBatchStepComponent {
 	 * @param searchParam 処理データ取得用パラメーター
 	 * @return 処理データリスト
 	 */
-	public List<String> getDataList(String searchParam);
+	public List<SearchMailTargetDto> getDataList(String searchParam);
 
 	/**
 	 * データチェック処理
@@ -38,7 +40,7 @@ public interface IBatchStepComponent {
 	 * @return
 	 * @throws Exception 
 	 */
-	public void process(String serviceTermStart) throws Exception;
+	public void process(List<String> mailAddressList, SearchMailTargetDto serchMailTargetDto) throws Exception;
 
 	/**
 	 * 事後処理

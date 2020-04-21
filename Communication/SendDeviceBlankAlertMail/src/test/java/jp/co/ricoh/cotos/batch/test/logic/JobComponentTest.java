@@ -1,4 +1,4 @@
-package jp.co.ricoh.cotos.batch.test;
+package jp.co.ricoh.cotos.batch.test.logic;
 
 import java.util.Calendar;
 
@@ -20,7 +20,7 @@ import jp.co.ricoh.cotos.logic.JobComponent;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SendDeviceBlankAlertMailTests extends TestBase {
+public class JobComponentTest extends TestBase {
 
 	static ConfigurableApplicationContext context;
 

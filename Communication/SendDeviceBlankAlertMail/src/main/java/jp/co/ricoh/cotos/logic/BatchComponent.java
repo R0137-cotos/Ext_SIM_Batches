@@ -1,5 +1,8 @@
 package jp.co.ricoh.cotos.logic;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -7,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
+import jp.co.ricoh.cotos.dto.SearchMailTargetDto;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -29,7 +33,15 @@ public class BatchComponent {
 		String serviceTermStart = baseComponent.paramCheck(args);
 
 		IBatchStepComponent component = this.getComponentInstance("SIM");
-		component.process(serviceTermStart);
+
+		List<SearchMailTargetDto> serchMailTargetDtoList = baseComponent.getDataList(serviceTermStart);
+
+		List<String> mailAddressList;
+		for (SearchMailTargetDto serchMailTargetDto : serchMailTargetDtoList) {
+			mailAddressList = new ArrayList<String>();
+			mailAddressList.add(serchMailTargetDto.getMailAddress());
+			component.process(mailAddressList, serchMailTargetDto);
+		}
 	}
 
 	/**
