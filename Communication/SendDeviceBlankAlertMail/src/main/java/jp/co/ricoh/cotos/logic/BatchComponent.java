@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
-import jp.co.ricoh.cotos.dto.SendDeviceBlankAlertMailDto;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -27,10 +26,10 @@ public class BatchComponent {
 	 */
 	public void execute(String[] args) throws Exception {
 		// パラメータチェック
-		SendDeviceBlankAlertMailDto dto = baseComponent.paramCheck(args);
+		String serviceTermStart = baseComponent.paramCheck(args);
 
 		IBatchStepComponent component = this.getComponentInstance("SIM");
-		component.process(dto);
+		component.process(serviceTermStart);
 	}
 
 	/**

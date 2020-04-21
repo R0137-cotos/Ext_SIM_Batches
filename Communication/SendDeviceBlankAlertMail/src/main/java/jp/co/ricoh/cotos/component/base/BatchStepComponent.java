@@ -17,7 +17,6 @@ import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.commonlib.repository.master.ProductGrpMasterRepository;
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
-import jp.co.ricoh.cotos.dto.SendDeviceBlankAlertMailDto;
 
 @Component("BASE")
 public class BatchStepComponent implements IBatchStepComponent {
@@ -35,8 +34,8 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 * @throws FileAlreadyExistsException 
 	 */
 	@Override
-	public final SendDeviceBlankAlertMailDto paramCheck(String[] args) {
-		SendDeviceBlankAlertMailDto dto = new SendDeviceBlankAlertMailDto();
+	public final String paramCheck(String[] args) {
+		String serviceTermStart;
 
 		String operationDate = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -56,8 +55,8 @@ public class BatchStepComponent implements IBatchStepComponent {
 				throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "IllegalFormatError", new String[] { "日付", "ｙｙｙMMｄｄ" }));
 			}
 		}
-		dto.setDate(operationDate);
-		return dto;
+		serviceTermStart = operationDate;
+		return serviceTermStart;
 	}
 
 	/**
@@ -92,7 +91,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 	}
 
 	@Override
-	public void process(SendDeviceBlankAlertMailDto dto) throws Exception {
+	public void process(String serviceTermStart) throws Exception {
 		// データ加工等の処理を実施
 	}
 

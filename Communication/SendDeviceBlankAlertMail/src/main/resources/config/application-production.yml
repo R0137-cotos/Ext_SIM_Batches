@@ -14,5 +14,9 @@ spring:
         use_sql_comments: true
         format_sql: true
         default_schema: cotos_product
+  # メール設定
+  mail:
+    host: 225.smtp1.ty1.rwan.unics.ricoh.com
+    port: 25
 cotos:
   authentication: https://api.cotos.ricoh.co.jp/auth/api/auth

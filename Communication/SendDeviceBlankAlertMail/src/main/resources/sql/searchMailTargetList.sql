@@ -9,5 +9,5 @@ LEFT OUTER JOIN product_master pm
 LEFT OUTER JOIN contract_pic_sa_emp cpse
              ON co.id = cpse.contract_id
 WHERE pm.product_class_div = 'SIM'
-  AND co.service_term_start >= :testdate
+  AND co.service_term_start >= :serviceTermStart
   AND JSON_EXISTS(JSON_QUERY(PC.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), '$?(@.device == null)' )

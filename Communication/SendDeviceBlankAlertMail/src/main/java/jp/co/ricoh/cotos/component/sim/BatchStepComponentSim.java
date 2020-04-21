@@ -15,7 +15,6 @@ import jp.co.ricoh.cotos.commonlib.entity.EnumType.ServiceCategory;
 import jp.co.ricoh.cotos.commonlib.logic.mail.CommonSendMail;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.SearchMailTargetDto;
-import jp.co.ricoh.cotos.dto.SendDeviceBlankAlertMailDto;
 import lombok.extern.log4j.Log4j;
 
 @Component("SIM")
@@ -29,11 +28,11 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	CommonSendMail commonSendMail;
 
 	@Override
-	public void process(SendDeviceBlankAlertMailDto dto) throws Exception {
+	public void process(String serviceTermStart) throws Exception {
 		log.info("SIM独自処理");
 
 		Map<String, Object> sqlParams = new HashMap<String, Object>();
-		sqlParams.put("testdate", dto.getDate());
+		sqlParams.put("serviceTermStart", serviceTermStart);
 		List<SearchMailTargetDto> serchMailTargetDtoList = dbUtil.loadFromSQLFile("sql/searchMailTargetList.sql", SearchMailTargetDto.class, sqlParams);
 		List<String> mailAddressList;
 		try {
