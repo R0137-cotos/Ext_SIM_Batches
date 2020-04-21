@@ -99,6 +99,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			if (0 == orderDataList.size()) {
 				log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "オーダーCSV作成" }).getMsg());
 			} else {
+				// この辺で新規、容量変更、有償交換を分岐する？引数の種別で判断するようにする
 				List<FindCreateOrderCsvDataDto> findOrderDataList = new ArrayList<>();
 				Map<String, List<CreateOrderCsvDataDto>> contractNumberGroupingMap = orderDataList.stream().collect(Collectors.groupingBy(order -> order.getContractNumber(), Collectors.mapping(order -> order, Collectors.toList())));
 
