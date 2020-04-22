@@ -40,3 +40,5 @@ export BATCH_PG_BTCOSI004=AccountingCreateSimRunning-0.0.1-SNAPSHOT.jar
 # BTCOSI005 [RUCCS]IFSその他機器情報CSV作成
 export BATCH_PG_BTCOSI005=CreateCsvIFS-0.0.1-SNAPSHOT.jar
 
+# BTCOSI009 デバイス空欄警告メール送信
+export BATCH_PG_BTCOSI009=SendDeviceBlankAlertMail-0.0.1-SNAPSHOT.jar
