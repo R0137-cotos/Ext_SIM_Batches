@@ -40,7 +40,7 @@ public interface IBatchStepComponent {
 	 * @return
 	 * @throws Exception 
 	 */
-	public void process(List<String> mailAddressList, SearchMailTargetDto serchMailTargetDto) throws Exception;
+	public void process(SearchMailTargetDto serchMailTargetDto) throws Exception;
 
 	/**
 	 * 事後処理

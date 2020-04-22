@@ -27,20 +27,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Autowired
 	CommonSendMail commonSendMail;
 
-	@Override
-	public void process(List<String> mailAddressList, SearchMailTargetDto serchMailTargetDto) throws Exception {
-		log.info("SIM独自処理");
-
-		mailAddressList = new ArrayList<String>();
-		mailAddressList.add(serchMailTargetDto.getMailAddress());
-		try {
-			commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), null);
-		} catch (MessagingException e) {
-			log.fatal("メール送信処理に失敗しました。");
-			throw new Exception(e);
-		}
-	}
-
 	/**
 	 * 処理データ取得
 	 * @param searchParam 処理データ取得用パラメーター
@@ -52,5 +38,19 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		sqlParams.put("serviceTermStart", serviceTermStart);
 		List<SearchMailTargetDto> serchMailTargetDtoList = dbUtil.loadFromSQLFile("sql/searchMailTargetList.sql", SearchMailTargetDto.class, sqlParams);
 		return serchMailTargetDtoList;
+	}
+
+	@Override
+	public void process(SearchMailTargetDto serchMailTargetDto) throws Exception {
+		log.info("SIM独自処理");
+
+		List<String> mailAddressList = new ArrayList<String>();
+		mailAddressList.add(serchMailTargetDto.getMailAddress());
+		try {
+			commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), null);
+		} catch (MessagingException e) {
+			log.fatal("メール送信処理に失敗しました。");
+			throw new Exception(e);
+		}
 	}
 }

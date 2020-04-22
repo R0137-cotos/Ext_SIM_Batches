@@ -10,6 +10,6 @@ public class BatchConstants {
 	/**
 	 * バッチパラメーター
 	 */
-	public static final String BATCH_PARAMETER_LIST_NAME = "日付";
+	public static final String BATCH_PARAMETER_LIST_NAME = "サービス開始日";
 
 }

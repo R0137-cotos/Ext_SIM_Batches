@@ -1,7 +1,6 @@
 package jp.co.ricoh.cotos.batch.test.component;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -62,7 +61,7 @@ public class BatchStepComponentTest extends TestBase {
 			List<ErrorInfo> messageInfo = e.getErrorInfoList();
 			Assert.assertEquals(1, messageInfo.size());
 			Assert.assertEquals(messageInfo.get(0).getErrorId(), "ROT00001");
-			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "パラメータ「日付」が設定されていません。");
+			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "パラメータ「サービス開始日」が設定されていません。");
 		}
 	}
 
@@ -114,14 +113,12 @@ public class BatchStepComponentTest extends TestBase {
 
 	@Test
 	public void 正常系_メール送信テスト() throws IOException {
-		List<String> mailAddressList = new ArrayList<String>();
 		SearchMailTargetDto serchMailTargetDto = new SearchMailTargetDto();
 		serchMailTargetDto.setSeqNo(1L);
 		serchMailTargetDto.setProductGrpMasterId(300L);
 		serchMailTargetDto.setMailAddress("test@example.com");
-		mailAddressList.add(serchMailTargetDto.getMailAddress());
 		try {
-			batchStepComponent.process(mailAddressList, serchMailTargetDto);
+			batchStepComponent.process(serchMailTargetDto);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

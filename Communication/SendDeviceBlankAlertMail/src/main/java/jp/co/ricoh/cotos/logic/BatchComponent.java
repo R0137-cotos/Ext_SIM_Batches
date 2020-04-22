@@ -35,11 +35,9 @@ public class BatchComponent {
 
 		List<SearchMailTargetDto> serchMailTargetDtoList = component.getDataList(serviceTermStart);
 
-		List<String> mailAddressList = null;
-
 		serchMailTargetDtoList.forEach(serchMailTargetDto -> {
 			try {
-				component.process(mailAddressList, serchMailTargetDto);
+				component.process(serchMailTargetDto);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
