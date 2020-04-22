@@ -63,7 +63,7 @@ public class JobComponentTest extends TestBase {
 	public void 異常系_JOB_パラメーター数不一致() {
 		try {
 			jobComponent.run(new String[] { "dummy", "dummy" });
-			Assert.fail("パラメータがないのに処理が実行された。");
+			Assert.fail("パラメータ数不一致なのに処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ステータス", 1, e.getStatus());
 		}

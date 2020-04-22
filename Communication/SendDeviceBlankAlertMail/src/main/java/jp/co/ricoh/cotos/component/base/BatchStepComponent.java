@@ -6,9 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -81,11 +79,8 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 * @return 処理データリスト
 	 */
 	@Override
-	public final List<SearchMailTargetDto> getDataList(String serviceTermStart) {
-		Map<String, Object> sqlParams = new HashMap<String, Object>();
-		sqlParams.put("serviceTermStart", serviceTermStart);
-		List<SearchMailTargetDto> serchMailTargetDtoList = dbUtil.loadFromSQLFile("sql/searchMailTargetList.sql", SearchMailTargetDto.class, sqlParams);
-		return serchMailTargetDtoList;
+	public List<SearchMailTargetDto> getDataList(String serviceTermStart) {
+		return null;
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package jp.co.ricoh.cotos.logic;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +33,17 @@ public class BatchComponent {
 
 		IBatchStepComponent component = this.getComponentInstance("SIM");
 
-		List<SearchMailTargetDto> serchMailTargetDtoList = baseComponent.getDataList(serviceTermStart);
+		List<SearchMailTargetDto> serchMailTargetDtoList = component.getDataList(serviceTermStart);
 
-		List<String> mailAddressList;
-		for (SearchMailTargetDto serchMailTargetDto : serchMailTargetDtoList) {
-			mailAddressList = new ArrayList<String>();
-			mailAddressList.add(serchMailTargetDto.getMailAddress());
-			component.process(mailAddressList, serchMailTargetDto);
-		}
+		List<String> mailAddressList = null;
+
+		serchMailTargetDtoList.forEach(serchMailTargetDto -> {
+			try {
+				component.process(mailAddressList, serchMailTargetDto);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	/**

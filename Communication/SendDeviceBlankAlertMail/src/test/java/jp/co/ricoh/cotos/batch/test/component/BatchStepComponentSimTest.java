@@ -25,14 +25,14 @@ import jp.co.ricoh.cotos.logic.JobComponent;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class BatchComponentTest extends TestBase {
+public class BatchStepComponentSimTest extends TestBase {
 
 	static ConfigurableApplicationContext context;
 
 	@Autowired
 	JobComponent jobComponent;
 
-	@SpyBean(name = "BASE")
+	@SpyBean(name = "SIM")
 	BatchStepComponent batchStepComponent;
 
 	@Autowired
