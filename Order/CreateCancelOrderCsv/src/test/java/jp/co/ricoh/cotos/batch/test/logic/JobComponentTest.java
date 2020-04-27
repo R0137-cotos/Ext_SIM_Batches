@@ -1,6 +1,5 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -44,20 +43,6 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 正常系() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderSuccessTestData.sql");
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-		// 一時ファイル名
-		String tmpFileName = "temp.csv";
-
-		// 出力ファイルが存在する場合は削除する
-		File csvFile = Paths.get(filePath, fileName).toFile();
-		Files.deleteIfExists(csvFile.toPath());
-
-		//　一時ファイルが存在する場合は削除する
-		File tmpFile = Paths.get(filePath, tmpFileName).toFile();
-		Files.deleteIfExists(tmpFile.toPath());
 
 		// 2019年6月の非営業日は以下を想定
 		// 2019/06/01 
@@ -93,14 +78,6 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 正常系_処理対象データ無し() throws IOException {
 		// データ投入を行わない
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-
-		// ファイルが存在する場合は削除する
-		File csvFile = Paths.get(filePath, fileName).toFile();
-		Files.deleteIfExists(csvFile.toPath());
 
 		// 2019年6月の非営業日は以下を想定
 		// 2019/06/01 
@@ -128,14 +105,6 @@ public class JobComponentTest extends TestBase {
 	public void 正常系_処理対象データ無し_processでデータ無し判定() throws IOException {
 		// 解約オーダーリストの取得には成功するが、processメソッド処理(解約手配CSV作成処理)で出力データ無しと判定されるケース
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderNoTargetTestData.sql");
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-
-		// ファイルが存在する場合は削除する
-		File csvFile = Paths.get(filePath, fileName).toFile();
-		Files.deleteIfExists(csvFile.toPath());
 
 		// 2019年6月の非営業日は以下を想定
 		// 2019/06/01 
@@ -179,7 +148,7 @@ public class JobComponentTest extends TestBase {
 
 		// 処理不要日付　営業日 月末営業日-2日以降 2019/06/27
 		try {
-			jobComponent.run(new String[] { "20190627", "output", "test.csv" });
+			jobComponent.run(new String[] { "20190627", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
@@ -187,7 +156,7 @@ public class JobComponentTest extends TestBase {
 
 		// 処理不要日付　営業日 月末営業日-2日以前 2019/06/25
 		try {
-			jobComponent.run(new String[] { "20190625", "output", "test.csv" });
+			jobComponent.run(new String[] { "20190625", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
@@ -195,7 +164,7 @@ public class JobComponentTest extends TestBase {
 
 		// 処理不要日付　非営業日 月末営業日-2日以降 2019/06/29
 		try {
-			jobComponent.run(new String[] { "20190629", "output", "test.csv" });
+			jobComponent.run(new String[] { "20190629", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
@@ -203,7 +172,7 @@ public class JobComponentTest extends TestBase {
 
 		// 処理不要日付　非営業日 月末営業日-2日以前 2019/06/23
 		try {
-			jobComponent.run(new String[] { "20190623", "output", "test.csv" });
+			jobComponent.run(new String[] { "20190623", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
@@ -213,14 +182,6 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 異常系_拡張項目繰返がJSON形式でない_全解約分() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonParseErrorTestData1.sql");
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-
-		// ファイルが存在する場合は削除する
-		File csvFile = Paths.get(filePath, fileName).toFile();
-		Files.deleteIfExists(csvFile.toPath());
 
 		// 2019年6月の非営業日は以下を想定
 		// 2019/06/01 
@@ -247,14 +208,6 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 異常系_拡張項目繰返がJSON形式でない_数量減分() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonParseErrorTestData2.sql");
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-
-		// ファイルが存在する場合は削除する
-		File csvFile = Paths.get(filePath, fileName).toFile();
-		Files.deleteIfExists(csvFile.toPath());
 
 		// 2019年6月の非営業日は以下を想定
 		// 2019/06/01 
@@ -281,14 +234,6 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 異常系_拡張項目繰返でJSONマッピングエラー_全解約分() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonMappingErrorTestData1.sql");
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-
-		// ファイルが存在する場合は削除する
-		File csvFile = Paths.get(filePath, fileName).toFile();
-		Files.deleteIfExists(csvFile.toPath());
 
 		// 2019年6月の非営業日は以下を想定
 		// 2019/06/01 
@@ -315,14 +260,6 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 異常系_拡張項目繰返でJSONマッピングエラー_数量減分() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonMappingErrorTestData2.sql");
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-
-		// ファイルが存在する場合は削除する
-		File csvFile = Paths.get(filePath, fileName).toFile();
-		Files.deleteIfExists(csvFile.toPath());
 
 		// 2019年6月の非営業日は以下を想定
 		// 2019/06/01 
@@ -366,7 +303,7 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			// パラメータ2つ
-			jobComponent.run(new String[] { "20190626", "output" });
+			jobComponent.run(new String[] { "20190626", filePath });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -374,7 +311,7 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			// パラメータ4つ
-			jobComponent.run(new String[] { "20190626", "output", "test.csv", "dummy" });
+			jobComponent.run(new String[] { "20190626", filePath, fileName, "dummy" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -384,7 +321,7 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 異常系_JOB_日付変換失敗() {
 		try {
-			jobComponent.run(new String[] { "2019/06/26", "output", "test.csv" });
+			jobComponent.run(new String[] { "2019/06/26", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -393,13 +330,7 @@ public class JobComponentTest extends TestBase {
 
 	@Test
 	public void 異常系_JOB_ファイルが既に存在() throws IOException {
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-
 		// ファイルを事前に作成する
-		File csvFile = Paths.get(filePath, fileName).toFile();
 		if (!csvFile.exists()) {
 			csvFile.createNewFile();
 		}
@@ -414,25 +345,13 @@ public class JobComponentTest extends TestBase {
 
 	@Test
 	public void 異常系_JOB_一時ファイルが既に存在() throws IOException {
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-		// 一時ファイル名
-		String tmpFileName = "temp.csv";
-
-		// 出力ファイルが存在する場合は削除する
-		File csvFile = Paths.get(filePath, fileName).toFile();
-		Files.deleteIfExists(csvFile.toPath());
-
 		// 一時ファイルを事前に作成する
-		File tmpFile = Paths.get(filePath, tmpFileName).toFile();
 		if (!tmpFile.exists()) {
 			tmpFile.createNewFile();
 		}
 
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, "test.csv" });
+			jobComponent.run(new String[] { "20190626", filePath, fileName });
 			Assert.fail("ファイルが存在する状態で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -446,8 +365,6 @@ public class JobComponentTest extends TestBase {
 	public void 異常系_JOB_ディレクトリが存在しない() throws IOException {
 		// 出力ファイルパス　※テスト環境に存在しないこと
 		String filePath = "hoge12345678999";
-		// 出力ファイル名
-		String fileName = "test.csv";
 
 		try {
 			jobComponent.run(new String[] { "20190626", filePath, fileName });

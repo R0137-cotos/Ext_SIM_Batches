@@ -1,6 +1,5 @@
 package jp.co.ricoh.cotos.batch.test.component;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -51,14 +50,13 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void パラメータチェック_正常系() throws FileAlreadyExistsException {
+	public void パラメータチェック_正常系() throws IOException {
 		try {
-			batchStepComponent.paramCheck(new String[] { "20190626", "output", "test.csv" });
+			batchStepComponent.paramCheck(new String[] { "20190626", filePath, fileName });
 		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
 	}
-
 
 	@Test
 	public void パラメータチェック_異常系_パラメータ数不一致() throws Exception {
@@ -127,13 +125,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void パラメータチェック_異常系_ファイルが既に存在() throws Exception {
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-
 		// ファイルを事前に作成する
-		File csvFile = Paths.get(filePath, fileName).toFile();
 		if (!csvFile.exists()) {
 			csvFile.createNewFile();
 		}
@@ -149,19 +141,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void パラメータチェック_異常系_一時ファイルが既に存在() throws Exception {
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-		// 一時ファイル名
-		String tmpFileName = "temp.csv";
-
-		// 出力ファイルが存在する場合は削除する
-		File csvFile = Paths.get(filePath, fileName).toFile();
-		Files.deleteIfExists(csvFile.toPath());
-
 		// 一時ファイルを事前に作成する
-		File tmpFile = Paths.get(filePath, tmpFileName).toFile();
 		if (!tmpFile.exists()) {
 			tmpFile.createNewFile();
 		}
@@ -182,8 +162,6 @@ public class BatchStepComponentSimTest extends TestBase {
 	public void パラメータチェック_異常系_ディレクトリが存在しない() throws Exception {
 		// 出力ファイルパス　※テスト環境に存在しないこと
 		String filePath = "hoge12345678999";
-		// 出力ファイル名
-		String fileName = "test.csv";
 
 		try {
 			batchStepComponent.paramCheck(new String[] { "20190626", filePath, fileName });
@@ -228,20 +206,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	public void 解約手配CSV作成処理_正常系() throws IOException {
 		// テストデータ作成
 		CreateOrderCsvParameter param = new CreateOrderCsvParameter();
-		String filePath = "output";
-		String fileName = "test.csv";
-		// 出力ファイル
-		File csvFile = Paths.get(filePath, "test.csv").toFile();
-		// 既にファイルが存在する場合は削除
-		Files.deleteIfExists(csvFile.toPath());
-		// 一時ファイル
-		File tmpFile = Paths.get(filePath, "temp.csv").toFile();
-		// 既にファイルが存在する場合は削除
-		Files.deleteIfExists(tmpFile.toPath());
-		// フォルダが存在しない場合は作成
-		if (csvFile.getParentFile().exists()) {
-			csvFile.getParentFile().mkdir();
-		}
+
 		// パラメータセット
 		param.setCsvFile(csvFile);
 		param.setTmpFile(tmpFile);

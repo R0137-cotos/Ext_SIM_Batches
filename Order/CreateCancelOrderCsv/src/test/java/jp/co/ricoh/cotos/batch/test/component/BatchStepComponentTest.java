@@ -1,9 +1,8 @@
 package jp.co.ricoh.cotos.batch.test.component;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -46,9 +45,9 @@ public class BatchStepComponentTest extends TestBase {
 	}
 
 	@Test
-	public void パラメータチェック_正常系() throws FileAlreadyExistsException {
+	public void パラメータチェック_正常系() throws IOException {
 		try {
-			batchStepComponent.paramCheck(new String[] { "20190626", "output", "test.csv" });
+			batchStepComponent.paramCheck(new String[] { "20190626", filePath, fileName });
 		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
@@ -122,13 +121,7 @@ public class BatchStepComponentTest extends TestBase {
 
 	@Test
 	public void パラメータチェック_異常系_ファイルが既に存在() throws Exception {
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-
-		// ファイルを事前に作成する
-		File csvFile = Paths.get(filePath, fileName).toFile();
+		// 出力ファイルを事前に作成する
 		if (!csvFile.exists()) {
 			csvFile.createNewFile();
 		}
@@ -144,19 +137,7 @@ public class BatchStepComponentTest extends TestBase {
 
 	@Test
 	public void パラメータチェック_異常系_一時ファイルが既に存在() throws Exception {
-		// 出力ファイルパス
-		String filePath = "output";
-		// 出力ファイル名
-		String fileName = "test.csv";
-		// 一時ファイル名
-		String tmpFileName = "temp.csv";
-
-		// 出力ファイルが存在する場合は削除する
-		File csvFile = Paths.get(filePath, fileName).toFile();
-		Files.deleteIfExists(csvFile.toPath());
-
 		// 一時ファイルを事前に作成する
-		File tmpFile = Paths.get(filePath, tmpFileName).toFile();
 		if (!tmpFile.exists()) {
 			tmpFile.createNewFile();
 		}
@@ -177,8 +158,6 @@ public class BatchStepComponentTest extends TestBase {
 	public void パラメータチェック_異常系_ディレクトリが存在しない() throws Exception {
 		// 出力ファイルパス　※テスト環境に存在しないこと
 		String filePath = "hoge12345678999";
-		// 出力ファイル名
-		String fileName = "test.csv";
 
 		try {
 			batchStepComponent.paramCheck(new String[] { "20190626", filePath, fileName });
