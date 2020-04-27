@@ -139,11 +139,13 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 正常系_パラメーターチェックテスト() {
+		fileDeleate(outputPath + "result_initial.csv");
 		try {
 			batchStepComponent.paramCheck(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
 			Assert.fail("エラー");
 		}
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
@@ -162,6 +164,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 正常系_データ取得_取得無し() throws IOException {
+		fileDeleate(outputPath + "result_initial.csv");
 		String contractType = "'$?(@.contractType == \"新規\")'";
 		try {
 			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
@@ -169,6 +172,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test

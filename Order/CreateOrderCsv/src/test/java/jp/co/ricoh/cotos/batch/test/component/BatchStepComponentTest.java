@@ -75,6 +75,7 @@ public class BatchStepComponentTest extends TestBase {
 
 	@Test
 	public void 異常系_パラメータチェックテスト_パラメーター数不一致() throws Exception {
+		fileDeleate(outputPath + "result_initial.csv");
 		try {
 			batchStepComponent.paramCheck(new String[] { "dummy", "dummy" });
 			Assert.fail("正常終了");
@@ -85,10 +86,12 @@ public class BatchStepComponentTest extends TestBase {
 			Assert.assertEquals(messageInfo.get(0).getErrorId(), "ROT00001");
 			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "パラメータ「処理年月日/ディレクトリ名/ファイル名/種別」が設定されていません。");
 		}
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
 	public void 異常系_パラメータチェックテスト_業務日付不正() throws Exception {
+		fileDeleate(outputPath + "result_initial.csv");
 		try {
 			batchStepComponent.paramCheck(new String[] { "dummy", outputPath, "result_initial.csv", "1" });
 			Assert.fail("正常終了");
@@ -99,10 +102,12 @@ public class BatchStepComponentTest extends TestBase {
 			Assert.assertEquals(messageInfo.get(0).getErrorId(), "RBA00001");
 			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "業務日付のフォーマットはyyyyMMddです。");
 		}
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
 	public void 異常系_パラメータチェックテスト_パス不正() throws Exception {
+		fileDeleate(outputPath + "result_initial.csv");
 		try {
 			batchStepComponent.paramCheck(new String[] { "20191018", "dummy", "result_initial.csv", "1" });
 			Assert.fail("正常終了");
@@ -113,10 +118,12 @@ public class BatchStepComponentTest extends TestBase {
 			Assert.assertEquals(messageInfo.get(0).getErrorId(), "ROT00110");
 			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "指定されたディレクトリが存在しません。");
 		}
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
 	public void 異常系_パラメータチェックテスト_種別不正() throws Exception {
+		fileDeleate(outputPath + "result_initial.csv");
 		try {
 			batchStepComponent.paramCheck(new String[] { "20191018", outputPath, "result_initial.csv", "dummy" });
 			Assert.fail("正常終了");
@@ -127,19 +134,23 @@ public class BatchStepComponentTest extends TestBase {
 			Assert.assertEquals(messageInfo.get(0).getErrorId(), "ROT00003");
 			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "種別が特定できません。");
 		}
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
 	public void 正常系_パラメーターチェックテスト() {
+		fileDeleate(outputPath + "result_initial.csv");
 		try {
 			batchStepComponent.paramCheck(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
 			Assert.fail("エラー");
 		}
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
 	public void 正常系_データ取得テスト() throws IOException {
+		fileDeleate(outputPath + "result_initial.csv");
 		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
 		String contractType = "'$?(@.contractType == \"新規\")'";
 		try {
@@ -148,10 +159,12 @@ public class BatchStepComponentTest extends TestBase {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
 	public void 正常系_データ取得_取得無し() throws IOException {
+		fileDeleate(outputPath + "result_initial.csv");
 		String contractType = "'$?(@.contractType == \"新規\")'";
 		try {
 			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
@@ -159,6 +172,7 @@ public class BatchStepComponentTest extends TestBase {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
