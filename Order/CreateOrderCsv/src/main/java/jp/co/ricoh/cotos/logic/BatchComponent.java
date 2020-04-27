@@ -37,7 +37,15 @@ public class BatchComponent {
 		CreateOrderCsvDto dto = baseComponent.paramCheck(args);
 
 		IBatchStepComponent component = this.getComponentInstance("SIM");
-		List<CreateOrderCsvDataDto> orderDataList = component.getDataList();
+		String contractType = null;
+		if ("1".equals(dto.getType())) {
+			contractType = "'$?(@.contractType == \"新規\")'";
+		} else if ("2".equals(dto.getType())) {
+			contractType = "'$?(@.contractType == \"容量変更\")'";
+		} else if ("3".equals(dto.getType())) {
+			contractType = "'$?(@.contractType == \"有償交換\")'";
+		}
+		List<CreateOrderCsvDataDto> orderDataList = component.getDataList(contractType);
 		component.process(dto, orderDataList);
 	}
 

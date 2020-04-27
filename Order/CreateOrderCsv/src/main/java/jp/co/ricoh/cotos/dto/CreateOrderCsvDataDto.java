@@ -103,4 +103,9 @@ public class CreateOrderCsvDataDto {
 	 * 契約明細ID
 	 */
 	private Long contractDetailId;
+
+	/**
+	 * 更新日時
+	 */
+	private Date updatedAt;
 }

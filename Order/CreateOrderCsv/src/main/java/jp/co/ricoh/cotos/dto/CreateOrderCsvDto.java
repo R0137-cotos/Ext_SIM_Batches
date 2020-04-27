@@ -21,4 +21,9 @@ public class CreateOrderCsvDto {
 	 * 処理日
 	 */
 	private String operationDate;
+
+	/**
+	 * 種別
+	 */
+	private String type;
 }
