@@ -1,9 +1,10 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -11,21 +12,29 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
-import jp.co.ricoh.cotos.logic.JobComponent;
+import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
+import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
+import jp.co.ricoh.cotos.component.base.BatchStepComponent;
+import jp.co.ricoh.cotos.logic.BatchComponent;
+import jp.co.ricoh.cotos.util.OperationDateException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class JobComponentTest extends TestBase {
+public class BatchComponentTest extends TestBase {
 
 	static ConfigurableApplicationContext context;
 
+	@SpyBean(name = "BASE")
+	BatchStepComponent batchStepComponent;
+
 	@Autowired
-	JobComponent jobComponent;
+	BatchComponent batchComponent;
 
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
@@ -42,7 +51,7 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系() throws IOException {
+	public void 正常系() throws Exception {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderSuccessTestData.sql");
 		// 出力ファイルパス
 		String filePath = "output";
@@ -74,8 +83,8 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
-		} catch (ExitException e) {
+			batchComponent.execute(new String[] { "20190626", "output", "test.csv" });
+		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
 
@@ -91,7 +100,7 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_処理対象データ無し() throws IOException {
+	public void 正常系_処理対象データ無し() throws Exception {
 		// データ投入を行わない
 		// 出力ファイルパス
 		String filePath = "output";
@@ -117,15 +126,15 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
-		} catch (ExitException e) {
+			batchComponent.execute(new String[] { "20190626", "output", "test.csv" });
+		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
 		Assert.assertFalse("解約手配CSVが出力されていないこと。", csvFile.exists());
 	}
 
 	@Test
-	public void 正常系_処理対象データ無し_processでデータ無し判定() throws IOException {
+	public void 正常系_処理対象データ無し_processでデータ無し判定() throws Exception {
 		// 解約オーダーリストの取得には成功するが、processメソッド処理(解約手配CSV作成処理)で出力データ無しと判定されるケース
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderNoTargetTestData.sql");
 		// 出力ファイルパス
@@ -152,8 +161,8 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
-		} catch (ExitException e) {
+			batchComponent.execute(new String[] { "20190626", "output", "test.csv" });
+		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
 
@@ -161,7 +170,7 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
-	public void 異常系_JOB_月末営業日マイナス2営業日以外() {
+	public void 異常系_月末営業日マイナス2営業日以外() throws Exception {
 		// 2019年6月の非営業日は以下を想定
 		// 2019/06/01 
 		// 2019/06/02
@@ -179,39 +188,45 @@ public class JobComponentTest extends TestBase {
 
 		// 処理不要日付　営業日 月末営業日-2日以降 2019/06/27
 		try {
-			jobComponent.run(new String[] { "20190627", "output", "test.csv" });
+			batchComponent.execute(new String[] { "20190627", "output", "test.csv" });
 			Assert.fail("処理日不正で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
+		} catch (OperationDateException e) {
+			// OperationDateExceptionが発生していること
+			Assert.assertNotEquals(null, e);
 		}
 
 		// 処理不要日付　営業日 月末営業日-2日以前 2019/06/25
 		try {
-			jobComponent.run(new String[] { "20190625", "output", "test.csv" });
+			batchComponent.execute(new String[] { "20190625", "output", "test.csv" });
 			Assert.fail("処理日不正で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
+		} catch (OperationDateException e) {
+			// OperationDateExceptionが発生していること
+			Assert.assertNotEquals(null, e);
 		}
+
 
 		// 処理不要日付　非営業日 月末営業日-2日以降 2019/06/29
 		try {
-			jobComponent.run(new String[] { "20190629", "output", "test.csv" });
+			batchComponent.execute(new String[] { "20190629", "output", "test.csv" });
 			Assert.fail("処理日不正で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
+		} catch (OperationDateException e) {
+			// OperationDateExceptionが発生していること
+			Assert.assertNotEquals(null, e);
 		}
+
 
 		// 処理不要日付　非営業日 月末営業日-2日以前 2019/06/23
 		try {
-			jobComponent.run(new String[] { "20190623", "output", "test.csv" });
+			batchComponent.execute(new String[] { "20190623", "output", "test.csv" });
 			Assert.fail("処理日不正で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
+		} catch (OperationDateException e) {
+			// OperationDateExceptionが発生していること
+			Assert.assertNotEquals(null, e);
 		}
 	}
 
 	@Test
-	public void 異常系_拡張項目繰返がJSON形式でない_全解約分() throws IOException {
+	public void 異常系_拡張項目繰返がJSON形式でない_全解約分() throws Exception {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonParseErrorTestData1.sql");
 		// 出力ファイルパス
 		String filePath = "output";
@@ -237,15 +252,19 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190626", filePath, fileName });
 			Assert.fail("JSON形式のparse失敗エラーが発生しなかった。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (ErrorCheckException e) {
+			// エラーメッセージ取得
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("ROT00113", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("JSONデータのマッピングに失敗しました。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 
 	@Test
-	public void 異常系_拡張項目繰返がJSON形式でない_数量減分() throws IOException {
+	public void 異常系_拡張項目繰返がJSON形式でない_数量減分() throws Exception {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonParseErrorTestData2.sql");
 		// 出力ファイルパス
 		String filePath = "output";
@@ -271,15 +290,19 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190626", filePath, fileName });
 			Assert.fail("JSON形式のparse失敗エラーが発生しなかった。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (ErrorCheckException e) {
+			// エラーメッセージ取得
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("ROT00113", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("JSONデータのマッピングに失敗しました。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 
 	@Test
-	public void 異常系_拡張項目繰返でJSONマッピングエラー_全解約分() throws IOException {
+	public void 異常系_拡張項目繰返でJSONマッピングエラー_全解約分() throws Exception {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonMappingErrorTestData1.sql");
 		// 出力ファイルパス
 		String filePath = "output";
@@ -305,15 +328,19 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190626", filePath, fileName });
 			Assert.fail("JSON形式のmapping失敗エラーが発生しなかった。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (ErrorCheckException e) {
+			// エラーメッセージ取得
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("ROT00113", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("JSONデータのマッピングに失敗しました。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 
 	@Test
-	public void 異常系_拡張項目繰返でJSONマッピングエラー_数量減分() throws IOException {
+	public void 異常系_拡張項目繰返でJSONマッピングエラー_数量減分() throws Exception {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonMappingErrorTestData2.sql");
 		// 出力ファイルパス
 		String filePath = "output";
@@ -339,60 +366,84 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190626", filePath, fileName });
 			Assert.fail("JSON形式のmapping失敗エラーが発生しなかった。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (ErrorCheckException e) {
+			// エラーメッセージ取得
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("ROT00113", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("JSONデータのマッピングに失敗しました。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 
 	@Test
-	public void 異常系_JOB_パラメーター数不一致() {
+	public void 異常系_パラメーター数不一致() throws Exception {
 		try {
 			// パラメータ無し
-			jobComponent.run(new String[] {});
+			batchComponent.execute(new String[] {});
 			Assert.fail("パラメータ数不一致で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (ErrorCheckException e) {
+			// エラーメッセージ取得
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("パラメータ「処理年月日/ディレクトリ名/作成ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
 		}
 
 		try {
 			// パラメータ1つ
-			jobComponent.run(new String[] { "20190626" });
+			batchComponent.execute(new String[] { "20190626" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (ErrorCheckException e) {
+			// エラーメッセージ取得
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("パラメータ「処理年月日/ディレクトリ名/作成ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
 		}
 
 		try {
 			// パラメータ2つ
-			jobComponent.run(new String[] { "20190626", "output" });
+			batchComponent.execute(new String[] { "20190626", "output" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (ErrorCheckException e) {
+			// エラーメッセージ取得
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("パラメータ「処理年月日/ディレクトリ名/作成ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
 		}
 
 		try {
 			// パラメータ4つ
-			jobComponent.run(new String[] { "20190626", "output", "test.csv", "dummy" });
+			batchComponent.execute(new String[] { "20190626", "output", "test.csv", "dummy" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (ErrorCheckException e) {
+			// エラーメッセージ取得
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("パラメータ「処理年月日/ディレクトリ名/作成ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 
 	@Test
-	public void 異常系_JOB_日付変換失敗() {
+	public void 異常系_日付変換失敗() throws Exception {
 		try {
-			jobComponent.run(new String[] { "2019/06/26", "output", "test.csv" });
+			batchComponent.execute(new String[] { "2019/06/26", "output", "test.csv" });
 			Assert.fail("処理日不正で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (ErrorCheckException e) {
+			// エラーメッセージ取得
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("RBA00001", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("業務日付のフォーマットはyyyyMMddです。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 
 	@Test
-	public void 異常系_JOB_ファイルが既に存在() throws IOException {
+	public void 異常系_ファイルが既に存在() throws Exception {
 		// 出力ファイルパス
 		String filePath = "output";
 		// 出力ファイル名
@@ -405,15 +456,16 @@ public class JobComponentTest extends TestBase {
 		}
 
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190626", filePath, fileName });
 			Assert.fail("ファイルが存在する状態で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (FileAlreadyExistsException e) {
+			// FileAlreadyExistsExceptionが発生していること
+			Assert.assertNotEquals(null, e);
 		}
 	}
 
 	@Test
-	public void 異常系_JOB_一時ファイルが既に存在() throws IOException {
+	public void 異常系_一時ファイルが既に存在() throws Exception {
 		// 出力ファイルパス
 		String filePath = "output";
 		// 出力ファイル名
@@ -432,10 +484,11 @@ public class JobComponentTest extends TestBase {
 		}
 
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, "test.csv" });
+			batchComponent.execute(new String[] { "20190626", filePath, fileName });
 			Assert.fail("ファイルが存在する状態で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (FileAlreadyExistsException e) {
+			// FileAlreadyExistsExceptionが発生していること
+			Assert.assertNotEquals(null, e);
 		} finally {
 			// 作成した一時ファイルを削除
 			Files.deleteIfExists(tmpFile.toPath());
@@ -443,17 +496,21 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
-	public void 異常系_JOB_ディレクトリが存在しない() throws IOException {
+	public void 異常系_ディレクトリが存在しない() throws Exception {
 		// 出力ファイルパス　※テスト環境に存在しないこと
 		String filePath = "hoge12345678999";
 		// 出力ファイル名
 		String fileName = "test.csv";
 
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190626", filePath, fileName });
 			Assert.fail("ディレクトリが存在しない状態で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (ErrorCheckException e) {
+			// エラーメッセージ取得
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("ROT00110", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("指定されたディレクトリが存在しません。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 }

@@ -7,30 +7,16 @@ import java.nio.file.Paths;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import jp.co.ricoh.cotos.BatchApplication;
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
-import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementPicWorkerEmp;
-import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
-import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork.WorkflowStatus;
-import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
-import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementPicWorkerEmpRepository;
-import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementWorkRepository;
-import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
-import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
-import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
-import jp.co.ricoh.cotos.logic.JobComponent;
-import jp.co.ricoh.cotos.security.CreateJwt;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -38,45 +24,10 @@ public class CreateCancelOrderCsvTests extends TestBase {
 
 	static ConfigurableApplicationContext context;
 
-	final private String outputPath = "output/";
-
-	final private String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"20191018\"}";
-
-	final private String dummySuccessExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"\"}";
-
-	final private String extendsParameter = "{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}";
-
-	@Autowired
-	JobComponent jobComponent;
-
-	@Autowired
-	BatchMomInfoProperties batchProperty;
-
-	@Autowired
-	ContractDetailRepository contractDetailRepository;
-
-	@Autowired
-	ArrangementWorkRepository arrangementWorkRepository;
-
-	@Autowired
-	ArrangementPicWorkerEmpRepository arrangementPicWorkerEmpRepository;
-
-	@Autowired
-	CreateJwt createJwt;
-
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
-		String jwt = createJwt.execute();
-		CotosAuthenticationDetails principal = new CotosAuthenticationDetails(batchProperty.getMomEmpId(), "sid", null, null, jwt, true, true, null);
-		Authentication auth = new PreAuthenticatedAuthenticationToken(principal, null, null);
-		SecurityContextHolder.getContext().setAuthentication(auth);
 		context = injectContext;
 		context.getBean(DBConfig.class).clearData();
-	}
-
-	private void テストデータ作成(String filePath) {
-		context.getBean(DBConfig.class).clearData();
-		context.getBean(DBConfig.class).initTargetTestData(filePath);
 	}
 
 	@AfterClass
@@ -87,190 +38,419 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		}
 	}
 
-	private void fileDeleate(String pathname) {
-		File file = new File(pathname);
-
-		if (!file.exists()) {
-			System.out.println("ファイル:[" + pathname + "]が存在しません");
-			return;
-		}
-		if (file.delete()) {
-			System.out.println("ファイル:[" + pathname + "]の削除に成功しました");
-			return;
-		}
-		System.out.println("ファイル:[" + pathname + "]の削除に失敗しました");
-	}
-
 	@Test
 	public void 正常系() throws IOException {
-		テストデータ作成("createCancelOrderTestData.sql");
+		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderSuccessTestData.sql");
+		// 出力ファイルパス
+		String filePath = "output";
+		// 出力ファイル名
+		String fileName = "test.csv";
+		// 一時ファイル名
+		String tmpFileName = "temp.csv";
 
-		jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv" });
-	}
+		// 出力ファイルが存在する場合は削除する
+		File csvFile = Paths.get(filePath, fileName).toFile();
+		Files.deleteIfExists(csvFile.toPath());
 
-	@Test
-	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
-	public void 正常系_CSVファイルを出力できること() throws IOException {
-		テストデータ作成("createOrderTestSuccessData.sql");
-		fileDeleate(outputPath + "result_initial.csv");
+		//　一時ファイルが存在する場合は削除する
+		File tmpFile = Paths.get(filePath, tmpFileName).toFile();
+		Files.deleteIfExists(tmpFile.toPath());
 
-		jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv" });
+		// 2019年6月の非営業日は以下を想定
+		// 2019/06/01 
+		// 2019/06/02
+		// 2019/06/08
+		// 2019/06/09
+		// 2019/06/15
+		// 2019/06/16
+		// 2019/06/22
+		// 2019/06/23
+		// 2019/06/29
+		// 2019/06/30
 
-		ArrangementWork arrangementWork1 = arrangementWorkRepository.findOne(1L);
-		ArrangementWork arrangementWork2 = arrangementWorkRepository.findOne(2L);
-		ArrangementWork arrangementWork3 = arrangementWorkRepository.findOne(3L);
-		ArrangementWork arrangementWork4 = arrangementWorkRepository.findOne(4L);
-		ArrangementPicWorkerEmp arrangementPicWorkerEmp4 = arrangementPicWorkerEmpRepository.findOne(4L);
-		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
-		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
-		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
-
-		Assert.assertEquals("作業状況が作業中に更新されていること", WorkflowStatus.作業中, arrangementWork1.getWorkflowStatus());
-		Assert.assertEquals("作業状況が作業中に更新されていること", WorkflowStatus.作業中, arrangementWork2.getWorkflowStatus());
-		Assert.assertEquals("作業状況が作業中に更新されていること", WorkflowStatus.作業中, arrangementWork3.getWorkflowStatus());
-		Assert.assertEquals("作業状況が作業中に更新されていること", WorkflowStatus.作業中, arrangementWork4.getWorkflowStatus());
-
-		Assert.assertEquals("更新者が変更されていないこと", "00229692", arrangementPicWorkerEmp4.getMomEmployeeId());
-
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail11.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail12.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail21.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail22.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail42.getExtendsParameter());
-
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
-		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial.csv"));
-		Assert.assertArrayEquals(expected, actuals);
-
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
-	public void 正常系_CSVファイルを出力しないこと() throws IOException {
-		テストデータ作成("createOrderTestFailedData.sql");
-		fileDeleate(outputPath + "result_initial.csv");
-
-		jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv" });
-
-		ArrangementWork arrangementWork3 = arrangementWorkRepository.findOne(3L);
-		ArrangementWork arrangementWork4 = arrangementWorkRepository.findOne(4L);
-		ArrangementWork arrangementWork5 = arrangementWorkRepository.findOne(5L);
-		ArrangementWork arrangementWork6 = arrangementWorkRepository.findOne(6L);
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(41L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(42L);
-		ContractDetail contractDetail51 = contractDetailRepository.findOne(51L);
-		ContractDetail contractDetail52 = contractDetailRepository.findOne(52L);
-		ContractDetail contractDetail61 = contractDetailRepository.findOne(61L);
-		ContractDetail contractDetail62 = contractDetailRepository.findOne(62L);
-
-		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork3.getWorkflowStatus());
-		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork4.getWorkflowStatus());
-		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork5.getWorkflowStatus());
-		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork6.getWorkflowStatus());
-
-		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail51.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail52.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail61.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail62.getExtendsParameter());
-
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-	
-	@Test
-	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
-	public void 正常系_CSVファイルを出力しないこと_処理日が祝日() throws IOException {
-		テストデータ作成("createOrderTestSuccessData.sql");
-		fileDeleate(outputPath + "result_initial.csv");
-
-		jobComponent.run(new String[] { "20191014", outputPath, "result_initial.csv" });
-		
-		ArrangementWork arrangementWork1 = arrangementWorkRepository.findOne(1L);
-		ArrangementWork arrangementWork2 = arrangementWorkRepository.findOne(2L);
-		ArrangementWork arrangementWork4 = arrangementWorkRepository.findOne(4L);
-		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
-		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
-		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
-
-		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork1.getWorkflowStatus());
-		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork2.getWorkflowStatus());
-		Assert.assertEquals("作業状況が作業中に変更されていないこと", WorkflowStatus.受付待ち, arrangementWork4.getWorkflowStatus());
-
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail11.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail12.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail21.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail22.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
-
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	public void 引数無しで実行すると失敗すること() {
+		// 2019/06/28 月末営業日
+		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
-			jobComponent.run(new String[] {});
-			Assert.fail("引数無しで実行したのに異常終了しなかった");
+			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 		} catch (ExitException e) {
+			Assert.fail("エラーが発生した。");
+		}
+
+		Assert.assertTrue("解約手配CSVが出力されていること。", csvFile.exists());
+		String expectedFilePath = "src/test/resources/expected";
+		// 作成されたCSVを期待結果と比較
+		String expectedFileName = "normal.csv";
+		if (csvFile.exists() && Paths.get(expectedFilePath, expectedFileName).toFile().exists()) {
+			byte[] actuals = Files.readAllBytes(Paths.get(filePath + "/" + fileName));
+			byte[] expected = Files.readAllBytes(Paths.get(expectedFilePath + "/" + expectedFileName));
+			Assert.assertArrayEquals(expected, actuals);
 		}
 	}
 
 	@Test
-	@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
-	public void 既存ファイルに上書きできないこと() throws IOException {
-		テストデータ作成("createOrderTestSuccessData.sql");
-		fileDeleate(outputPath + "duplicate.csv");
-		if (!Files.exists(Paths.get("output/duplicate.csv"))) {
-			Files.createFile(Paths.get("output/duplicate.csv"));
-		}
+	public void 正常系_処理対象データ無し() throws IOException {
+		// データ投入を行わない
+		// 出力ファイルパス
+		String filePath = "output";
+		// 出力ファイル名
+		String fileName = "test.csv";
+
+		// ファイルが存在する場合は削除する
+		File csvFile = Paths.get(filePath, fileName).toFile();
+		Files.deleteIfExists(csvFile.toPath());
+
+		// 2019年6月の非営業日は以下を想定
+		// 2019/06/01 
+		// 2019/06/02
+		// 2019/06/08
+		// 2019/06/09
+		// 2019/06/15
+		// 2019/06/16
+		// 2019/06/22
+		// 2019/06/23
+		// 2019/06/29
+		// 2019/06/30
+
+		// 2019/06/28 月末営業日
+		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20191018", outputPath, "duplicate.csv" });
-			Assert.fail("既存ファイルがあるのに異常終了しなかった");
+			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 		} catch (ExitException e) {
-			fileDeleate(outputPath + "duplicate.csv");
+			Assert.fail("エラーが発生した。");
 		}
-		fileDeleate(outputPath + "duplicate.csv");
+		Assert.assertFalse("解約手配CSVが出力されていないこと。", csvFile.exists());
 	}
 
 	@Test
-	public void パラメータ不正_存在しないディレクトリ() throws IOException {
-		Files.deleteIfExists(Paths.get("output/dummy/result_initial.csv"));
+	public void 正常系_処理対象データ無し_processでデータ無し判定() throws IOException {
+		// 解約オーダーリストの取得には成功するが、processメソッド処理(解約手配CSV作成処理)で出力データ無しと判定されるケース
+		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderNoTargetTestData.sql");
+		// 出力ファイルパス
+		String filePath = "output";
+		// 出力ファイル名
+		String fileName = "test.csv";
 
+		// ファイルが存在する場合は削除する
+		File csvFile = Paths.get(filePath, fileName).toFile();
+		Files.deleteIfExists(csvFile.toPath());
+
+		// 2019年6月の非営業日は以下を想定
+		// 2019/06/01 
+		// 2019/06/02
+		// 2019/06/08
+		// 2019/06/09
+		// 2019/06/15
+		// 2019/06/16
+		// 2019/06/22
+		// 2019/06/23
+		// 2019/06/29
+		// 2019/06/30
+
+		// 2019/06/28 月末営業日
+		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20191018", outputPath + "dummy", "result_initial.csv" });
-			Assert.fail("CSVファイルが書き込めないのに異常終了しなかった");
+			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 		} catch (ExitException e) {
+			Assert.fail("エラーが発生した。");
+		}
+
+		Assert.assertFalse("解約手配CSVが出力されていないこと。", csvFile.exists());
+	}
+
+	@Test
+	public void 異常系_JOB_月末営業日マイナス2営業日以外() {
+		// 2019年6月の非営業日は以下を想定
+		// 2019/06/01 
+		// 2019/06/02
+		// 2019/06/08
+		// 2019/06/09
+		// 2019/06/15
+		// 2019/06/16
+		// 2019/06/22
+		// 2019/06/23
+		// 2019/06/29
+		// 2019/06/30
+
+		// 2019/06/28 月末営業日
+		// 2019/06/26 月末営業日-2日　要処理日付
+
+		// 処理不要日付　営業日 月末営業日-2日以降 2019/06/27
+		try {
+			BatchApplication.main(new String[] { "20190627", "output", "test.csv" });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
+		}
+
+		// 処理不要日付　営業日 月末営業日-2日以前 2019/06/25
+		try {
+			BatchApplication.main(new String[] { "20190625", "output", "test.csv" });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
+		}
+
+		// 処理不要日付　非営業日 月末営業日-2日以降 2019/06/29
+		try {
+			BatchApplication.main(new String[] { "20190629", "output", "test.csv" });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
+		}
+
+		// 処理不要日付　非営業日 月末営業日-2日以前 2019/06/23
+		try {
+			BatchApplication.main(new String[] { "20190623", "output", "test.csv" });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
 		}
 	}
 
 	@Test
-	public void パラメータ不正_処理年月日不正() throws IOException {
+	public void 異常系_拡張項目繰返がJSON形式でない_全解約分() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonParseErrorTestData1.sql");
+		// 出力ファイルパス
+		String filePath = "output";
+		// 出力ファイル名
+		String fileName = "test.csv";
+
+		// ファイルが存在する場合は削除する
+		File csvFile = Paths.get(filePath, fileName).toFile();
+		Files.deleteIfExists(csvFile.toPath());
+
+		// 2019年6月の非営業日は以下を想定
+		// 2019/06/01 
+		// 2019/06/02
+		// 2019/06/08
+		// 2019/06/09
+		// 2019/06/15
+		// 2019/06/16
+		// 2019/06/22
+		// 2019/06/23
+		// 2019/06/29
+		// 2019/06/30
+
+		// 2019/06/28 月末営業日
+		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
-			jobComponent.run(new String[] { "不正データ", outputPath, "result_initial.csv" });
-			Assert.fail("処理年月日のフォーマットが不正なのに異常終了しなかった");
+			BatchApplication.main(new String[] { "20190626", filePath, fileName });
+			Assert.fail("JSON形式のparse失敗エラーが発生しなかった。");
 		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		}
+	}
+
+	@Test
+	public void 異常系_拡張項目繰返がJSON形式でない_数量減分() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonParseErrorTestData2.sql");
+		// 出力ファイルパス
+		String filePath = "output";
+		// 出力ファイル名
+		String fileName = "test.csv";
+
+		// ファイルが存在する場合は削除する
+		File csvFile = Paths.get(filePath, fileName).toFile();
+		Files.deleteIfExists(csvFile.toPath());
+
+		// 2019年6月の非営業日は以下を想定
+		// 2019/06/01 
+		// 2019/06/02
+		// 2019/06/08
+		// 2019/06/09
+		// 2019/06/15
+		// 2019/06/16
+		// 2019/06/22
+		// 2019/06/23
+		// 2019/06/29
+		// 2019/06/30
+
+		// 2019/06/28 月末営業日
+		// 2019/06/26 月末営業日-2日　要処理日付
+		try {
+			BatchApplication.main(new String[] { "20190626", filePath, fileName });
+			Assert.fail("JSON形式のparse失敗エラーが発生しなかった。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		}
+	}
+
+	@Test
+	public void 異常系_拡張項目繰返でJSONマッピングエラー_全解約分() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonMappingErrorTestData1.sql");
+		// 出力ファイルパス
+		String filePath = "output";
+		// 出力ファイル名
+		String fileName = "test.csv";
+
+		// ファイルが存在する場合は削除する
+		File csvFile = Paths.get(filePath, fileName).toFile();
+		Files.deleteIfExists(csvFile.toPath());
+
+		// 2019年6月の非営業日は以下を想定
+		// 2019/06/01 
+		// 2019/06/02
+		// 2019/06/08
+		// 2019/06/09
+		// 2019/06/15
+		// 2019/06/16
+		// 2019/06/22
+		// 2019/06/23
+		// 2019/06/29
+		// 2019/06/30
+
+		// 2019/06/28 月末営業日
+		// 2019/06/26 月末営業日-2日　要処理日付
+		try {
+			BatchApplication.main(new String[] { "20190626", filePath, fileName });
+			Assert.fail("JSON形式のmapping失敗エラーが発生しなかった。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		}
+	}
+
+	@Test
+	public void 異常系_拡張項目繰返でJSONマッピングエラー_数量減分() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonMappingErrorTestData2.sql");
+		// 出力ファイルパス
+		String filePath = "output";
+		// 出力ファイル名
+		String fileName = "test.csv";
+
+		// ファイルが存在する場合は削除する
+		File csvFile = Paths.get(filePath, fileName).toFile();
+		Files.deleteIfExists(csvFile.toPath());
+
+		// 2019年6月の非営業日は以下を想定
+		// 2019/06/01 
+		// 2019/06/02
+		// 2019/06/08
+		// 2019/06/09
+		// 2019/06/15
+		// 2019/06/16
+		// 2019/06/22
+		// 2019/06/23
+		// 2019/06/29
+		// 2019/06/30
+
+		// 2019/06/28 月末営業日
+		// 2019/06/26 月末営業日-2日　要処理日付
+		try {
+			BatchApplication.main(new String[] { "20190626", filePath, fileName });
+			Assert.fail("JSON形式のmapping失敗エラーが発生しなかった。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		}
+	}
+
+	@Test
+	public void 異常系_JOB_パラメーター数不一致() {
+		try {
+			// パラメータ無し
+			BatchApplication.main(new String[] {});
+			Assert.fail("パラメータ数不一致で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
 		}
 
+		try {
+			// パラメータ1つ
+			BatchApplication.main(new String[] { "20190626" });
+			Assert.fail("パラメータ数不一致で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		}
+
+		try {
+			// パラメータ2つ
+			BatchApplication.main(new String[] { "20190626", "output" });
+			Assert.fail("パラメータ数不一致で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		}
+
+		try {
+			// パラメータ4つ
+			BatchApplication.main(new String[] { "20190626", "output", "test.csv", "dummy" });
+			Assert.fail("パラメータ数不一致で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		}
+	}
+
+	@Test
+	public void 異常系_JOB_日付変換失敗() {
+		try {
+			BatchApplication.main(new String[] { "2019/06/26", "output", "test.csv" });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		}
+	}
+
+	@Test
+	public void 異常系_JOB_ファイルが既に存在() throws IOException {
+		// 出力ファイルパス
+		String filePath = "output";
+		// 出力ファイル名
+		String fileName = "test.csv";
+
+		// ファイルを事前に作成する
+		File csvFile = Paths.get(filePath, fileName).toFile();
+		if (!csvFile.exists()) {
+			csvFile.createNewFile();
+		}
+
+		try {
+			BatchApplication.main(new String[] { "20190626", filePath, fileName });
+			Assert.fail("ファイルが存在する状態で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		}
+	}
+
+	@Test
+	public void 異常系_JOB_一時ファイルが既に存在() throws IOException {
+		// 出力ファイルパス
+		String filePath = "output";
+		// 出力ファイル名
+		String fileName = "test.csv";
+		// 一時ファイル名
+		String tmpFileName = "temp.csv";
+
+		// 出力ファイルが存在する場合は削除する
+		File csvFile = Paths.get(filePath, fileName).toFile();
+		Files.deleteIfExists(csvFile.toPath());
+
+		// 一時ファイルを事前に作成する
+		File tmpFile = Paths.get(filePath, tmpFileName).toFile();
+		if (!tmpFile.exists()) {
+			tmpFile.createNewFile();
+		}
+
+		try {
+			BatchApplication.main(new String[] { "20190626", filePath, "test.csv" });
+			Assert.fail("ファイルが存在する状態で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} finally {
+			// 作成した一時ファイルを削除
+			Files.deleteIfExists(tmpFile.toPath());
+		}
+	}
+
+	@Test
+	public void 異常系_JOB_ディレクトリが存在しない() throws IOException {
+		// 出力ファイルパス　※テスト環境に存在しないこと
+		String filePath = "hoge12345678999";
+		// 出力ファイル名
+		String fileName = "test.csv";
+
+		try {
+			BatchApplication.main(new String[] { "20190626", filePath, fileName });
+			Assert.fail("ディレクトリが存在しない状態で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		}
 	}
 }
