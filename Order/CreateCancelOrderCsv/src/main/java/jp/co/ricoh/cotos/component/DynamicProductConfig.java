@@ -34,6 +34,7 @@ public class DynamicProductConfig {
 			return batchStepComponentMap.get("BASE");
 		}
 
+		log.info("商材切替：" + productDiv);
 		return batchStepComponentMap.get(productDiv);
 	}
 }

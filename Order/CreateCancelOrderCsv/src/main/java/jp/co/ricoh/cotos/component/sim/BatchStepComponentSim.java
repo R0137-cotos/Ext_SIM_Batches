@@ -87,7 +87,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Autowired
 	ObjectMapper om;
 
-	// CSVヘッダは固定なので事前にファイルを用意しマージする
+	// CSVヘッダファイル
 	private static final String headerFilePath = "file/header.csv";
 
 	/**
@@ -109,7 +109,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		log.info("SIM独自処理");
 
 		// 解約オーダーリスト・処理実行日が存在しない場合は処理を行わない
-		if (!CollectionUtils.isEmpty(cancelOrderList) || param.getOperationDate() != null) {
+		if (!CollectionUtils.isEmpty(cancelOrderList) && param.getOperationDate() != null) {
 			// yyyyMMフォーマッター
 			DateTimeFormatter yyyyMMFormatter = DateTimeFormatter.ofPattern("yyyyMM");
 			DateTimeFormatter yyyyMMddFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -266,6 +266,12 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			CsvMapper mapper = new CsvMapper();
 			CsvSchema schemaWithOutHeader = mapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true).schemaFor(CancelOrderCsvDto.class).withoutHeader().withColumnSeparator(',').withLineSeparator("\r\n").withNullValue("\"\"");
 
+			if (CollectionUtils.isEmpty(csvDtoList)) {
+				// 処理対象データ無し
+				log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "解約手配CSV作成" }).getMsg());
+				return;
+			}
+
 			csvDtoList.stream().forEach(dto -> {
 				try {
 					mapper.writer(schemaWithOutHeader).writeValues(Files.newBufferedWriter(param.getTmpFile().toPath(), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.APPEND)).write(dto);
@@ -274,7 +280,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				}
 			});
 			try {
-				// ヘッダーファイルとのマージ
+				// CSVヘッダは固定なので、事前に用意したヘッダファイルとマージする
 				List<String> outputList = Files.readAllLines(param.getTmpFile().toPath(), Charset.forName("UTF-8"));
 				List<String> headerList = new ArrayList<>();
 				InputStream in = this.getClass().getClassLoader().getResourceAsStream(headerFilePath);
@@ -289,156 +295,18 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				log.error(messageUtil.createMessageInfo("BatchCannotCreateFiles", new String[] { String.format("解約手配CSV作成") }).getMsg(), e);
 			}
 		} else {
+			// 処理対象データ無し
 			log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "解約手配CSV作成" }).getMsg());
 		}
-
-		/*
-		// 営業日
-		Date operationDate = batchUtil.changeDate(param.getOperationDate());
-		if (nonBusinessDayCalendarMasterRepository.findOne(operationDate) == null) {
-			cancelOrderList = cancelOrderList.stream().filter(o -> {
-				int orderCsvCreationStatus = 1;
-				try {
-					orderCsvCreationStatus = batchUtil.getOrderCsvCreationStatus(o.getExtendsParameterIterance());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return orderCsvCreationStatus == 0;
-			}).filter(o -> {
-				// 処理年月日 + 最短納期日を取得
-				Date shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), o.getShortestDeliveryDate(), false);
-				return shortBusinessDay.compareTo(o.getConclusionPreferredDate()) > -1;
-			}).collect(Collectors.toList());
-		
-			if (0 == cancelOrderList.size()) {
-				log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "オーダーCSV作成" }).getMsg());
-			} else {
-				List<CancelOrderCsvDto> findOrderDataList = new ArrayList<>();
-				Map<String, List<CancelOrderEntity>> contractNumberGroupingMap = cancelOrderList.stream().collect(Collectors.groupingBy(order -> order.getContractNumber(), Collectors.mapping(order -> order, Collectors.toList())));
-		
-				contractNumberGroupingMap.entrySet().stream().forEach(orderDataMap -> {
-					IntStream.range(0, orderDataMap.getValue().size()).forEach(i -> {
-						CancelOrderEntity orderData = orderDataMap.getValue().get(i);
-						int itemQuantity = Integer.parseInt(orderData.getQuantity());
-		
-						IntStream.range(0, itemQuantity).forEach(k -> {
-							CancelOrderCsvDto orderCsvEntity = new CancelOrderCsvDto();
-							orderCsvEntity.setContractIdTemp(orderData.getContractIdTemp());
-							orderCsvEntity.setContractDetailId(orderData.getContractDetailId());
-							orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%03d", i + 1));
-							orderCsvEntity.setRicohItemCode(orderData.getRicohItemCode());
-							orderCsvEntity.setItemContractName(orderData.getItemContractName());
-							orderCsvEntity.setOrderDate(batchUtil.changeFormatString(operationDate));
-							orderCsvEntity.setConclusionPreferredDate(batchUtil.changeFormatString(orderData.getConclusionPreferredDate()));
-							orderCsvEntity.setPicName(orderData.getPicName());
-							orderCsvEntity.setPicNameKana(orderData.getPicNameKana());
-							orderCsvEntity.setPostNumber(orderData.getPostNumber());
-							orderCsvEntity.setAddress(orderData.getAddress());
-							orderCsvEntity.setCompanyName(orderData.getCompanyName());
-							orderCsvEntity.setOfficeName(orderData.getOfficeName());
-							orderCsvEntity.setPicPhoneNumber(orderData.getPicPhoneNumber());
-							orderCsvEntity.setPicFaxNumber(orderData.getPicFaxNumber());
-							orderCsvEntity.setPicMailAddress(orderData.getPicMailAddress());
-							orderCsvEntity.setLineNumber("");
-							orderCsvEntity.setSerialNumber("");
-							orderCsvEntity.setDeliveryExpectedDate("");
-							orderCsvEntity.setInvoiceNumber("");
-							orderCsvEntity.setRemarks("");
-		
-							findOrderDataList.add(orderCsvEntity);
-						});
-					});
-				});
-		
-				List<Long> successIdList = new ArrayList<>();
-				List<Long> failedIdList = new ArrayList<>();
-		
-				Map<Long, List<CancelOrderCsvDto>> OrderDataIdGroupingMap = findOrderDataList.stream().collect(Collectors.groupingBy(findOrderData -> findOrderData.getContractIdTemp(), Collectors.mapping(findOrderData -> findOrderData, Collectors.toList())));
-				CsvMapper mapper = new CsvMapper();
-				CsvSchema schemaWithOutHeader = mapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true).schemaFor(CancelOrderCsvDto.class).withoutHeader().withColumnSeparator(',').withLineSeparator("\r\n").withNullValue("\"\"");
-		
-				// CSV出力
-				OrderDataIdGroupingMap.entrySet().stream().sorted(Entry.comparingByKey()).forEach(map -> {
-					try {
-						mapper.writer(schemaWithOutHeader).writeValues(Files.newBufferedWriter(param.getTmpFile().toPath(), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.APPEND)).write(map.getValue());
-						successIdList.add(map.getKey());
-					} catch (Exception e) {
-						log.error(messageUtil.createMessageInfo("BatchCannotCreateFiles", new String[] { String.format("オーダーCSV作成") }).getMsg(), e);
-						failedIdList.add(map.getKey());
-					}
-				});
-				// ヘッダーファイルとのマージ
-				List<String> outputList = Files.readAllLines(param.getTmpFile().toPath(), Charset.forName("UTF-8"));
-				List<String> headerList = new ArrayList<>();
-				InputStream in = this.getClass().getClassLoader().getResourceAsStream(headerFilePath);
-				String header = IOUtils.toString(in, "UTF-8");
-				headerList.add(header);
-				headerList.addAll(outputList);
-				try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(param.getCsvFile())))) {
-					headerList.stream().forEach(s -> pw.print(s + "\r\n"));
-				}
-				Files.deleteIfExists(param.getTmpFile().toPath());
-		
-				// 出力成功
-				if (!successIdList.isEmpty()) {
-					// 事後処理（拡張項目）
-					Map<String, Object> successMap = new HashMap<>();
-					String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"" + param.getOperationDate() + "\"}";
-					List<Long> contractDetailIdList = cancelOrderList.stream().filter(o -> successIdList.contains(o.getContractIdTemp())).map(o -> o.getContractDetailId()).collect(Collectors.toList());
-		
-					successMap.put("extendsParam", successExtendsParameter);
-					successMap.put("idList", contractDetailIdList);
-					dbUtil.execute("sql/updateExtendsParameter.sql", successMap);
-					// 事後処理（手配）
-					successIdList.stream().forEach(ContractId -> {
-						List<Long> arrangementWorkIdListAssign = new ArrayList<>();
-						List<Long> arrangementWorkIdListAccept = new ArrayList<>();
-						Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(ContractId, 0);
-						if (arrangement != null) {
-							List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
-							arrangementWorkList.stream().forEach(arrangementWork -> {
-								if (arrangementWork.getArrangementPicWorkerEmp() == null) {
-									arrangementWorkIdListAssign.add(arrangementWork.getId());
-								}
-								if (arrangementWork.getWorkflowStatus() == WorkflowStatus.受付待ち) {
-									arrangementWorkIdListAccept.add(arrangementWork.getId());
-								}
-							});
-						}
-						// 手配担当者登録APIを実行
-						try {
-							batchUtil.callAssignWorker(arrangementWorkIdListAssign);
-						} catch (Exception arrangementError) {
-							log.fatal(String.format("担当者登録に失敗しました。"));
-							arrangementError.printStackTrace();
-						}
-						// 手配業務受付APIを実行
-						try {
-							batchUtil.callAcceptWorkApi(arrangementWorkIdListAccept);
-						} catch (Exception arrangementError) {
-							log.fatal(String.format("ステータスの変更に失敗しました。"));
-							arrangementError.printStackTrace();
-						}
-					});
-				}
-				// 出力失敗
-				if (!failedIdList.isEmpty()) {
-					// 事後処理（拡張項目）
-					Map<String, Object> failedMap = new HashMap<>();
-					String failedExtendsParameter = "{\"orderCsvCreationStatus\":\"2\",\"orderCsvCreationDate\":\"\"}";
-					List<Long> contractDetailIdList = cancelOrderList.stream().filter(o -> failedIdList.contains(o.getContractIdTemp())).map(o -> o.getContractDetailId()).collect(Collectors.toList());
-		
-					failedMap.put("extendsParam", failedExtendsParameter);
-					failedMap.put("idList", contractDetailIdList);
-					dbUtil.execute("sql/updateExtendsParameter.sql", failedMap);
-				}
-			}
-		}
-		*/
 	}
 
-	/*
+	/**
 	 * 拡張項目文字列をオブジェクトに変換する
+	 * @param extendsParameterIterance 拡張項目繰返(文字列)
+	 * @return 拡張項目繰返オブジェクト
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 * @throws IOException
 	 */
 	private List<SIMExtendsParameterIteranceDto> readJson(String extendsParameterIterance) throws JsonParseException, JsonMappingException, IOException {
 		HashMap<String, HashMap<String, Object>> basicContentsJsonMap = om.readValue(extendsParameterIterance, new TypeReference<Object>() {

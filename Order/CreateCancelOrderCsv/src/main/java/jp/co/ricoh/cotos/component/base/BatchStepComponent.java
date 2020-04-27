@@ -46,11 +46,12 @@ public class BatchStepComponent implements IBatchStepComponent {
 	/**
 	 * パラメーターチェック処理
 	 * ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
-	 * @return
+	 * @return　引数オブジェクト
 	 * @throws FileAlreadyExistsException
 	 */
 	@Override
 	public final CreateOrderCsvParameter paramCheck(String[] args) throws FileAlreadyExistsException {
+		log.info("パラメータチェック開始");
 		CreateOrderCsvParameter param = new CreateOrderCsvParameter();
 
 		// バッチパラメーターのチェックを実施
@@ -93,7 +94,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 			throw new FileAlreadyExistsException(csvFile.getAbsolutePath());
 		}
 
-		// 作成先フォルダパスが存在しない場合はエラー
+		// 作成先フォルダパス(一時ファイル作成先フォルダパス)が存在しない場合はエラー
 		if (!csvFile.getParentFile().exists()) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "DirectoryNotFoundError"));
 		}
@@ -103,11 +104,6 @@ public class BatchStepComponent implements IBatchStepComponent {
 		// 既に一時ファイルが存在する場合はエラー
 		if (tmpFile.exists()) {
 			throw new FileAlreadyExistsException(tmpFile.getAbsolutePath());
-		}
-
-		// 一時ファイル作成先フォルダパスが存在しない場合はエラー
-		if (!tmpFile.getParentFile().exists()) {
-			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "DirectoryNotFoundError"));
 		}
 
 		param.setCsvFile(csvFile);
