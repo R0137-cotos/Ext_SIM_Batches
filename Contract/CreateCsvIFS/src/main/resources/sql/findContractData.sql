@@ -33,9 +33,11 @@ select
   (
    co.contract_type = 4
   and
-   JSON_EXISTS(JSON_QUERY(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), '$?(@.contractType == "容量変更")' )
-  or
-   JSON_EXISTS(JSON_QUERY(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), '$?(@.contractType == "有償交換")' )
+   (
+    JSON_EXISTS(JSON_QUERY(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), '$?(@.contractType == "容量変更")' )
+   or
+    JSON_EXISTS(JSON_QUERY(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), '$?(@.contractType == "有償交換")' )
+   )
   )
  )
 )
