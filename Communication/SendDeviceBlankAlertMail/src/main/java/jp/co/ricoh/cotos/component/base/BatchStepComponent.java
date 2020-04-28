@@ -57,7 +57,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 			try {
 				sdf.parse(operationDate);
 			} catch (ParseException pe) {
-				throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "IllegalFormatError", new String[] { "日付", "ｙｙｙMMｄｄ" }));
+				throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "IllegalFormatError", new String[] { "日付", "ｙｙｙyMMｄｄ" }));
 			}
 		}
 		serviceTermStart = operationDate;
