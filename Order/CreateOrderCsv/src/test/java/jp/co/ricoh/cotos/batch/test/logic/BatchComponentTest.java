@@ -78,8 +78,8 @@ public class BatchComponentTest extends TestBase {
 			// エラーメッセージ取得
 			List<ErrorInfo> messageInfo = e.getErrorInfoList();
 			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals(messageInfo.get(0).getErrorId(), "ROT00001");
-			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "パラメータ「処理年月日/ディレクトリ名/ファイル名/種別」が設定されていません。");
+			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("パラメータ「処理年月日/ディレクトリ名/ファイル名/種別」が設定されていません。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 
@@ -92,8 +92,8 @@ public class BatchComponentTest extends TestBase {
 			// エラーメッセージ取得
 			List<ErrorInfo> messageInfo = e.getErrorInfoList();
 			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals(messageInfo.get(0).getErrorId(), "RBA00001");
-			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "業務日付のフォーマットはyyyyMMddです。");
+			Assert.assertEquals("RBA00001", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("業務日付のフォーマットはyyyyMMddです。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 
@@ -106,8 +106,8 @@ public class BatchComponentTest extends TestBase {
 			// エラーメッセージ取得
 			List<ErrorInfo> messageInfo = e.getErrorInfoList();
 			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals(messageInfo.get(0).getErrorId(), "ROT00110");
-			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "指定されたディレクトリが存在しません。");
+			Assert.assertEquals("ROT00110", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("指定されたディレクトリが存在しません。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 
@@ -120,8 +120,8 @@ public class BatchComponentTest extends TestBase {
 			// エラーメッセージ取得
 			List<ErrorInfo> messageInfo = e.getErrorInfoList();
 			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals(messageInfo.get(0).getErrorId(), "ROT00003");
-			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "種別が特定できません。");
+			Assert.assertEquals("ROT00003", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("種別が特定できません。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 

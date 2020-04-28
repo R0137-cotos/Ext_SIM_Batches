@@ -231,7 +231,6 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
-	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 既存ファイルに上書きできないこと() throws IOException {
 		テストデータ作成("createOrderTestSuccessData.sql");
 		fileDeleate(outputPath + "duplicate.csv");
@@ -304,7 +303,7 @@ public class JobComponentTest extends TestBase {
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_capacity_change.csv"));
 		Assert.assertArrayEquals(expected, actuals);
 
-		//fileDeleate(outputPath + "result_initial.csv");
+		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
@@ -423,7 +422,6 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
-	//@Ignore // APIコールが必要なテストであるため、検証時はcotos_devなどに向けて行なってください
 	public void 正常系_CSVファイルを出力しないこと_有償交換() throws IOException {
 		テストデータ作成("createOrderTestFailedDataPaidExchange.sql");
 		fileDeleate(outputPath + "result_initial.csv");
