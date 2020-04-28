@@ -75,7 +75,7 @@ public class BatchStepComponentTest extends TestBase {
 			List<ErrorInfo> messageInfo = e.getErrorInfoList();
 			Assert.assertEquals(1, messageInfo.size());
 			Assert.assertEquals(messageInfo.get(0).getErrorId(), "ROT00032");
-			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "日付のフォーマットはｙｙyｙMMｄｄです。");
+			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "日付のフォーマットはyyyyMMddです。");
 		}
 	}
 
