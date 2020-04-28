@@ -25,7 +25,7 @@ public interface IBatchStepComponent {
 	 * 解約オーダー取得
 	 * @return 解約オーダーリスト
 	 */
-	public List<CancelOrderEntity> getCancelOrder();
+	public List<CancelOrderEntity> getDataList();
 
 	/**
 	 * データチェック処理

@@ -117,7 +117,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 * @return 解約オーダーリスト
 	 */
 	@Override
-	public List<CancelOrderEntity> getCancelOrder() {
+	public List<CancelOrderEntity> getDataList() {
 		return null;
 	}
 

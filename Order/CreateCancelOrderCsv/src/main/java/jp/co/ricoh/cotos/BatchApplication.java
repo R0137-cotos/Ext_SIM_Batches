@@ -54,11 +54,6 @@ public class BatchApplication {
 		return loadRestTemplateForAuth();
 	}
 
-	@Bean(name = "forArrangementApi")
-	public RestTemplate loadRestTemplateForArrangement() {
-		return loadRestTemplate();
-	}
-
 	/**
 	 * メイン処理
 	 * 
@@ -92,20 +87,6 @@ public class BatchApplication {
 				request.getHeaders().add("X-Cotos-Application-Id", "cotos_batch");
 				request.getHeaders().add("X-Cotos-Pass", "cotosmightyoubehappy");
 
-				return execution.execute(request, body);
-			}
-		}).stream()).collect(Collectors.toList()));
-
-		return rest;
-	}
-
-	private RestTemplate loadRestTemplate() {
-		RestTemplate rest = restTemplateBuilder.build();
-		rest.setInterceptors(Stream.concat(rest.getInterceptors().stream(), Arrays.asList(new ClientHttpRequestInterceptor() {
-			@Override
-			public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-				CotosAuthenticationDetails userInfo = (CotosAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-				request.getHeaders().add(headersProperties.getAuthorization(), userInfo.getJwt());
 				return execution.execute(request, body);
 			}
 		}).stream()).collect(Collectors.toList()));

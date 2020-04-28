@@ -41,11 +41,8 @@ import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
-import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementRepository;
-import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementWorkRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractRepository;
 import jp.co.ricoh.cotos.commonlib.repository.master.NonBusinessDayCalendarMasterRepository;
-import jp.co.ricoh.cotos.component.BatchUtil;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.CancelOrderCsvDto;
 import jp.co.ricoh.cotos.dto.CancelOrderEntity;
@@ -58,19 +55,10 @@ import lombok.extern.log4j.Log4j;
 public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Autowired
-	ArrangementRepository arrangementRepository;
-
-	@Autowired
-	ArrangementWorkRepository arrangementWorkRepository;
-
-	@Autowired
 	NonBusinessDayCalendarMasterRepository nonBusinessDayCalendarMasterRepository;
 
 	@Autowired
 	ContractRepository contractRepository;
-
-	@Autowired
-	BatchUtil batchUtil;
 
 	@Autowired
 	MessageUtil messageUtil;
@@ -95,7 +83,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	 * @return 解約オーダーリスト
 	 */
 	@Override
-	public List<CancelOrderEntity> getCancelOrder() {
+	public List<CancelOrderEntity> getDataList() {
 		return dbUtil.loadFromSQLFile("sql/findCancelOrder.sql", CancelOrderEntity.class);
 	}
 

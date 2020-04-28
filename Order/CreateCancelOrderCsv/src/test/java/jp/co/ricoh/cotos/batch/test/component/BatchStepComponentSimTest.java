@@ -180,7 +180,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// テストデータ投入
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderSuccessTestData.sql");
 		try {
-			List<CancelOrderEntity> cancelOrderEntityList = batchStepComponent.getCancelOrder();
+			List<CancelOrderEntity> cancelOrderEntityList = batchStepComponent.getDataList();
 			// 一件以上取得できていること
 			Assert.assertNotEquals(0, cancelOrderEntityList.size());
 		} catch (Exception e) {
@@ -193,7 +193,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	public void 解約オーダー取得テスト_正常系_取得データ0件() throws IOException {
 		// テストデータを投入しない
 		try {
-			List<CancelOrderEntity> cancelOrderEntityList = batchStepComponent.getCancelOrder();
+			List<CancelOrderEntity> cancelOrderEntityList = batchStepComponent.getDataList();
 			// 一件も取得されていないこと
 			Assert.assertEquals(0, cancelOrderEntityList.size());
 		} catch (Exception e) {

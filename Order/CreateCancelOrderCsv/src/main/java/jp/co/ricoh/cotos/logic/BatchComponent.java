@@ -37,7 +37,7 @@ public class BatchComponent {
 
 		// SIM固定 他商材についてコンポーネントを作成した場合はここで分岐すること
 		IBatchStepComponent component = this.getComponentInstance("SIM");
-		List<CancelOrderEntity> orderDataList = component.getCancelOrder();
+		List<CancelOrderEntity> orderDataList = component.getDataList();
 		component.process(param, orderDataList);
 	}
 
