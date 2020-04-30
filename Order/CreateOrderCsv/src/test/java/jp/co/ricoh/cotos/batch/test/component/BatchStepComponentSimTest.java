@@ -167,6 +167,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			Assert.assertEquals(9, serchMailTargetDtoList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("異常終了");
 		}
 		fileDeleate(outputPath + "result_initial.csv");
 	}
@@ -181,6 +182,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			Assert.assertEquals(9, serchMailTargetDtoList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("異常終了");
 		}
 		fileDeleate(outputPath + "result_initial.csv");
 	}
@@ -195,6 +197,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			Assert.assertEquals(9, serchMailTargetDtoList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("異常終了");
 		}
 		fileDeleate(outputPath + "result_initial.csv");
 	}
@@ -208,6 +211,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			Assert.assertEquals(0, serchMailTargetDtoList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("異常終了");
 		}
 		fileDeleate(outputPath + "result_initial.csv");
 	}
@@ -255,6 +259,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			batchStepComponent.process(dto, orderDataList);
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("異常終了");
 		}
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_one.csv"));
@@ -306,6 +311,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			batchStepComponent.process(dto, orderDataList);
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("異常終了");
 		}
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_one_capacity_change.csv"));
@@ -357,6 +363,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			batchStepComponent.process(dto, orderDataList);
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("異常終了");
 		}
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_one_paid_exchange.csv"));

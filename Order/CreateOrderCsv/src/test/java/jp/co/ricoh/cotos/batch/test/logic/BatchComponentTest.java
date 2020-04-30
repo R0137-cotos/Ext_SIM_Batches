@@ -1,12 +1,11 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Mockito.doNothing;
+
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -14,17 +13,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
-import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
-import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
-import jp.co.ricoh.cotos.component.base.BatchStepComponent;
-import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
-import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
+import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementPicWorkerEmp;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
+import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementPicWorkerEmpRepository;
+import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
+import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.logic.BatchComponent;
 
 @RunWith(SpringRunner.class)
@@ -35,16 +34,37 @@ public class BatchComponentTest extends TestBase {
 
 	final private String outputPath = "output/";
 
-	@SpyBean(name = "BASE")
-	BatchStepComponent batchStepComponent;
+	final private String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"20191018\"}";
+
+	final private String successExtendsParameterCapacityChange = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"20190926\"}";
+
+	final private String successExtendsParameterPaidExchange = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"20191028\"}";
+
+	final private String dummySuccessExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"\"}";
+
+	final private String extendsParameter = "{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}";
+
+	@MockBean
+	RestApiClient restApiClient;
 
 	@Autowired
 	BatchComponent batchComponent;
 
 	@Autowired
+	ContractDetailRepository contractDetailRepository;
+
+	@Autowired
+	ArrangementPicWorkerEmpRepository arrangementPicWorkerEmpRepository;
+
+	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
 		context = injectContext;
 		context.getBean(DBConfig.class).clearData();
+	}
+
+	private void テストデータ作成(String filePath) {
+		context.getBean(DBConfig.class).clearData();
+		context.getBean(DBConfig.class).initTargetTestData(filePath);
 	}
 
 	@AfterClass
@@ -70,123 +90,385 @@ public class BatchComponentTest extends TestBase {
 	}
 
 	@Test
-	public void 異常系_パラメータチェックテスト_パラメーター数不一致() throws Exception {
-		try {
-			batchStepComponent.paramCheck(new String[] { "dummy", "dummy" });
-			Assert.fail("正常終了");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("パラメータ「処理年月日/ディレクトリ名/ファイル名/種別」が設定されていません。", messageInfo.get(0).getErrorMessage());
-		}
-	}
-
-	@Test
-	public void 異常系_パラメータチェックテスト_業務日付不正() throws Exception {
-		try {
-			batchStepComponent.paramCheck(new String[] { "dummy", outputPath, "result_initial.csv", "1" });
-			Assert.fail("正常終了");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("RBA00001", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("業務日付のフォーマットはyyyyMMddです。", messageInfo.get(0).getErrorMessage());
-		}
-	}
-
-	@Test
-	public void 異常系_パラメータチェックテスト_パス不正() throws Exception {
-		try {
-			batchStepComponent.paramCheck(new String[] { "20191018", "dummy", "result_initial.csv", "1" });
-			Assert.fail("正常終了");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("ROT00110", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("指定されたディレクトリが存在しません。", messageInfo.get(0).getErrorMessage());
-		}
-	}
-
-	@Test
-	public void 異常系_パラメータチェックテスト_種別不正() throws Exception {
-		try {
-			batchStepComponent.paramCheck(new String[] { "20191018", outputPath, "result_initial.csv", "dummy" });
-			Assert.fail("正常終了");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("ROT00003", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("種別が特定できません。", messageInfo.get(0).getErrorMessage());
-		}
-	}
-
-	@Test
-	public void 正常系_データ取得テスト() throws IOException {
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
-		String contractType = "'$?(@.contractType == \"新規\")'";
-		try {
-			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
-			Assert.assertEquals(9, serchMailTargetDtoList.size());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void 正常系_データ取得_取得無し() throws IOException {
-		String contractType = "'$?(@.contractType == \"新規\")'";
-		try {
-			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
-			Assert.assertEquals(0, serchMailTargetDtoList.size());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void 正常系_オーダーCSV作成() throws IOException, ParseException {
+	public void 正常系_CSVファイルを出力できること() throws Exception {
+		テストデータ作成("createOrderTestSuccessData.sql");
 		fileDeleate(outputPath + "result_initial.csv");
-		CreateOrderCsvDto dto = new CreateOrderCsvDto();
-		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
-		dto.setTmpFile(Paths.get("output\\temp.csv").toFile());
-		dto.setOperationDate("20191018");
-		dto.setType("1");
 
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 
-		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
-		createOrderCsvDataDto.setId(1L);
-		createOrderCsvDataDto.setContractIdTemp(1);
-		createOrderCsvDataDto.setContractNumber("CIC201912240101");
-		createOrderCsvDataDto.setQuantity("1");
-		createOrderCsvDataDto.setRicohItemCode("SI0001");
-		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
-		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
-		createOrderCsvDataDto.setShortestDeliveryDate(8);
-		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
-		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
-		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
-		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
-		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
-		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
-		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
-		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
-		createOrderCsvDataDto.setContractDetailId(11L);
-		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
-		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
-		orderDataList.add(createOrderCsvDataDto);
+		batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+
+		ArrangementPicWorkerEmp arrangementPicWorkerEmp4 = arrangementPicWorkerEmpRepository.findOne(4L);
+		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
+		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
+		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
+		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
+		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
+		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
+
+		Assert.assertEquals("更新者が変更されていないこと", "00229692", arrangementPicWorkerEmp4.getMomEmployeeId());
+
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail11.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail12.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail21.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail22.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail31.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail42.getExtendsParameter());
+
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力しないこと() throws Exception {
+		テストデータ作成("createOrderTestFailedData.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+
+		batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+
+		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
+		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
+		ContractDetail contractDetail41 = contractDetailRepository.findOne(41L);
+		ContractDetail contractDetail42 = contractDetailRepository.findOne(42L);
+		ContractDetail contractDetail51 = contractDetailRepository.findOne(51L);
+		ContractDetail contractDetail52 = contractDetailRepository.findOne(52L);
+		ContractDetail contractDetail61 = contractDetailRepository.findOne(61L);
+		ContractDetail contractDetail62 = contractDetailRepository.findOne(62L);
+		ContractDetail contractDetail71 = contractDetailRepository.findOne(71L);
+		ContractDetail contractDetail72 = contractDetailRepository.findOne(72L);
+		ContractDetail contractDetail81 = contractDetailRepository.findOne(81L);
+		ContractDetail contractDetail82 = contractDetailRepository.findOne(82L);
+
+		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail31.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail51.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail52.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail61.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail62.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail71.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail72.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail81.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail82.getExtendsParameter());
+
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力しないこと_処理日が祝日() throws Exception {
+		テストデータ作成("createOrderTestSuccessData.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+
+		batchComponent.execute(new String[] { "20191014", outputPath, "result_initial.csv", "1" });
+
+		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
+		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
+		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
+		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
+		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
+		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
+
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail11.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail12.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail21.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail22.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail31.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
+
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 引数無しで実行すると失敗すること() {
 		try {
-			batchStepComponent.process(dto, orderDataList);
+			batchComponent.execute(new String[] {});
+			Assert.fail("引数無しで実行したのに異常終了しなかった");
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
+	}
+
+	@Test
+	public void 既存ファイルに上書きできないこと() throws Exception {
+		テストデータ作成("createOrderTestSuccessData.sql");
+		fileDeleate(outputPath + "duplicate.csv");
+		if (!Files.exists(Paths.get("output/duplicate.csv"))) {
+			Files.createFile(Paths.get("output/duplicate.csv"));
+		}
+		try {
+			batchComponent.execute(new String[] { "20191018", outputPath, "duplicate.csv", "1" });
+			Assert.fail("既存ファイルがあるのに異常終了しなかった");
+		} catch (Exception e) {
+			fileDeleate(outputPath + "duplicate.csv");
+		}
+		fileDeleate(outputPath + "duplicate.csv");
+	}
+
+	@Test
+	public void パラメータ不正_存在しないディレクトリ() throws Exception {
+		Files.deleteIfExists(Paths.get("output/dummy/result_initial.csv"));
+
+		try {
+			batchComponent.execute(new String[] { "20191018", outputPath + "dummy", "result_initial.csv", "1" });
+			Assert.fail("CSVファイルが書き込めないのに異常終了しなかった");
+		} catch (Exception e) {
+		}
+	}
+
+	@Test
+	public void パラメータ不正_処理年月日不正() throws Exception {
+		try {
+			batchComponent.execute(new String[] { "不正データ", outputPath, "result_initial.csv", "1" });
+			Assert.fail("処理年月日のフォーマットが不正なのに異常終了しなかった");
+		} catch (Exception e) {
+		}
+
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力できること_容量変更() throws Exception {
+		テストデータ作成("createOrderTestSuccessDataCapacityChange.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+
+		batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+
+		ArrangementPicWorkerEmp arrangementPicWorkerEmp4 = arrangementPicWorkerEmpRepository.findOne(4L);
+		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
+		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
+		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
+		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
+		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
+		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
+
+		Assert.assertEquals("更新者が変更されていないこと", "00229692", arrangementPicWorkerEmp4.getMomEmployeeId());
+
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail11.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail12.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail21.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail22.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail31.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail42.getExtendsParameter());
+
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_capacity_change.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力しないこと_容量変更() throws Exception {
+		テストデータ作成("createOrderTestFailedDataCapacityChange.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+
+		batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+
+		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
+		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
+		ContractDetail contractDetail41 = contractDetailRepository.findOne(41L);
+		ContractDetail contractDetail42 = contractDetailRepository.findOne(42L);
+		ContractDetail contractDetail51 = contractDetailRepository.findOne(51L);
+		ContractDetail contractDetail52 = contractDetailRepository.findOne(52L);
+		ContractDetail contractDetail61 = contractDetailRepository.findOne(61L);
+		ContractDetail contractDetail62 = contractDetailRepository.findOne(62L);
+		ContractDetail contractDetail71 = contractDetailRepository.findOne(71L);
+		ContractDetail contractDetail72 = contractDetailRepository.findOne(72L);
+		ContractDetail contractDetail81 = contractDetailRepository.findOne(81L);
+		ContractDetail contractDetail82 = contractDetailRepository.findOne(82L);
+		ContractDetail contractDetail91 = contractDetailRepository.findOne(91L);
+		ContractDetail contractDetail92 = contractDetailRepository.findOne(92L);
+
+		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail31.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail51.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail52.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail61.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail62.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail71.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail72.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail81.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail82.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail91.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail92.getExtendsParameter());
+
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力しないこと_処理日が処理年月日末営業日2営業日前でない_容量変更() throws Exception {
+		テストデータ作成("createOrderTestSuccessDataCapacityChange.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+
+		batchComponent.execute(new String[] { "20190927", outputPath, "result_initial.csv", "2" });
+
+		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
+		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
+		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
+		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
+		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
+		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
+
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail11.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail12.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail21.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail22.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail31.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
+
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力できること_有償交換() throws Exception {
+		テストデータ作成("createOrderTestSuccessDataPaidExchange.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+
+		batchComponent.execute(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
+
+		ArrangementPicWorkerEmp arrangementPicWorkerEmp4 = arrangementPicWorkerEmpRepository.findOne(4L);
+		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
+		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
+		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
+		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
+		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
+		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
+
+		Assert.assertEquals("更新者が変更されていないこと", "00229692", arrangementPicWorkerEmp4.getMomEmployeeId());
+
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail11.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail12.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail21.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail22.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail31.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail42.getExtendsParameter());
+
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_paid_exchange.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力しないこと_有償交換() throws Exception {
+		テストデータ作成("createOrderTestFailedDataPaidExchange.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+
+		batchComponent.execute(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
+
+		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
+		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
+		ContractDetail contractDetail41 = contractDetailRepository.findOne(41L);
+		ContractDetail contractDetail42 = contractDetailRepository.findOne(42L);
+		ContractDetail contractDetail51 = contractDetailRepository.findOne(51L);
+		ContractDetail contractDetail52 = contractDetailRepository.findOne(52L);
+		ContractDetail contractDetail61 = contractDetailRepository.findOne(61L);
+		ContractDetail contractDetail62 = contractDetailRepository.findOne(62L);
+		ContractDetail contractDetail71 = contractDetailRepository.findOne(71L);
+		ContractDetail contractDetail72 = contractDetailRepository.findOne(72L);
+		ContractDetail contractDetail81 = contractDetailRepository.findOne(81L);
+		ContractDetail contractDetail82 = contractDetailRepository.findOne(82L);
+
+		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail31.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail51.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail52.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail61.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail62.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail71.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail72.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail81.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail82.getExtendsParameter());
+
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力しないこと_処理日が祝日_有償交換() throws Exception {
+		テストデータ作成("createOrderTestSuccessDataPaidExchange.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+
+		batchComponent.execute(new String[] { "20191022", outputPath, "result_initial.csv", "3" });
+
+		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
+		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
+		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
+		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
+		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
+		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
+		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
+
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail11.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail12.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail21.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail22.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail31.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail32.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
+		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
+
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 }
