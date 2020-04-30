@@ -1,5 +1,8 @@
 package jp.co.ricoh.cotos.batch.test.component;
 
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Mockito.doNothing;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -23,6 +27,7 @@ import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
+import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
@@ -36,6 +41,9 @@ public class BatchStepComponentSimTest extends TestBase {
 	static ConfigurableApplicationContext context;
 
 	final private String outputPath = "output/";
+
+	@MockBean
+	RestApiClient restApiClient;
 
 	@Autowired
 	JobComponent jobComponent;
@@ -207,6 +215,11 @@ public class BatchStepComponentSimTest extends TestBase {
 	@Test
 	public void 正常系_オーダーCSV作成_新規() throws IOException, ParseException {
 		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
 		dto.setTmpFile(Paths.get("output\\temp.csv").toFile());
@@ -252,6 +265,11 @@ public class BatchStepComponentSimTest extends TestBase {
 	@Test
 	public void 正常系_オーダーCSV作成_容量変更() throws IOException, ParseException {
 		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
 		dto.setTmpFile(Paths.get("output\\temp.csv").toFile());
@@ -297,6 +315,11 @@ public class BatchStepComponentSimTest extends TestBase {
 	@Test
 	public void 正常系_オーダーCSV作成_有償交換() throws IOException, ParseException {
 		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
 		dto.setTmpFile(Paths.get("output\\temp.csv").toFile());
