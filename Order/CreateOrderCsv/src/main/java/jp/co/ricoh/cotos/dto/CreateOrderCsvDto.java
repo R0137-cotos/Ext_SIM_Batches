@@ -24,6 +24,7 @@ public class CreateOrderCsvDto {
 
 	/**
 	 * 種別
+	 * 1:新規 2:容量変更 3:有償交換
 	 */
 	private String type;
 }

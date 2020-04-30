@@ -2,6 +2,7 @@ package jp.co.ricoh.cotos.batch.test.component;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -149,10 +150,38 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_データ取得テスト() throws IOException {
+	public void 正常系_データ取得テスト_新規() throws IOException {
 		fileDeleate(outputPath + "result_initial.csv");
 		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
 		String contractType = "'$?(@.contractType == \"新規\")'";
+		try {
+			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
+			Assert.assertEquals(9, serchMailTargetDtoList.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_データ取得テスト_容量変更() throws IOException {
+		fileDeleate(outputPath + "result_initial.csv");
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataCapacityChange.sql");
+		String contractType = "'$?(@.contractType == \"容量変更\")'";
+		try {
+			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
+			Assert.assertEquals(9, serchMailTargetDtoList.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_データ取得テスト_有償交換() throws IOException {
+		fileDeleate(outputPath + "result_initial.csv");
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataPaidExchange.sql");
+		String contractType = "'$?(@.contractType == \"有償交換\")'";
 		try {
 			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
 			Assert.assertEquals(9, serchMailTargetDtoList.size());
@@ -176,7 +205,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規() throws IOException, ParseException {
 		fileDeleate(outputPath + "result_initial.csv");
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
@@ -214,6 +243,99 @@ public class BatchStepComponentSimTest extends TestBase {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_one.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_オーダーCSV作成_容量変更() throws IOException, ParseException {
+		fileDeleate(outputPath + "result_initial.csv");
+		CreateOrderCsvDto dto = new CreateOrderCsvDto();
+		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
+		dto.setTmpFile(Paths.get("output\\temp.csv").toFile());
+		dto.setOperationDate("20191028");
+		dto.setType("2");
+
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
+		createOrderCsvDataDto.setId(1L);
+		createOrderCsvDataDto.setContractIdTemp(1);
+		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setQuantity("1");
+		createOrderCsvDataDto.setRicohItemCode("SI0001");
+		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
+		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-11-01 00:00:00"));
+		createOrderCsvDataDto.setShortestDeliveryDate(8);
+		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
+		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
+		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
+		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
+		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
+		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
+		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
+		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
+		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setContractDetailId(11L);
+		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2019-09-27 12:09:10"));
+		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
+		orderDataList.add(createOrderCsvDataDto);
+		try {
+			batchStepComponent.process(dto, orderDataList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_one_capacity_change.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_オーダーCSV作成_有償交換() throws IOException, ParseException {
+		fileDeleate(outputPath + "result_initial.csv");
+		CreateOrderCsvDto dto = new CreateOrderCsvDto();
+		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
+		dto.setTmpFile(Paths.get("output\\temp.csv").toFile());
+		dto.setOperationDate("20191018");
+		dto.setType("3");
+
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
+		createOrderCsvDataDto.setId(1L);
+		createOrderCsvDataDto.setContractIdTemp(1);
+		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setQuantity("1");
+		createOrderCsvDataDto.setRicohItemCode("SI0001");
+		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
+		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-15 00:00:00"));
+		createOrderCsvDataDto.setShortestDeliveryDate(8);
+		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
+		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
+		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
+		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
+		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
+		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
+		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
+		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
+		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setContractDetailId(11L);
+		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
+		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
+		orderDataList.add(createOrderCsvDataDto);
+		try {
+			batchStepComponent.process(dto, orderDataList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_one_paid_exchange.csv"));
+		Assert.assertArrayEquals(expected, actuals);
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 }

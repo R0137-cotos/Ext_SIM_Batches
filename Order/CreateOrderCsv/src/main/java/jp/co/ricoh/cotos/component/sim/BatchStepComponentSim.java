@@ -123,11 +123,14 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			}).collect(Collectors.toList());
 
 			if ("2".equals(dto.getType())) {
-				// 契約.更新日時 >= 処理年月日末日営業日 - 3
+				// 契約.更新日時 >= 処理年月日前月末日営業日 - 3
 				orderDataList = orderDataList.stream().filter(o -> {
-					Date lastBusinessDay = businessDayUtil.getLastBusinessDayOfTheMonth(new SimpleDateFormat("YYYYMM").format(operationDate));
-					lastBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(lastBusinessDay, Calendar.DAY_OF_MONTH), 4, true);
-					System.out.println(lastBusinessDay.compareTo(DateUtils.truncate(o.getUpdatedAt(), Calendar.DAY_OF_MONTH)));
+					Calendar cal = Calendar.getInstance();
+					cal.setTimeInMillis(operationDate.getTime());
+					cal.add(Calendar.MONTH, -1);
+					Date lastBusinessDay = DateUtils.truncate(cal.getTime(), Calendar.DAY_OF_MONTH);
+					lastBusinessDay = businessDayUtil.getLastBusinessDayOfTheMonth(new SimpleDateFormat("YYYYMM").format(lastBusinessDay));
+					lastBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(lastBusinessDay, Calendar.DAY_OF_MONTH), 2, true);
 					return lastBusinessDay.compareTo(DateUtils.truncate(o.getUpdatedAt(), Calendar.DAY_OF_MONTH)) <= 0;
 				}).collect(Collectors.toList());
 			}

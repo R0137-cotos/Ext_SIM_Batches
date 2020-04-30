@@ -6,11 +6,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
 import lombok.Setter;
 
 @Component
@@ -26,24 +24,6 @@ public class RestApiClient {
 
 	@Value("${cotos.mom.superUserId}")
 	String COTOS_MOM_SUPERUSERID;
-
-	/**
-	 * 契約情報更新APIを呼び出す
-	 * 
-	 * @param dto
-	 */
-	public void callCompleteArrangement(long arrangementWorkId) {
-		restForArrangement.patchForObject(COTOS_ARRANGEMENT_URL + "/arrangementWork/" + arrangementWorkId + "/completeWork", null, Void.class);
-	}
-
-	/**
-	 * 手配情報取得APIを呼び出す
-	 */
-	public ArrangementWork callFindOneArrangement(long arrangementWorkId) {
-		String parameterStr = COTOS_ARRANGEMENT_URL + "/arrangementWork/" + arrangementWorkId;
-		ResponseEntity<ArrangementWork> result = restForArrangement.getForEntity(parameterStr, ArrangementWork.class);
-		return result == null ? null : result.getBody();
-	}
 
 	/**
 	 * 手配情報担当作業者設定APIを呼び出す
