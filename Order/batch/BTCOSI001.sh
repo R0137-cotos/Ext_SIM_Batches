@@ -28,15 +28,18 @@ OPERATION_DATE=$1
 DIR_PATH=$2
 ### ファイル名
 FILE_NAME=$3
+### 種別
+TYPE=$4
 
 Log.Info "処理日：${OPERATION_DATE}" >> ${LOG_FILE_PATH}
 Log.Info "ディレクトリパス：${DIR_PATH}" >> ${LOG_FILE_PATH}
 Log.Info "ファイル名：${FILE_NAME}" >> ${LOG_FILE_PATH}
+Log.Info "種別：${TYPE}" >> ${LOG_FILE_PATH}
 
 ################################################
 ### 処理実行
 ################################################
-SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI001} "${OPERATION_DATE}" "${DIR_PATH}" "${FILE_NAME}" > ${PROCESS_LOG_FILE_PATH}
+SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI001} "${OPERATION_DATE}" "${DIR_PATH}" "${FILE_NAME}" "${TYPE}" > ${PROCESS_LOG_FILE_PATH}
 
 if [  $? != 0 ]; then
   Log.Error "BTCOSI001:[SB]オーダーCSV作成に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};

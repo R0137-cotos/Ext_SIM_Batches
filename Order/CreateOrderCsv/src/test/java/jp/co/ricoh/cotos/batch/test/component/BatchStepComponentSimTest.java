@@ -215,7 +215,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	@Test
 	public void 正常系_オーダーCSV作成_新規() throws IOException, ParseException {
 		fileDeleate(outputPath + "result_initial.csv");
-
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
@@ -265,6 +265,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	@Test
 	public void 正常系_オーダーCSV作成_容量変更() throws IOException, ParseException {
 		fileDeleate(outputPath + "result_initial.csv");
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataCapacityChange.sql");
 
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
@@ -315,6 +316,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	@Test
 	public void 正常系_オーダーCSV作成_有償交換() throws IOException, ParseException {
 		fileDeleate(outputPath + "result_initial.csv");
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataPaidExchange.sql");
 
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
