@@ -4,7 +4,7 @@ import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -129,7 +129,8 @@ public class JobComponentTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		doReturn(getContract()).when(restApiClient).callFindOneContractApi(anyLong());
+		//doReturn(getContract()).when(restApiClient).callFindOneContractApi(anyLong());
+		when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
 		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
@@ -514,7 +515,15 @@ public class JobComponentTest extends TestBase {
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 
-	private Contract getContract() {
+	private List<ContractDetail> getContractDetailList() {
+		List<ContractDetail> contractDetailList = new ArrayList<ContractDetail>();
+		ContractDetail contractDetail = new ContractDetail();
+		contractDetail.setId(1L);
+		contractDetailList.add(contractDetail);
+		return contractDetailList;
+	}
+
+	private Contract dummyContract() {
 		Contract contract = new Contract();
 		contract.setId(1L);
 		contract.setContractDetailList(getContractDetailList());
@@ -532,13 +541,5 @@ public class JobComponentTest extends TestBase {
 		customerContract.setCompanyName("testCompanyName");
 		contract.setCustomerContract(customerContract);
 		return contract;
-	}
-
-	private List<ContractDetail> getContractDetailList() {
-		List<ContractDetail> contractDetailList = new ArrayList<ContractDetail>();
-		ContractDetail contractDetail = new ContractDetail();
-		contractDetail.setId(1L);
-		contractDetailList.add(contractDetail);
-		return contractDetailList;
 	}
 }

@@ -196,7 +196,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"" + dto.getOperationDate() + "\"}";
 					List<Long> contractIdList = orderDataList.stream().filter(o -> successIdList.contains(o.getContractIdTemp())).map(o -> o.getContractIdTemp()).collect(Collectors.toList());
 
-					// エラー発生個所	
 					contractIdList.forEach(contractId -> {
 						//Contract contract = contractRepository.findOne(contractId);
 						Contract contract = restApiClient.callFindOneContractApi(contractId);
@@ -206,6 +205,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						restApiClient.callContractApi(contract);
 					});
 
+					// エラー発生個所	
 					// 事後処理（手配）
 					successIdList.stream().forEach(ContractId -> {
 						List<Long> arrangementWorkIdListAssign = new ArrayList<>();
