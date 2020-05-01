@@ -27,7 +27,7 @@ repositories {
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.9.1')
-	compile('jp.co.ricoh.cotos:common-libraries:0.0.321')
+	compile('jp.co.ricoh.cotos:common-libraries:0.0.330')
 	compile group: 'commons-io', name: 'commons-io', version: '2.5'
 	compile group: 'com.ibm.icu', name: 'icu4j', version: '63.1'
 
