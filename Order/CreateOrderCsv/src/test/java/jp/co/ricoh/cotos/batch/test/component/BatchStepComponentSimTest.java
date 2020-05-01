@@ -1,6 +1,7 @@
 package jp.co.ricoh.cotos.batch.test.component;
 
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doNothing;
 
 import java.io.File;
@@ -219,10 +220,11 @@ public class BatchStepComponentSimTest extends TestBase {
 	@Test
 	public void 正常系_オーダーCSV作成_新規() throws IOException, ParseException {
 		fileDeleate(outputPath + "result_initial.csv");
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData2.sql");
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
@@ -275,6 +277,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
@@ -327,6 +330,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());

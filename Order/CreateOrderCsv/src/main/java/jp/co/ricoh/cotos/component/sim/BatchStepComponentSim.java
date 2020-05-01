@@ -34,6 +34,7 @@ import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.Arrangement;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork.WorkflowStatus;
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementRepository;
@@ -192,13 +193,18 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				// 出力成功
 				if (!successIdList.isEmpty()) {
 					// 事後処理（拡張項目）
-					Map<String, Object> successMap = new HashMap<>();
 					String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"" + dto.getOperationDate() + "\"}";
-					List<Long> contractDetailIdList = orderDataList.stream().filter(o -> successIdList.contains(o.getContractIdTemp())).map(o -> o.getContractDetailId()).collect(Collectors.toList());
+					List<Long> contractIdList = orderDataList.stream().filter(o -> successIdList.contains(o.getContractIdTemp())).map(o -> o.getContractIdTemp()).collect(Collectors.toList());
 
-					successMap.put("extendsParam", successExtendsParameter);
-					successMap.put("idList", contractDetailIdList);
-					dbUtil.execute("sql/updateExtendsParameter.sql", successMap);
+					// エラー発生個所	
+					contractIdList.forEach(contractId -> {
+						Contract contract = contractRepository.findOne(contractId);
+						contract.getContractDetailList().forEach(ContractDetail -> {
+							ContractDetail.setExtendsParameter(successExtendsParameter);
+						});
+						restApiClient.callContractApi(contract);
+					});
+
 					// 事後処理（手配）
 					successIdList.stream().forEach(ContractId -> {
 						List<Long> arrangementWorkIdListAssign = new ArrayList<>();

@@ -1,6 +1,7 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doNothing;
 
 import java.io.File;
@@ -97,6 +98,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 
@@ -136,6 +138,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 
@@ -176,6 +179,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		batchComponent.execute(new String[] { "20191014", outputPath, "result_initial.csv", "1" });
 
@@ -254,6 +258,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
 
@@ -293,6 +298,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
 
@@ -337,6 +343,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		batchComponent.execute(new String[] { "20190927", outputPath, "result_initial.csv", "2" });
 
@@ -369,6 +376,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		batchComponent.execute(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
 
@@ -408,6 +416,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		batchComponent.execute(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
 
@@ -448,6 +457,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		batchComponent.execute(new String[] { "20191022", outputPath, "result_initial.csv", "3" });
 
