@@ -75,7 +75,7 @@ public class BatchApplicationTests extends TestBase {
 
 	@Test
 	public void 正常系_CSVファイルを出力できること_容量変更() throws IOException {
-		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractData2.sql");
+		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractDataCapacityChange.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
@@ -95,7 +95,7 @@ public class BatchApplicationTests extends TestBase {
 
 	@Test
 	public void 正常系_CSVファイルを出力できること_有償交換() throws IOException {
-		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractData3.sql");
+		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractDataPaidExchange.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
@@ -115,7 +115,7 @@ public class BatchApplicationTests extends TestBase {
 
 	@Test
 	public void 正常系_CSVファイルを出力できること_新規_容量変更_有償交換() throws IOException {
-		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractData3.sql");
+		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractDataAll.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
