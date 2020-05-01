@@ -6,9 +6,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import lombok.Setter;
 
@@ -19,6 +21,11 @@ public class RestApiClient {
 	@Autowired
 	@Qualifier("forArrangementApi")
 	RestTemplate restForArrangement;
+
+	@Setter
+	@Autowired
+	@Qualifier("forContractApi")
+	RestTemplate restForContract;
 
 	@Value("${cotos.arrangement.url}")
 	String COTOS_ARRANGEMENT_URL;
@@ -54,15 +61,34 @@ public class RestApiClient {
 	}
 
 	/**
+	 * 手配情報取得APIを呼び出す
+	 */
+	public ArrangementWork callFindOneArrangement(long arrangementWorkId) {
+		String parameterStr = COTOS_ARRANGEMENT_URL + "/arrangementWork/" + arrangementWorkId;
+		ResponseEntity<ArrangementWork> result = restForArrangement.getForEntity(parameterStr, ArrangementWork.class);
+		return result == null ? null : result.getBody();
+	}
+
+	/**
+	 * 契約情報明細取得APIを呼び出す
+	 *
+	 * @param conttactId
+	 *            契約ID
+	 * @return 
+	 */
+	public Contract callFindOneContractApi(long contractId) {
+		ResponseEntity<Contract> result = restForContract.getForEntity(COTOS_CONTRACT_URL + "/contract/" + contractId, Contract.class);
+		return result == null ? null : result.getBody();
+	}
+
+	/**
 	 * 契約情報更新APIを呼び出す
 	 *
-	 * @param conttactIdList
-	 *            手配業務IDリスト
+	 * @param conttact
+	 *            契約情報
 	 */
 	public void callContractApi(Contract contract) {
-		if (CollectionUtils.isEmpty(contract.getContractDetailList()))
-			return;
-		restForArrangement.patchForObject(COTOS_CONTRACT_URL + "/contract", contract, Void.class);
+		restForContract.patchForObject(COTOS_CONTRACT_URL + "/contract", contract, Void.class);
 	}
 
 }

@@ -1,13 +1,18 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -25,7 +30,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementPicWorkerEmp;
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
+import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementPicWorkerEmpRepository;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementWorkRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
@@ -119,6 +129,7 @@ public class JobComponentTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doReturn(getContract()).when(restApiClient).callFindOneContractApi(anyLong());
 		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
@@ -501,5 +512,33 @@ public class JobComponentTest extends TestBase {
 		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
 
 		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	private Contract getContract() {
+		Contract contract = new Contract();
+		contract.setId(1L);
+		contract.setContractDetailList(getContractDetailList());
+		contract.setEstimationNumber("testEstimationNumber");
+		ContractPicSaEmp contractPicSaEmp = new ContractPicSaEmp();
+		contractPicSaEmp.setMailAddress("testSaEmp@example.com");
+		contract.setContractPicSaEmp(contractPicSaEmp);
+		ContractAddedEditorEmp contractAddedEditorEmp = new ContractAddedEditorEmp();
+		contractAddedEditorEmp.setMailAddress("testAddedEditor@example.com");
+		contract.setContractAddedEditorEmpList(Arrays.asList(contractAddedEditorEmp));
+		ProductContract productContract = new ProductContract();
+		productContract.setProductContractName("testProductContractName");
+		contract.setProductContractList(Arrays.asList(productContract));
+		CustomerContract customerContract = new CustomerContract();
+		customerContract.setCompanyName("testCompanyName");
+		contract.setCustomerContract(customerContract);
+		return contract;
+	}
+
+	private List<ContractDetail> getContractDetailList() {
+		List<ContractDetail> contractDetailList = new ArrayList<ContractDetail>();
+		ContractDetail contractDetail = new ContractDetail();
+		contractDetail.setId(1L);
+		contractDetailList.add(contractDetail);
+		return contractDetailList;
 	}
 }
