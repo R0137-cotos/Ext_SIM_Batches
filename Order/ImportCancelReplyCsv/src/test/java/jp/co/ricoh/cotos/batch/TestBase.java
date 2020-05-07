@@ -22,6 +22,11 @@ public class TestBase {
 	@Value("${spring.datasource.password}")
 	String dbPassword;
 
+	// 出力ファイルパス
+	protected static final String filePath = "src/test/resources/csv";
+	// 出力ファイル名
+	protected static final String fileName = "reply.csv";
+
 	@SuppressWarnings("serial")
 	@Data
 	@EqualsAndHashCode(callSuper = false)

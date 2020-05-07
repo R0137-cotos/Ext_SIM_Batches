@@ -69,7 +69,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
 		try {
-			jobComponent.run(new String[] { "src/test/resources/csv", "reply.csv" });
+			jobComponent.run(new String[] { filePath, fileName });
 		} catch (Exception e) {
 			Assert.fail("エラーが発生した。");
 		}
@@ -87,7 +87,7 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			// パラメータ1つ
-			jobComponent.run(new String[] { "src/test/resources/csv" });
+			jobComponent.run(new String[] { filePath });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -95,7 +95,7 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			// パラメータ3つ
-			jobComponent.run(new String[] { "src/test/resources/csv", "reply.csv", "dummy" });
+			jobComponent.run(new String[] { filePath, fileName, "dummy" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -108,7 +108,7 @@ public class JobComponentTest extends TestBase {
 		String filePath = "hoge12345678999";
 
 		try {
-			jobComponent.run(new String[] { filePath, "reply.csv" });
+			jobComponent.run(new String[] { filePath, fileName });
 			Assert.fail("ディレクトリが存在しない状態で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -121,7 +121,7 @@ public class JobComponentTest extends TestBase {
 		String fileName = "hoge12345678999.csv";
 
 		try {
-			jobComponent.run(new String[] { "src/test/resources/csv", fileName });
+			jobComponent.run(new String[] { filePath, fileName });
 			Assert.fail("ファイルが存在しない状態で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());

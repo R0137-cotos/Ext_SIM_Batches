@@ -33,6 +33,7 @@ public class JobComponent {
 			e.getErrorInfoList().stream().forEach(errorInfo -> log.error(errorInfo.getErrorId() + ":" + errorInfo.getErrorMessage()));
 			e.printStackTrace();
 			log.error(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
+			System.exit(1);
 
 		} catch (Exception e) {
 			e.printStackTrace();

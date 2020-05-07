@@ -13,7 +13,7 @@ FROM
 WHERE
   pm.product_class_div = 'SIM' 
   AND ic.cost_type != '1' 
-  AND ( 
+  AND (( 
     c.lifecycle_status = '7' 
     AND c.workflow_status = '3'
   ) 
@@ -21,9 +21,9 @@ WHERE
     c.lifecycle_status = '2' 
     AND c.workflow_status = '3' 
     AND c.contract_type = '2'
-  ) 
+  )) 
 {{#contractNumberList}}
-	AND c.immutable_cont_ident_number IN ({{&contractNumberList}})
+	AND c.contract_number IN ({{&contractNumberList}})
 {{/contractNumberList}}
 ORDER BY
   c.id

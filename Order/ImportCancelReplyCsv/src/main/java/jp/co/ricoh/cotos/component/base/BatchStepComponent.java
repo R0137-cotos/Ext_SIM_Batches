@@ -45,7 +45,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 		if (!csvFile.getParentFile().exists()) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "DirectoryNotFoundError"));
 		}
-		// 既にファイルが存在する場合はエラー
+		// 取込み対象のリプライCSVファイルが存在しない場合はエラー
 		if (!csvFile.exists()) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileNotFoundError"));
 		}

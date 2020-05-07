@@ -96,14 +96,14 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 		// 枝番削除した契約番号をキーとしたMap
 		// リプライCSVの枝番削除した契約番号(契約番号の上位15桁)が更新対象契約番号
-		Map<String, List<ReplyOrderDto>> contractNumberGroupingMap = csvlist.stream().collect(Collectors.groupingBy(dto -> substringContractNumber(dto.getContractId()), Collectors.mapping(dto -> dto, Collectors.toList())));
+		Map<String, List<ReplyOrderDto>> contractNumberGroupingMapFromCsv = csvlist.stream().collect(Collectors.groupingBy(dto -> substringContractNumber(dto.getContractId()), Collectors.mapping(dto -> dto, Collectors.toList())));
 		// 枝番削除した契約番号のリスト
-		List<String> contractNumberList = contractNumberGroupingMap.entrySet().stream().map(map -> map.getKey()).map(c -> substringContractNumber(c)).collect(Collectors.toList());
+		List<String> contractNumberListFromCsv = contractNumberGroupingMapFromCsv.entrySet().stream().map(map -> map.getKey()).map(c -> substringContractNumber(c)).collect(Collectors.toList());
 
 		// 対象契約取得
 		Map<String, Object> queryParams = new HashMap<>();
 		StringJoiner joiner = new StringJoiner("','", "'", "'").setEmptyValue("");
-		contractNumberList.stream().forEach(conNumLst -> joiner.add(conNumLst));
+		contractNumberListFromCsv.stream().forEach(conNumLst -> joiner.add(conNumLst));
 		queryParams.put("contractNumberList", joiner.toString());
 		List<Contract> contractList = dbUtil.loadFromSQLFile("sql/findTargetContract.sql", Contract.class, queryParams);
 
@@ -192,19 +192,17 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				boolean hasJsonError = false;
 
 				List<ProductContract> productContractList = contract.getProductContractList();
-				List<ReplyOrderDto> replyOrderList = contractNumberGroupingMap.get(contractMap.getKey());
 				// ライフサイクル状態を設定
 				contract.setLifecycleStatus(Contract.LifecycleStatus.締結中);
 				// ワークフロー状態を設定
 				contract.setWorkflowStatus(Contract.WorkflowStatus.売上可能);
 
-				// 商品コードでグルーピング
-				Map<String, List<ReplyOrderDto>> replyOrderProductGroupingMap = replyOrderList.stream().collect(Collectors.groupingBy(dto -> dto.getRicohItemCode(), Collectors.mapping(dto -> dto, Collectors.toList())));
-
 				// 拡張項目繰り返しを設定
 				for (ProductContract p : productContractList) {
+					// 商品(契約用)から拡張項目繰返を取得
 					String extendsParameterIterance = p.getExtendsParameterIterance();
 					Function<String, List<ExtendsParameterDto>> readJsonFunc = batchUtil.Try(x -> batchUtil.readJson(x), (error, x) -> null);
+					// 取得した拡張項目繰返をDtoのListに変換
 					List<ExtendsParameterDto> extendsParameterList = readJsonFunc.apply(extendsParameterIterance);
 					if (CollectionUtils.isEmpty(extendsParameterList)) {
 						log.fatal(String.format("契約ID=%dの商品拡張項目繰返読込に失敗しました。", contract.getId()));
@@ -212,17 +210,28 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						return;
 					}
 
+					// 拡張項目繰返更新用リスト
 					List<ExtendsParameterDto> updatedExtendsParameterList = new ArrayList<>();
-					replyOrderProductGroupingMap.entrySet().stream().forEach(replyMap -> {
-						List<ReplyOrderDto> dtoList = replyMap.getValue();
-						List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyMap.getKey())).collect(Collectors.toList());
-						IntStream.range(0, dtoList.size()).forEach(j -> {
+
+					// 拡張項目繰返の内、更新対象であるリスト
+					List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> "解約".equals(trimDoubleQuote(e.getContractType()))).collect(Collectors.toList());
+					// 拡張項目繰返の内、更新対象でないリスト
+					List<ExtendsParameterDto> notTargetList = extendsParameterList.stream().filter(e -> !"解約".equals(trimDoubleQuote(e.getContractType()))).collect(Collectors.toList());
+					if (targetList != null) {
+						// 拡張項目繰返の内、更新対象であるリストの解約日を更新して拡張項目繰返更新用リストに格納
+						IntStream.range(0, targetList.size()).forEach(j -> {
 							targetList.get(j).setCancelDate(contract.getCancelScheduledDate().toString());
 							updatedExtendsParameterList.add(targetList.get(j));
 						});
-					});
+					}
+					if (notTargetList != null) {
+						// 拡張項目繰返の内、更新対象でないリストは更新を行わず拡張項目繰返更新用リストに格納
+						IntStream.range(0, notTargetList.size()).forEach(j -> {
+							updatedExtendsParameterList.add(notTargetList.get(j));
+						});
+					}
 
-					// 拡張項目繰返への設定値をIDの昇順でソート
+					// 拡拡張項目繰返更新用リストをIDの昇順でソート
 					if (!CollectionUtils.isEmpty(updatedExtendsParameterList)) {
 						updatedExtendsParameterList.sort((a, b) -> (int) a.getId() - (int) b.getId());
 					}
@@ -328,7 +337,26 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	 * @return 枝番削除した契約番号
 	 */
 	private String substringContractNumber(String number) {
+		if (number == null) {
+			return null;
+		}
+		number = trimDoubleQuote(number);
+		if (number.length() < 15) {
+			return null;
+		}
 		return number.substring(0, 15);
+	}
+
+	/**
+	 * 文字列からダブルクオートを削除する
+	 * @param str 文字列
+	 * @return ダブルクオート削除した文字列
+	 */
+	private String trimDoubleQuote(String str) {
+		if (str == null) {
+			return null;
+		}
+		return str.replaceAll("\"", "");
 	}
 
 }
