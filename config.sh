@@ -43,5 +43,8 @@ export BATCH_PG_BTCOSI005=CreateCsvIFS-0.0.1-SNAPSHOT.jar
 # BTCOSI007 [SB]解約手配CSV作成
 export BATCH_PG_BTCOSI007=CreateCancelOrderCsv-0.0.1-SNAPSHOT.jar
 
+# BTCOSI008 [SB]リプライCSV取込解約
+export BATCH_PG_BTCOSI008=ImportCancelReplyCsv-0.0.1-SNAPSHOT.jar
+
 # BTCOSI009 デバイス空欄警告メール送信
 export BATCH_PG_BTCOSI009=SendDeviceBlankAlertMail-0.0.1-SNAPSHOT.jar
