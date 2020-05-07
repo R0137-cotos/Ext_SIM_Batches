@@ -45,7 +45,7 @@ public class BatchStepComponentTest extends TestBase {
 	@Test
 	public void パラメータチェック_正常系() throws IOException {
 		try {
-			// batchStepComponent.paramCheck(new String[] { "20190626", filePath, fileName });
+			batchStepComponent.paramCheck(new String[] { filePath, fileName });
 		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
@@ -63,57 +63,65 @@ public class BatchStepComponentTest extends TestBase {
 			List<ErrorInfo> messageInfo = e.getErrorInfoList();
 			Assert.assertEquals(1, messageInfo.size());
 			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("パラメータ「処理年月日/ディレクトリ名/作成ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
+			Assert.assertEquals("パラメータ「ファイルディレクトリ/ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
 		}
 
 		try {
 			// パラメータ1つ
-			batchStepComponent.paramCheck(new String[] { "20190626" });
+			batchStepComponent.paramCheck(new String[] { filePath });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
 			List<ErrorInfo> messageInfo = e.getErrorInfoList();
 			Assert.assertEquals(1, messageInfo.size());
 			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("パラメータ「処理年月日/ディレクトリ名/作成ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
+			Assert.assertEquals("パラメータ「ファイルディレクトリ/ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
 		}
 
 		try {
-			// パラメータ2つ
-			batchStepComponent.paramCheck(new String[] { "20190626", "output" });
+			// パラメータ3つ
+			batchStepComponent.paramCheck(new String[] { filePath, fileName, "dummy" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
 			List<ErrorInfo> messageInfo = e.getErrorInfoList();
 			Assert.assertEquals(1, messageInfo.size());
 			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("パラメータ「処理年月日/ディレクトリ名/作成ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
-		}
-
-		try {
-			// パラメータ4つ
-			batchStepComponent.paramCheck(new String[] { "20190626", "output", "test.csv", "dummy" });
-			Assert.fail("パラメータ数不一致で処理が実行された。");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("パラメータ「処理年月日/ディレクトリ名/作成ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
+			Assert.assertEquals("パラメータ「ファイルディレクトリ/ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 
 	@Test
-	public void パラメータチェック_異常系_日付変換失敗() throws Exception {
+	public void 異常系_JOB_ディレクトリが存在しない() throws Exception {
+		// 出力ファイルパス　※テスト環境に存在しないこと
+		String filePath = "hoge12345678999";
+
 		try {
-			batchStepComponent.paramCheck(new String[] { "2019/06/26", "output", "test.csv" });
-			Assert.fail("処理日不正で処理が実行された。");
+			batchStepComponent.paramCheck(new String[] { filePath, fileName });
+			Assert.fail("ディレクトリが存在しない状態で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
 			List<ErrorInfo> messageInfo = e.getErrorInfoList();
 			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("RBA00001", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("業務日付のフォーマットはyyyyMMddです。", messageInfo.get(0).getErrorMessage());
+			Assert.assertEquals("ROT00110", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("指定されたディレクトリが存在しません。", messageInfo.get(0).getErrorMessage());
+		}
+	}
+
+	@Test
+	public void 異常系_JOB_ファイルが存在しない() throws Exception {
+		// 出力ファイル名　※テスト環境に存在しないこと
+		String fileName = "hoge12345678999.csv";
+
+		try {
+			batchStepComponent.paramCheck(new String[] { filePath, fileName });
+			Assert.fail("ファイルが存在しない状態で処理が実行された。");
+		} catch (ErrorCheckException e) {
+			// エラーメッセージ取得
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("ROT00100", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("指定されたファイルが存在しません。", messageInfo.get(0).getErrorMessage());
 		}
 	}
 
