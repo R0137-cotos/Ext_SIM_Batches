@@ -1,9 +1,6 @@
 package jp.co.ricoh.cotos.component;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -61,19 +58,6 @@ public class BatchUtil {
 	 */
 	public void callCompleteArrangement(long arrangementWorkId) {
 		restForArrangement.patchForObject(COTOS_ARRANGEMENT_URL + "/arrangementWork/" + arrangementWorkId + "/completeWork", null, Void.class);
-	}
-
-	/**
-	 * 文字列を日付に変換する
-	 * @param yyyyMMdd 文字列の日付
-	 * @return Date型の日付
-	 */
-	public Date changeDate(String yyyyMMdd) {
-		try {
-			return new SimpleDateFormat("yyyyMMdd").parse(yyyyMMdd);
-		} catch (ParseException e1) {
-			return null;
-		}
 	}
 
 	/**
