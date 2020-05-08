@@ -100,10 +100,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		return csvlist;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	@Transactional
-	public void process(List<?> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
+	public void process(List csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
 		log.info("SIM独自処理");
 
 		if (CollectionUtils.isEmpty(csvlist)) {

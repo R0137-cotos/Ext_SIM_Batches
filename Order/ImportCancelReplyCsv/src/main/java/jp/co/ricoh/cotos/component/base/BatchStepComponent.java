@@ -74,8 +74,9 @@ public class BatchStepComponent implements IBatchStepComponent {
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void process(List<?> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
+	public void process(List csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
 		// データ加工等の処理を実施
 	}
 

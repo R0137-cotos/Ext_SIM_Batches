@@ -45,7 +45,8 @@ public interface IBatchStepComponent {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public void process(List<?> csvlist) throws JsonProcessingException, FileNotFoundException, IOException;
+	@SuppressWarnings("rawtypes")
+	public void process(List csvlist) throws JsonProcessingException, FileNotFoundException, IOException;
 
 	/**
 	 * 事後処理
