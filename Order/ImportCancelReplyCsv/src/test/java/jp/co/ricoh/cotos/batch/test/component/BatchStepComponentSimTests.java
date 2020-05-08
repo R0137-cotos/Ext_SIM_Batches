@@ -26,6 +26,7 @@ import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
 import jp.co.ricoh.cotos.component.BatchUtil;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
+import jp.co.ricoh.cotos.dto.ReplyOrderDto;
 import jp.co.ricoh.cotos.security.CreateJwt;
 
 @RunWith(SpringRunner.class)
@@ -72,7 +73,7 @@ public class BatchStepComponentSimTests extends TestBase {
 		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
 
 		try {
-			List<?> csvlist = batchStepComponent.beforeProcess(new String[] { filePath, fileName });
+			List<ReplyOrderDto> csvlist = batchStepComponent.beforeProcess(new String[] { filePath, fileName });
 			if (CollectionUtils.isEmpty(csvlist)) {
 				Assert.fail("CSV読み込みに失敗した。");
 			}
@@ -84,7 +85,7 @@ public class BatchStepComponentSimTests extends TestBase {
 	@Test
 	public void beforeProcess_正常系_引数不正() throws IOException {
 		try {
-			List<?> csvlist = batchStepComponent.beforeProcess(new String[] {});
+			List<ReplyOrderDto> csvlist = batchStepComponent.beforeProcess(new String[] {});
 			if (!CollectionUtils.isEmpty(csvlist)) {
 				Assert.fail("nullでない");
 			}
@@ -96,7 +97,7 @@ public class BatchStepComponentSimTests extends TestBase {
 	@Test
 	public void beforeProcess_正常系_空ファイル() throws IOException {
 		try {
-			List<?> csvlist = batchStepComponent.beforeProcess(new String[] { filePath, "empty.csv" });
+			List<ReplyOrderDto> csvlist = batchStepComponent.beforeProcess(new String[] { filePath, "empty.csv" });
 			if (!CollectionUtils.isEmpty(csvlist)) {
 				Assert.fail("nullでない");
 			}
@@ -109,7 +110,7 @@ public class BatchStepComponentSimTests extends TestBase {
 	public void beforeProcess_正常系_ファイルが存在しない() throws IOException {
 		// hoge12345678999.csvが環境に存在しないこと
 		try {
-			List<?> csvlist = batchStepComponent.beforeProcess(new String[] { filePath, "hoge12345678999.csv" });
+			List<ReplyOrderDto> csvlist = batchStepComponent.beforeProcess(new String[] { filePath, "hoge12345678999.csv" });
 			if (!CollectionUtils.isEmpty(csvlist)) {
 				Assert.fail("nullでない");
 			}
