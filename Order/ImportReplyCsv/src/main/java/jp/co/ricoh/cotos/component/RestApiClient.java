@@ -32,9 +32,6 @@ public class RestApiClient {
 	@Value("${cotos.arrangement.url}")
 	String COTOS_ARRANGEMENT_URL;
 
-	@Value("${cotos.mom.superUserId}")
-	String COTOS_MOM_SUPERUSERID;
-
 	@Value("${cotos.contract.url}")
 	String COTOS_CONTRACT_URL;
 

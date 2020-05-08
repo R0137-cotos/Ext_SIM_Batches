@@ -110,8 +110,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				searchParam.setContractNumber(conNumLst);
 				contractList.addAll(restApiClient.callFindTargetContract(searchParam));
 			} catch (Exception updateError) {
-				// log.fatal(String.format("契約番号=%dの契約取得に失敗しました。", conNumLst));
-				// いい感じのエラーログを探す
+				log.fatal(String.format("契約番号=" + conNumLst + "の契約取得に失敗しました。", conNumLst));
 				updateError.printStackTrace();
 				return;
 			}
@@ -145,11 +144,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					IntStream.range(0, dtoList.size()).forEach(i -> {
 						// 回線番号Nullチェック
 						// リプライデータの送り状番号ブランクチェック
-						System.out.println("★★★★★★★");
-						System.out.println(dtoList.get(i).getLineNumber());
-						System.out.println(targetList.get(i).getLineNumber());
-						System.out.println(!(dtoList.get(i).getLineNumber().equals(targetList.get(i).getLineNumber())));
-						System.out.println(dtoList.get(i).getInvoiceNumber());
 						if (!(dtoList.get(i).getLineNumber().equals(targetList.get(i).getLineNumber()))) {
 							targetList.get(i).setLineNumber(dtoList.get(i).getLineNumber());
 							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
