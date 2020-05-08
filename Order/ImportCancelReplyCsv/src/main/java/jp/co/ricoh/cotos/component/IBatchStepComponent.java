@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import jp.co.ricoh.cotos.dto.ReplyOrderDto;
+
 public interface IBatchStepComponent {
 
 	/**
@@ -36,7 +38,7 @@ public interface IBatchStepComponent {
 	 * @return
 	 * @throws IOException
 	 */
-	public List<?> beforeProcess(String[] args) throws IOException;
+	public List<ReplyOrderDto> beforeProcess(String[] args) throws IOException;
 
 	/**
 	 * プロセス
@@ -45,8 +47,7 @@ public interface IBatchStepComponent {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	@SuppressWarnings("rawtypes")
-	public void process(List csvlist) throws JsonProcessingException, FileNotFoundException, IOException;
+	public void process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException;
 
 	/**
 	 * 事後処理

@@ -75,7 +75,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	EntityManager em;
 
 	@Override
-	public List<?> beforeProcess(String[] args) throws IOException {
+	public List<ReplyOrderDto> beforeProcess(String[] args) throws IOException {
 		log.info("SIM独自処理");
 
 		// バッチパラメーターのチェックを実施
@@ -100,10 +100,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		return csvlist;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	@Transactional
-	public void process(List csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
+	public void process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
 		log.info("SIM独自処理");
 
 		if (CollectionUtils.isEmpty(csvlist)) {
@@ -111,11 +110,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			return;
 		}
 
-		List<ReplyOrderDto> dtolist = (List<ReplyOrderDto>) csvlist;
-
 		// 枝番削除した契約番号をキーとしたMap
 		// リプライCSVの枝番削除した契約番号(契約番号の上位15桁)が更新対象契約番号
-		Map<String, List<ReplyOrderDto>> contractNumberGroupingMapFromCsv = dtolist.stream().collect(Collectors.groupingBy(dto -> substringContractNumber(dto.getContractId()), Collectors.mapping(dto -> dto, Collectors.toList())));
+		Map<String, List<ReplyOrderDto>> contractNumberGroupingMapFromCsv = csvlist.stream().collect(Collectors.groupingBy(dto -> substringContractNumber(dto.getContractId()), Collectors.mapping(dto -> dto, Collectors.toList())));
 		// 枝番削除した契約番号のリスト
 		List<String> contractNumberListFromCsv = contractNumberGroupingMapFromCsv.entrySet().stream().map(map -> map.getKey()).map(c -> substringContractNumber(c)).collect(Collectors.toList());
 
