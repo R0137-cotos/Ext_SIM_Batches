@@ -1,6 +1,5 @@
-package jp.co.ricoh.cotos.batch.test;
+package jp.co.ricoh.cotos.batch.test.logic;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import jp.co.ricoh.cotos.BatchApplication;
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
@@ -39,22 +37,26 @@ import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
 import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
 import jp.co.ricoh.cotos.component.RestApiClient;
+import jp.co.ricoh.cotos.logic.JobComponent;
 import jp.co.ricoh.cotos.security.CreateJwt;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ImportReplyCsvTests extends TestBase {
+public class JobComponentTest extends TestBase {
 
 	static ConfigurableApplicationContext context;
 
-	@MockBean
-	RestApiClient restApiClient;
+	@Autowired
+	BatchMomInfoProperties batchProperty;
 
 	@Autowired
 	CreateJwt createJwt;
 
 	@Autowired
-	BatchMomInfoProperties batchProperty;
+	JobComponent jobComponent;
+
+	@MockBean
+	RestApiClient restApiClient;
 
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
@@ -74,102 +76,116 @@ public class ImportReplyCsvTests extends TestBase {
 		}
 	}
 
+	private void テストデータ作成(String sql) {
+		context.getBean(DBConfig.class).clearData();
+		context.getBean(DBConfig.class).initTargetTestData(sql);
+	}
+
 	@Test
-	public void 正常系_新規() throws IOException {
+	public void 正常系_リプライCSV取込_新規() {
+		テストデータ作成("sql/insertTestData.sql");
+
 		Mockito.when(restApiClient.callFindTargetContract(Mockito.anyObject())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 
-		テストデータ作成("sql/insertTestData.sql");
 		try {
-			BatchApplication.main(new String[] { filePath, fileName });
+			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
 		} catch (Exception e) {
-			Assert.fail("エラーが発生した。");
+			Assert.fail("テスト失敗");
 		}
 	}
 
 	@Test
-	public void 正常系_容量変更() throws IOException {
+	public void 正常系_リプライCSV取込_容量変更() {
+		テストデータ作成("sql/insertTestData.sql");
+
 		Mockito.when(restApiClient.callFindTargetContract(Mockito.anyObject())).thenReturn(dummyContract("容量変更"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
-		テストデータ作成("sql/insertTestData.sql");
+
 		try {
-			BatchApplication.main(new String[] { filePath, fileName });
+			jobComponent.run(new String[] { "src/test/resources/csv", "test2.csv" });
 		} catch (Exception e) {
-			Assert.fail("エラーが発生した。");
+			Assert.fail("テスト失敗");
 		}
 	}
 
 	@Test
-	public void 正常系_有償交換() throws IOException {
+	public void 正常系_リプライCSV取込_有償交換() {
+		テストデータ作成("sql/insertTestData.sql");
+
 		Mockito.when(restApiClient.callFindTargetContract(Mockito.anyObject())).thenReturn(dummyContract("有償交換"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 
-		テストデータ作成("sql/insertTestData.sql");
 		try {
-			BatchApplication.main(new String[] { filePath, fileName });
+			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
 		} catch (Exception e) {
-			Assert.fail("エラーが発生した。");
+			Assert.fail("テスト失敗");
+		}
+	}
+
+	@Test
+	public void 正常系_空ファイル_処理終了() {
+		try {
+			jobComponent.run(new String[] { "src/test/resources/csv", "empty.csv" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+	}
+
+	@Test
+	public void 正常系_リプライCSV取込_契約情報取得失敗() {
+
+		テストデータ作成("sql/insertTestDataExtendsParameterError.sql");
+
+		Mockito.when(restApiClient.callFindTargetContract(Mockito.anyObject())).thenReturn(null);
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+
+		try {
+			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+
+	}
+
+	@Test
+	public void 正常系_リプライCSV取込_拡張項目読込失敗() {
+
+		テストデータ作成("sql/insertTestDataExtendsParameterError.sql");
+
+		Mockito.when(restApiClient.callFindTargetContract(Mockito.anyObject())).thenReturn(dummyContract("失敗"));
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+
+		try {
+			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
 		}
 	}
 
 	@Test
 	public void 異常系_JOB_パラメーター数不一致() {
 		try {
-			// パラメータ無し
-			BatchApplication.main(new String[] {});
-			Assert.fail("パラメータ数不一致で処理が実行された。");
+			jobComponent.run(new String[] { "dummy" });
+			Assert.fail("パラメータがないのに処理が実行された。");
 		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
-		}
-
-		try {
-			// パラメータ1つ
-			BatchApplication.main(new String[] { filePath });
-			Assert.fail("パラメータ数不一致で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
-		}
-
-		try {
-			// パラメータ3つ
-			BatchApplication.main(new String[] { filePath, fileName, "dummy" });
-			Assert.fail("パラメータ数不一致で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+			Assert.assertEquals("ステータス", 1, e.getStatus());
 		}
 	}
 
 	@Test
-	public void 異常系_JOB_ディレクトリが存在しない() throws IOException {
-		// 出力ファイルパス　※テスト環境に存在しないこと
-		String filePath = "dummy.csv";
-
+	public void 異常系_JOB_存在しないファイル() {
 		try {
-			BatchApplication.main(new String[] { filePath, fileName });
-			Assert.fail("ディレクトリが存在しない状態で処理が実行された。");
+			jobComponent.run(new String[] { "src/test/resources/csv", "dummy.csv" });
+			Assert.fail("パラメータが不正なのに処理が実行された。");
 		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+			Assert.assertEquals("ステータス", 1, e.getStatus());
 		}
-	}
-
-	@Test
-	public void 異常系_JOB_ファイルが存在しない() throws IOException {
-		String fileName = "dummy.csv";
-
-		try {
-			BatchApplication.main(new String[] { filePath, fileName });
-			Assert.fail("ファイルが存在しない状態で処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
-		}
-	}
-
-	private void テストデータ作成(String sql) {
-		context.getBean(DBConfig.class).clearData();
-		context.getBean(DBConfig.class).initTargetTestData(sql);
 	}
 
 	private List<Contract> dummyContract(String type) {
@@ -218,5 +234,4 @@ public class ImportReplyCsvTests extends TestBase {
 
 		return Arrays.asList(contract);
 	}
-
 }

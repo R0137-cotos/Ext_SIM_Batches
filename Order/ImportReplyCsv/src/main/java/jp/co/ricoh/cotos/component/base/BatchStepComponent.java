@@ -18,6 +18,7 @@ import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
+import jp.co.ricoh.cotos.dto.ReplyOrderDto;
 
 @Component("BASE")
 public class BatchStepComponent implements IBatchStepComponent {
@@ -69,12 +70,13 @@ public class BatchStepComponent implements IBatchStepComponent {
 	}
 
 	@Override
-	public void beforeProcess(Object param) {
+	public List<ReplyOrderDto> beforeProcess(String[] args) throws IOException {
 		// 事前処理を実施
+		return null;
 	}
 
 	@Override
-	public void process(String[] params)throws JsonProcessingException, FileNotFoundException, IOException{
+	public void process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
 		// データ加工等の処理を実施
 	}
 
