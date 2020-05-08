@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -19,6 +18,7 @@ import java.util.stream.IntStream;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
+import jp.co.ricoh.cotos.commonlib.dto.parameter.contract.ContractSearchParameter;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.Arrangement;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
@@ -38,6 +39,7 @@ import jp.co.ricoh.cotos.commonlib.logic.mail.CommonSendMail;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractRepository;
 import jp.co.ricoh.cotos.component.BatchUtil;
+import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.ExtendsParameterDto;
 import jp.co.ricoh.cotos.dto.ReplyOrderDto;
@@ -52,6 +54,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Autowired
 	BatchUtil batchUtil;
+
+	@Autowired
+	RestApiClient restApiClient;
 
 	@Autowired
 	ObjectMapper objectMapper;
@@ -96,13 +101,22 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		//枝番削除した契約番号のリスト
 		List<String> contractNumberList = contractNumberGroupingMap.entrySet().stream().map(map -> map.getKey()).map(c -> substringContractNumber(c)).collect(Collectors.toList());
 
-		//対象契約取得
-		Map<String, Object> queryParams = new HashMap<>();
-		StringJoiner joiner = new StringJoiner("','", "'", "'").setEmptyValue("");
-		contractNumberList.stream().forEach(conNumLst -> joiner.add(conNumLst));
-		queryParams.put("contractNumberList", joiner.toString());
-		List<Contract> contractList = dbUtil.loadFromSQLFile("sql/findTargetContract.sql", Contract.class, queryParams);
-		Map<String, Contract> contractMapByContractNumber = contractList.stream().collect(Collectors.toMap(Contract::getImmutableContIdentNumber, con -> con));
+		// 対象契約取得
+		List<Contract> contractList = new ArrayList<Contract>();
+		contractNumberList.stream().forEach(conNumLst -> {
+			//契約情報取得
+			try {
+				ContractSearchParameter searchParam = new ContractSearchParameter();
+				searchParam.setContractNumber(conNumLst);
+				contractList.addAll(restApiClient.callFindTargetContract(searchParam));
+			} catch (Exception updateError) {
+				// log.fatal(String.format("契約番号=%dの契約取得に失敗しました。", conNumLst));
+				// いい感じのエラーログを探す
+				updateError.printStackTrace();
+				return;
+			}
+		});
+		Map<String, Contract> contractMapByContractNumber = contractList.stream().collect(Collectors.toMap(Contract::getContractNumber, con -> con));
 
 		contractMapByContractNumber.entrySet().stream().forEach(contractMap -> {
 			Contract contract = contractMap.getValue();
@@ -129,9 +143,23 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					List<ReplyOrderDto> dtoList = replyMap.getValue();
 					List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyMap.getKey())).collect(Collectors.toList());
 					IntStream.range(0, dtoList.size()).forEach(i -> {
-						targetList.get(i).setLineNumber(dtoList.get(i).getLineNumber());
-						targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
-						targetList.get(i).setInvoiceNumber(dtoList.get(i).getInvoiceNumber());
+						// 回線番号Nullチェック
+						// リプライデータの送り状番号ブランクチェック
+						System.out.println("★★★★★★★");
+						System.out.println(dtoList.get(i).getLineNumber());
+						System.out.println(targetList.get(i).getLineNumber());
+						System.out.println(!(dtoList.get(i).getLineNumber().equals(targetList.get(i).getLineNumber())));
+						System.out.println(dtoList.get(i).getInvoiceNumber());
+						if (!(dtoList.get(i).getLineNumber().equals(targetList.get(i).getLineNumber()))) {
+							targetList.get(i).setLineNumber(dtoList.get(i).getLineNumber());
+							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
+							targetList.get(i).setInvoiceNumber(dtoList.get(i).getInvoiceNumber());
+						} else if (StringUtils.isNotEmpty(dtoList.get(i).getInvoiceNumber())) {
+							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
+							targetList.get(i).setInvoiceNumber(dtoList.get(i).getInvoiceNumber());
+						} else {
+							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
+						}
 						updatedExtendsParameterList.add(targetList.get(i));
 					});
 				});
@@ -140,7 +168,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				if (updatedExtendsParameterList != null) {
 					updatedExtendsParameterList.sort((a, b) -> (int) a.getId() - (int) b.getId());
 				}
-
 				Map<String, List<ExtendsParameterDto>> extendsParameterMap = new HashMap<>();
 				extendsParameterMap.put("extendsParameterList", updatedExtendsParameterList);
 				try {
@@ -155,7 +182,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 			//契約更新
 			try {
-				batchUtil.callUpdateContract(contract);
+				restApiClient.callUpdateContract(contract);
 			} catch (Exception updateError) {
 				log.fatal(String.format("契約ID=%dの契約更新に失敗しました。", contract.getId()));
 				updateError.printStackTrace();
@@ -166,7 +193,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
 			arrangementWorkList.stream().forEach(work -> {
 				try {
-					batchUtil.callCompleteArrangement(work.getId());
+					restApiClient.callCompleteArrangement(work.getId());
 				} catch (Exception arrangementError) {
 					log.fatal(String.format("契約ID=%dの手配完了に失敗しました。", contract.getId()));
 					arrangementError.printStackTrace();
