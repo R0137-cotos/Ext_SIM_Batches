@@ -192,8 +192,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				boolean hasJsonError = false;
 
 				List<ProductContract> productContractList = contract.getProductContractList();
-				// ライフサイクル状態を設定
-				contract.setLifecycleStatus(Contract.LifecycleStatus.締結中);
 				// ワークフロー状態を設定
 				contract.setWorkflowStatus(Contract.WorkflowStatus.売上可能);
 
