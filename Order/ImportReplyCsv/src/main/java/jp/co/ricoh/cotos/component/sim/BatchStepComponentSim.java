@@ -61,9 +61,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	RestApiClient restApiClient;
 
 	@Autowired
-	ObjectMapper objectMapper;
-
-	@Autowired
 	DBUtil dbUtil;
 
 	@Autowired
