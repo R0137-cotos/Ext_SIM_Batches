@@ -10,7 +10,7 @@ source ${BATCH_BASE_PATH}/config.sh
 
 # ログファイルパス
 LOG_FILE_PATH="${LOG_DIR}/BTCOSI008.log"
-PROCESS_LOG_FILE_PATH="${LOG_DIR}/ImportReplyCsv.log"
+PROCESS_LOG_FILE_PATH="${LOG_DIR}/ImportCancelReplyCsv.log"
 
 Log.Info "BTCOSI008:[SB]リプライCSV取込解約を開始します。" >> ${LOG_FILE_PATH}
 
