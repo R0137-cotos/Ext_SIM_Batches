@@ -75,11 +75,19 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	EntityManager em;
 
 	@Override
-	@Transactional
-	public void process(String[] args) throws JsonProcessingException, FileNotFoundException, IOException {
+	public List<?> beforeProcess(String[] args) throws IOException {
 		log.info("SIM独自処理");
 
+		// バッチパラメーターのチェックを実施
+		if (null == args || args.length != 2) {
+			return null;
+		}
+
 		File csvFile = Paths.get(args[0], args[1]).toFile();
+
+		if (csvFile == null || !csvFile.exists()) {
+			return null;
+		}
 
 		// リプライCSV読込
 		CsvMapper mapper = new CsvMapper();
@@ -89,14 +97,25 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		MappingIterator<ReplyOrderDto> it = mapper.readerFor(ReplyOrderDto.class).with(schema).with(quoteSchema).readValues(new InputStreamReader(new FileInputStream(csvFile), Charset.forName("Shift_JIS")));
 		List<ReplyOrderDto> csvlist = it.readAll();
 
+		return csvlist;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Transactional
+	public void process(List<?> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
+		log.info("SIM独自処理");
+
 		if (CollectionUtils.isEmpty(csvlist)) {
 			log.info("取込データが0件のため処理を終了します");
 			return;
 		}
 
+		List<ReplyOrderDto> dtolist = (List<ReplyOrderDto>) csvlist;
+
 		// 枝番削除した契約番号をキーとしたMap
 		// リプライCSVの枝番削除した契約番号(契約番号の上位15桁)が更新対象契約番号
-		Map<String, List<ReplyOrderDto>> contractNumberGroupingMapFromCsv = csvlist.stream().collect(Collectors.groupingBy(dto -> substringContractNumber(dto.getContractId()), Collectors.mapping(dto -> dto, Collectors.toList())));
+		Map<String, List<ReplyOrderDto>> contractNumberGroupingMapFromCsv = dtolist.stream().collect(Collectors.groupingBy(dto -> substringContractNumber(dto.getContractId()), Collectors.mapping(dto -> dto, Collectors.toList())));
 		// 枝番削除した契約番号のリスト
 		List<String> contractNumberListFromCsv = contractNumberGroupingMapFromCsv.entrySet().stream().map(map -> map.getKey()).map(c -> substringContractNumber(c)).collect(Collectors.toList());
 

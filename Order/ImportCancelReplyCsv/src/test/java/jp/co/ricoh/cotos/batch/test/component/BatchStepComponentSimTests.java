@@ -1,7 +1,9 @@
 package jp.co.ricoh.cotos.batch.test.component;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,7 +65,61 @@ public class BatchStepComponentSimTests extends TestBase {
 	}
 
 	@Test
-	public void リプライCSV取込解約_正常系() throws IOException {
+	public void beforeProcess_正常系() throws IOException {
+		// 契約情報更新APIを無効にする
+		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配情報完了APIを無効にする
+		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
+
+		try {
+			List<?> csvlist = batchStepComponent.beforeProcess(new String[] { filePath, fileName });
+			if (CollectionUtils.isEmpty(csvlist)) {
+				Assert.fail("CSV読み込みに失敗した。");
+			}
+		} catch (ErrorCheckException e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void beforeProcess_正常系_引数不正() throws IOException {
+		try {
+			List<?> csvlist = batchStepComponent.beforeProcess(new String[] {});
+			if (!CollectionUtils.isEmpty(csvlist)) {
+				Assert.fail("nullでない");
+			}
+		} catch (ErrorCheckException e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void beforeProcess_正常系_空ファイル() throws IOException {
+		try {
+			List<?> csvlist = batchStepComponent.beforeProcess(new String[] { filePath, "empty.csv" });
+			if (!CollectionUtils.isEmpty(csvlist)) {
+				Assert.fail("nullでない");
+			}
+		} catch (ErrorCheckException e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void beforeProcess_正常系_ファイルが存在しない() throws IOException {
+		// hoge12345678999.csvが環境に存在しないこと
+		try {
+			List<?> csvlist = batchStepComponent.beforeProcess(new String[] { filePath, "hoge12345678999.csv" });
+			if (!CollectionUtils.isEmpty(csvlist)) {
+				Assert.fail("nullでない");
+			}
+		} catch (ErrorCheckException e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void process_正常系() throws IOException {
 		// 契約情報更新APIを無効にする
 		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
 		// 手配情報完了APIを無効にする
@@ -71,7 +127,22 @@ public class BatchStepComponentSimTests extends TestBase {
 		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
 
 		try {
-			batchStepComponent.process(new String[] { filePath, fileName });
+			batchStepComponent.process(batchStepComponent.beforeProcess(new String[] { filePath, fileName }));
+		} catch (ErrorCheckException e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void process_正常系_引数null() throws IOException {
+		// 契約情報更新APIを無効にする
+		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配情報完了APIを無効にする
+		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
+
+		try {
+			batchStepComponent.process(null);
 		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}

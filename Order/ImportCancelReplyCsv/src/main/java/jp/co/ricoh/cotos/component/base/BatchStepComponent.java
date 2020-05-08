@@ -3,7 +3,6 @@ package jp.co.ricoh.cotos.component.base;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +27,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 	/**
 	 * パラメーターチェック処理
 	 * ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
-	 * @return
-	 * @throws FileAlreadyExistsException 
+	 * @param args バッチ起動引数
 	 */
 	@Override
 	public final void paramCheck(String[] args) {
@@ -71,12 +69,13 @@ public class BatchStepComponent implements IBatchStepComponent {
 	}
 
 	@Override
-	public void beforeProcess(Object param) {
+	public List<?> beforeProcess(String[] args) throws IOException {
 		// 事前処理を実施
+		return null;
 	}
 
 	@Override
-	public void process(String[] params)throws JsonProcessingException, FileNotFoundException, IOException{
+	public void process(List<?> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
 		// データ加工等の処理を実施
 	}
 

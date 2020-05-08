@@ -2,7 +2,6 @@ package jp.co.ricoh.cotos.component;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,8 +11,7 @@ public interface IBatchStepComponent {
 	/**
 	 * パラメーターチェック処理
 	 * ※標準コンポーネントでのみ実装できます。商材個別になる場合は別バッチとして実装することを検討してください。
-	 * @return
-	 * @throws FileAlreadyExistsException 
+	 * @param args バッチ起動引数
 	 */
 	public void paramCheck(String[] args);
 
@@ -27,26 +25,31 @@ public interface IBatchStepComponent {
 
 	/**
 	 * データチェック処理
+	 * @param dataList データリスト
 	 * @return
 	 */
 	public boolean dataCheck(List<String> dataList);
 
 	/**
 	 * 事前処理
+	 * @param args バッチ起動引数
 	 * @return
+	 * @throws IOException
 	 */
-	public void beforeProcess(Object param);
+	public List<?> beforeProcess(String[] args) throws IOException;
 
 	/**
 	 * プロセス
-	 * @return
-	 * @throws Exception 
+	 * @param csvlist CSVリスト
+	 * @throws JsonProcessingException
+	 * @throws FileNotFoundException
+	 * @throws IOException
 	 */
-	public void process(String[] params)throws JsonProcessingException, FileNotFoundException, IOException;
+	public void process(List<?> csvlist) throws JsonProcessingException, FileNotFoundException, IOException;
 
 	/**
 	 * 事後処理
-	 * @return
+	 * @param param パラメータ
 	 */
 	public void afterProcess(Object param);
 }

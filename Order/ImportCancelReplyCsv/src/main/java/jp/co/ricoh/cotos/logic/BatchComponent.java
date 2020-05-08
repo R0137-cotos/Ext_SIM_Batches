@@ -29,8 +29,7 @@ public class BatchComponent {
 		baseComponent.paramCheck(args);
 
 		IBatchStepComponent component = this.getComponentInstance("SIM");
-		component.process(args);
-
+		component.process(component.beforeProcess(args));
 	}
 
 	/**
