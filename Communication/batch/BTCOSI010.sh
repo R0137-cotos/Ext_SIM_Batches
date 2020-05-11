@@ -1,7 +1,7 @@
 #!/bin/sh
 ################################################
-### バッチID: BTCOSI006
-### 機能名：  オーダーメール送信
+### バッチID: BTCOSI010
+### 機能名：  オーダー解約メール送信
 ################################################
 
 {
@@ -28,9 +28,9 @@ echo ""
 echo "--1234"
 echo "Content-Type: text/plain; name=`date "+%Y%m%d"`_SIM_sinki.csv"
 echo "Content-Transfer-Encoding: base64"
-echo "Content-Disposition: attachment; filename=`date "+%Y%m%d"`_SIM_sinki.zip"
+echo "Content-Disposition: attachment; filename=`date "+%Y%m%d"`_SIM_kaiyaku.zip"
 echo ""
-cat /sharestorage/work/BTCOSI001/cooperation/`date "+%Y%m%d"`_SIM_新規.zip | base64
+cat /sharestorage/work/BTCOSI008/cooperation/`date "+%Y%m%d"`_SIM_解約.zip | base64
 echo ""
 echo "--1234--"
 echo "."
