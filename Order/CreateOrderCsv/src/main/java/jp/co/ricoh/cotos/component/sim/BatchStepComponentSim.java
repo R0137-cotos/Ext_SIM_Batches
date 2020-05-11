@@ -24,6 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.csv.CsvGenerator;
@@ -83,6 +84,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	private static final String headerFilePath = "file/header.csv";
 
 	@Override
+	@Transactional
 	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
 		log.info("SIM独自処理");
 		// 取得したデータを出力データのみに設定

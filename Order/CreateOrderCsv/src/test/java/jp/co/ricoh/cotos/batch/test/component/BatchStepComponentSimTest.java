@@ -35,14 +35,10 @@ import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
-import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
-import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
-import jp.co.ricoh.cotos.logic.BatchComponent;
-import jp.co.ricoh.cotos.logic.JobComponent;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -55,14 +51,8 @@ public class BatchStepComponentSimTest extends TestBase {
 	@MockBean
 	RestApiClient restApiClient;
 
-	@Autowired
-	JobComponent jobComponent;
-
 	@SpyBean(name = "SIM")
 	BatchStepComponent batchStepComponent;
-
-	@Autowired
-	BatchComponent batchComponent;
 
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
@@ -90,140 +80,6 @@ public class BatchStepComponentSimTest extends TestBase {
 			return;
 		}
 		System.out.println("ファイル:[" + pathname + "]の削除に失敗しました");
-	}
-
-	@Test
-	public void 異常系_パラメータチェックテスト_パラメーター数不一致() throws Exception {
-		fileDeleate(outputPath + "result_initial.csv");
-		try {
-			batchStepComponent.paramCheck(new String[] { "dummy", "dummy" });
-			Assert.fail("正常終了");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("パラメータ「処理年月日/ディレクトリ名/ファイル名/種別」が設定されていません。", messageInfo.get(0).getErrorMessage());
-		}
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	public void 異常系_パラメータチェックテスト_業務日付不正() throws Exception {
-		fileDeleate(outputPath + "result_initial.csv");
-		try {
-			batchStepComponent.paramCheck(new String[] { "dummy", outputPath, "result_initial.csv", "1" });
-			Assert.fail("正常終了");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("RBA00001", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("業務日付のフォーマットはyyyyMMddです。", messageInfo.get(0).getErrorMessage());
-		}
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	public void 異常系_パラメータチェックテスト_パス不正() throws Exception {
-		fileDeleate(outputPath + "result_initial.csv");
-		try {
-			batchStepComponent.paramCheck(new String[] { "20191018", "dummy", "result_initial.csv", "1" });
-			Assert.fail("正常終了");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("ROT00110", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("指定されたディレクトリが存在しません。", messageInfo.get(0).getErrorMessage());
-		}
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	public void 異常系_パラメータチェックテスト_種別不正() throws Exception {
-		fileDeleate(outputPath + "result_initial.csv");
-		try {
-			batchStepComponent.paramCheck(new String[] { "20191018", outputPath, "result_initial.csv", "dummy" });
-			Assert.fail("正常終了");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("ROT00003", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("種別が特定できません。", messageInfo.get(0).getErrorMessage());
-		}
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	public void 正常系_パラメーターチェックテスト() {
-		fileDeleate(outputPath + "result_initial.csv");
-		try {
-			batchStepComponent.paramCheck(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
-		} catch (Exception e) {
-			Assert.fail("エラー");
-		}
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	public void 正常系_データ取得テスト_新規() throws IOException {
-		fileDeleate(outputPath + "result_initial.csv");
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
-		String contractType = "'$?(@.contractType == \"新規\")'";
-		try {
-			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
-			Assert.assertEquals(9, serchMailTargetDtoList.size());
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail("異常終了");
-		}
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	public void 正常系_データ取得テスト_容量変更() throws IOException {
-		fileDeleate(outputPath + "result_initial.csv");
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataCapacityChange.sql");
-		String contractType = "'$?(@.contractType == \"容量変更\")'";
-		try {
-			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
-			Assert.assertEquals(9, serchMailTargetDtoList.size());
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail("異常終了");
-		}
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	public void 正常系_データ取得テスト_有償交換() throws IOException {
-		fileDeleate(outputPath + "result_initial.csv");
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataPaidExchange.sql");
-		String contractType = "'$?(@.contractType == \"有償交換\")'";
-		try {
-			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
-			Assert.assertEquals(9, serchMailTargetDtoList.size());
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail("異常終了");
-		}
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	public void 正常系_データ取得_取得無し() throws IOException {
-		fileDeleate(outputPath + "result_initial.csv");
-		String contractType = "'$?(@.contractType == \"新規\")'";
-		try {
-			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
-			Assert.assertEquals(0, serchMailTargetDtoList.size());
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail("異常終了");
-		}
-		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test

@@ -96,16 +96,13 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 * @param searchParam
 	 *            処理データ取得用パラメーター
 	 * @return 処理データリスト
-	 * @throws ParseException
 	 */
 	@Override
 	public final List<CreateOrderCsvDataDto> getDataList(String contractType) {
 		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<>();
-
 		Map<String, Object> sqlParams = new HashMap<String, Object>();
 		sqlParams.put("contractType", contractType);
 		orderDataList = dbUtil.loadFromSQLFile("sql/findOrderData.sql", CreateOrderCsvDataDto.class, sqlParams);
-
 		return orderDataList;
 	}
 
