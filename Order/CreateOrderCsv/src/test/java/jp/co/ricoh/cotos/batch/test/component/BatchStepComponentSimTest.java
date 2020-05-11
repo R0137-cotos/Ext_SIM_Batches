@@ -1,6 +1,7 @@
 package jp.co.ricoh.cotos.batch.test.component;
 
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doNothing;
 
@@ -11,12 +12,14 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,6 +29,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
+import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.component.RestApiClient;
@@ -224,6 +233,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
 		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
@@ -236,7 +246,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
 		createOrderCsvDataDto.setId(1L);
-		createOrderCsvDataDto.setContractIdTemp(1);
+		createOrderCsvDataDto.setContractIdTemp(1L);
 		createOrderCsvDataDto.setContractNumber("CIC201912240101");
 		createOrderCsvDataDto.setQuantity("1");
 		createOrderCsvDataDto.setRicohItemCode("SI0001");
@@ -277,6 +287,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
 		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
@@ -330,6 +341,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
 		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
@@ -373,5 +385,33 @@ public class BatchStepComponentSimTest extends TestBase {
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_one_paid_exchange.csv"));
 		Assert.assertArrayEquals(expected, actuals);
 		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	private List<ContractDetail> getContractDetailList() {
+		List<ContractDetail> contractDetailList = new ArrayList<ContractDetail>();
+		ContractDetail contractDetail = new ContractDetail();
+		contractDetail.setId(1L);
+		contractDetailList.add(contractDetail);
+		return contractDetailList;
+	}
+
+	private Contract dummyContract() {
+		Contract contract = new Contract();
+		contract.setId(1L);
+		contract.setContractDetailList(getContractDetailList());
+		contract.setEstimationNumber("testEstimationNumber");
+		ContractPicSaEmp contractPicSaEmp = new ContractPicSaEmp();
+		contractPicSaEmp.setMailAddress("testSaEmp@example.com");
+		contract.setContractPicSaEmp(contractPicSaEmp);
+		ContractAddedEditorEmp contractAddedEditorEmp = new ContractAddedEditorEmp();
+		contractAddedEditorEmp.setMailAddress("testAddedEditor@example.com");
+		contract.setContractAddedEditorEmpList(Arrays.asList(contractAddedEditorEmp));
+		ProductContract productContract = new ProductContract();
+		productContract.setProductContractName("testProductContractName");
+		contract.setProductContractList(Arrays.asList(productContract));
+		CustomerContract customerContract = new CustomerContract();
+		customerContract.setCompanyName("testCompanyName");
+		contract.setCustomerContract(customerContract);
+		return contract;
 	}
 }

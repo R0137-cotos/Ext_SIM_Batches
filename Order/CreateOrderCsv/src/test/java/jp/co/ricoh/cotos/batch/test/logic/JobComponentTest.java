@@ -3,8 +3,6 @@ package jp.co.ricoh.cotos.batch.test.logic;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +16,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,16 +28,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
-import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementPicWorkerEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
-import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementPicWorkerEmpRepository;
-import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementWorkRepository;
-import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
 import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
 import jp.co.ricoh.cotos.component.RestApiClient;
@@ -53,16 +48,6 @@ public class JobComponentTest extends TestBase {
 
 	final private String outputPath = "output/";
 
-	final private String successExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"20191018\"}";
-
-	final private String successExtendsParameterCapacityChange = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"20190926\"}";
-
-	final private String successExtendsParameterPaidExchange = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"20191028\"}";
-
-	final private String dummySuccessExtendsParameter = "{\"orderCsvCreationStatus\":\"1\",\"orderCsvCreationDate\":\"\"}";
-
-	final private String extendsParameter = "{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}";
-
 	@MockBean
 	RestApiClient restApiClient;
 
@@ -71,15 +56,6 @@ public class JobComponentTest extends TestBase {
 
 	@Autowired
 	BatchMomInfoProperties batchProperty;
-
-	@Autowired
-	ContractDetailRepository contractDetailRepository;
-
-	@Autowired
-	ArrangementWorkRepository arrangementWorkRepository;
-
-	@Autowired
-	ArrangementPicWorkerEmpRepository arrangementPicWorkerEmpRepository;
 
 	@Autowired
 	CreateJwt createJwt;
@@ -127,35 +103,15 @@ public class JobComponentTest extends TestBase {
 		fileDeleate(outputPath + "result_initial.csv");
 
 		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		//doReturn(getContract()).when(restApiClient).callFindOneContractApi(anyLong());
-		when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-
-		jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
-
-		ArrangementPicWorkerEmp arrangementPicWorkerEmp4 = arrangementPicWorkerEmpRepository.findOne(4L);
-		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
-		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
-		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
-
-		Assert.assertEquals("更新者が変更されていないこと", "00229692", arrangementPicWorkerEmp4.getMomEmployeeId());
-
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail11.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail12.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail21.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail22.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameter, contractDetail42.getExtendsParameter());
-
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial.csv"));
 		Assert.assertArrayEquals(expected, actuals);
@@ -169,37 +125,15 @@ public class JobComponentTest extends TestBase {
 		fileDeleate(outputPath + "result_initial.csv");
 
 		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-
-		jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
-
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(41L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(42L);
-		ContractDetail contractDetail51 = contractDetailRepository.findOne(51L);
-		ContractDetail contractDetail52 = contractDetailRepository.findOne(52L);
-		ContractDetail contractDetail61 = contractDetailRepository.findOne(61L);
-		ContractDetail contractDetail62 = contractDetailRepository.findOne(62L);
-		ContractDetail contractDetail71 = contractDetailRepository.findOne(71L);
-		ContractDetail contractDetail72 = contractDetailRepository.findOne(72L);
-		ContractDetail contractDetail81 = contractDetailRepository.findOne(81L);
-		ContractDetail contractDetail82 = contractDetailRepository.findOne(82L);
-
-		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail51.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail52.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail61.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail62.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail71.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail72.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail81.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail82.getExtendsParameter());
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(null);
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
 
 		fileDeleate(outputPath + "result_initial.csv");
 	}
@@ -210,29 +144,15 @@ public class JobComponentTest extends TestBase {
 		fileDeleate(outputPath + "result_initial.csv");
 
 		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-
-		jobComponent.run(new String[] { "20191014", outputPath, "result_initial.csv", "1" });
-
-		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
-		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
-		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
-
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail11.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail12.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail21.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail22.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			jobComponent.run(new String[] { "20191014", outputPath, "result_initial.csv", "1" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
 
 		fileDeleate(outputPath + "result_initial.csv");
 	}
@@ -249,6 +169,11 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 既存ファイルに上書きできないこと() throws IOException {
 		テストデータ作成("createOrderTestSuccessData.sql");
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		fileDeleate(outputPath + "duplicate.csv");
 		if (!Files.exists(Paths.get("output/duplicate.csv"))) {
 			Files.createFile(Paths.get("output/duplicate.csv"));
@@ -289,32 +214,15 @@ public class JobComponentTest extends TestBase {
 		fileDeleate(outputPath + "result_initial.csv");
 
 		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-
-		jobComponent.run(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
-
-		ArrangementPicWorkerEmp arrangementPicWorkerEmp4 = arrangementPicWorkerEmpRepository.findOne(4L);
-		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
-		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
-		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
-
-		Assert.assertEquals("更新者が変更されていないこと", "00229692", arrangementPicWorkerEmp4.getMomEmployeeId());
-
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail11.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail12.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail21.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail22.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterCapacityChange, contractDetail42.getExtendsParameter());
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			jobComponent.run(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_capacity_change.csv"));
@@ -329,42 +237,15 @@ public class JobComponentTest extends TestBase {
 		fileDeleate(outputPath + "result_initial.csv");
 
 		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-
-		jobComponent.run(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
-
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(41L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(42L);
-		ContractDetail contractDetail51 = contractDetailRepository.findOne(51L);
-		ContractDetail contractDetail52 = contractDetailRepository.findOne(52L);
-		ContractDetail contractDetail61 = contractDetailRepository.findOne(61L);
-		ContractDetail contractDetail62 = contractDetailRepository.findOne(62L);
-		ContractDetail contractDetail71 = contractDetailRepository.findOne(71L);
-		ContractDetail contractDetail72 = contractDetailRepository.findOne(72L);
-		ContractDetail contractDetail81 = contractDetailRepository.findOne(81L);
-		ContractDetail contractDetail82 = contractDetailRepository.findOne(82L);
-		ContractDetail contractDetail91 = contractDetailRepository.findOne(91L);
-		ContractDetail contractDetail92 = contractDetailRepository.findOne(92L);
-
-		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail51.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail52.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail61.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail62.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail71.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail72.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail81.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail82.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail91.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail92.getExtendsParameter());
-
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			jobComponent.run(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 
@@ -374,29 +255,15 @@ public class JobComponentTest extends TestBase {
 		fileDeleate(outputPath + "result_initial.csv");
 
 		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-
-		jobComponent.run(new String[] { "20190927", outputPath, "result_initial.csv", "2" });
-
-		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
-		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
-		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
-
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail11.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail12.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail21.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail22.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			jobComponent.run(new String[] { "20190927", outputPath, "result_initial.csv", "2" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
 
 		fileDeleate(outputPath + "result_initial.csv");
 	}
@@ -407,32 +274,15 @@ public class JobComponentTest extends TestBase {
 		fileDeleate(outputPath + "result_initial.csv");
 
 		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-
-		jobComponent.run(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
-
-		ArrangementPicWorkerEmp arrangementPicWorkerEmp4 = arrangementPicWorkerEmpRepository.findOne(4L);
-		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
-		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
-		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
-
-		Assert.assertEquals("更新者が変更されていないこと", "00229692", arrangementPicWorkerEmp4.getMomEmployeeId());
-
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail11.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail12.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail21.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail22.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が設定されていること", successExtendsParameterPaidExchange, contractDetail42.getExtendsParameter());
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			jobComponent.run(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_paid_exchange.csv"));
@@ -447,37 +297,15 @@ public class JobComponentTest extends TestBase {
 		fileDeleate(outputPath + "result_initial.csv");
 
 		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-
-		jobComponent.run(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
-
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(41L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(42L);
-		ContractDetail contractDetail51 = contractDetailRepository.findOne(51L);
-		ContractDetail contractDetail52 = contractDetailRepository.findOne(52L);
-		ContractDetail contractDetail61 = contractDetailRepository.findOne(61L);
-		ContractDetail contractDetail62 = contractDetailRepository.findOne(62L);
-		ContractDetail contractDetail71 = contractDetailRepository.findOne(71L);
-		ContractDetail contractDetail72 = contractDetailRepository.findOne(72L);
-		ContractDetail contractDetail81 = contractDetailRepository.findOne(81L);
-		ContractDetail contractDetail82 = contractDetailRepository.findOne(82L);
-
-		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", dummySuccessExtendsParameter, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail51.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail52.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail61.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail62.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail71.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail72.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail81.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail82.getExtendsParameter());
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			jobComponent.run(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
 
 		fileDeleate(outputPath + "result_initial.csv");
 	}
@@ -488,30 +316,14 @@ public class JobComponentTest extends TestBase {
 		fileDeleate(outputPath + "result_initial.csv");
 
 		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-
-		jobComponent.run(new String[] { "20191022", outputPath, "result_initial.csv", "3" });
-
-		ContractDetail contractDetail11 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail12 = contractDetailRepository.findOne(12L);
-		ContractDetail contractDetail21 = contractDetailRepository.findOne(21L);
-		ContractDetail contractDetail22 = contractDetailRepository.findOne(22L);
-		ContractDetail contractDetail31 = contractDetailRepository.findOne(31L);
-		ContractDetail contractDetail32 = contractDetailRepository.findOne(32L);
-		ContractDetail contractDetail41 = contractDetailRepository.findOne(11L);
-		ContractDetail contractDetail42 = contractDetailRepository.findOne(12L);
-
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail11.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail12.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail21.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail22.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail31.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail32.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail41.getExtendsParameter());
-		Assert.assertEquals("拡張項目が変更されていないこと", extendsParameter, contractDetail42.getExtendsParameter());
-
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			jobComponent.run(new String[] { "20191022", outputPath, "result_initial.csv", "3" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 

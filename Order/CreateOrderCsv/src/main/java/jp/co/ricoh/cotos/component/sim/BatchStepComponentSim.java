@@ -197,7 +197,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					List<Long> contractIdList = orderDataList.stream().filter(o -> successIdList.contains(o.getContractIdTemp())).map(o -> o.getContractIdTemp()).collect(Collectors.toList());
 
 					contractIdList.forEach(contractId -> {
-						//Contract contract = contractRepository.findOne(contractId);
 						Contract contract = restApiClient.callFindOneContractApi(contractId);
 						contract.getContractDetailList().forEach(ContractDetail -> {
 							ContractDetail.setExtendsParameter(successExtendsParameter);
@@ -211,7 +210,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						List<Long> arrangementWorkIdListAssign = new ArrayList<>();
 						List<Long> arrangementWorkIdListAccept = new ArrayList<>();
 						Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(ContractId, 0);
-						//Arrangement arrangement = restApiClient.callFindOneArrangement(ContractId);
+						System.out.println("★★★");
+						System.out.println(arrangement.getArrangementWorkList().get(0).getId());
 						if (arrangement != null) {
 							List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
 							arrangementWorkList.stream().forEach(arrangementWork -> {

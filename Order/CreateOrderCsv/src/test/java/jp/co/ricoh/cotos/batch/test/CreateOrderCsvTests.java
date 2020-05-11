@@ -1,19 +1,41 @@
 package jp.co.ricoh.cotos.batch.test;
 
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.BatchApplication;
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
+import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
+import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
+import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
+import jp.co.ricoh.cotos.component.RestApiClient;
+import jp.co.ricoh.cotos.security.CreateJwt;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -23,11 +45,23 @@ public class CreateOrderCsvTests extends TestBase {
 
 	final private String outputPath = "output/";
 
+	@MockBean
+	RestApiClient restApiClient;
+
+	@Autowired
+	CreateJwt createJwt;
+
+	@Autowired
+	BatchMomInfoProperties batchProperty;
+
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
+		String jwt = createJwt.execute();
+		CotosAuthenticationDetails principal = new CotosAuthenticationDetails(batchProperty.getMomEmpId(), "sid", null, null, jwt, true, true, null);
+		Authentication auth = new PreAuthenticatedAuthenticationToken(principal, null, null);
+		SecurityContextHolder.getContext().setAuthentication(auth);
 		context = injectContext;
 		context.getBean(DBConfig.class).clearData();
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
 	}
 
 	@AfterClass
@@ -54,7 +88,49 @@ public class CreateOrderCsvTests extends TestBase {
 
 	@Test
 	public void 正常系_ジョブテスト() {
-		BatchApplication.main(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+
+		try {
+			BatchApplication.main(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_ジョブテスト_容量変更() {
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+
+		try {
+			BatchApplication.main(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_ジョブテスト_有償交換() {
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+
+		try {
+			BatchApplication.main(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 
@@ -113,5 +189,33 @@ public class CreateOrderCsvTests extends TestBase {
 			Assert.assertEquals(1, e.getStatus());
 		}
 		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	private List<ContractDetail> getContractDetailList() {
+		List<ContractDetail> contractDetailList = new ArrayList<ContractDetail>();
+		ContractDetail contractDetail = new ContractDetail();
+		contractDetail.setId(1L);
+		contractDetailList.add(contractDetail);
+		return contractDetailList;
+	}
+
+	private Contract dummyContract() {
+		Contract contract = new Contract();
+		contract.setId(1L);
+		contract.setContractDetailList(getContractDetailList());
+		contract.setEstimationNumber("testEstimationNumber");
+		ContractPicSaEmp contractPicSaEmp = new ContractPicSaEmp();
+		contractPicSaEmp.setMailAddress("testSaEmp@example.com");
+		contract.setContractPicSaEmp(contractPicSaEmp);
+		ContractAddedEditorEmp contractAddedEditorEmp = new ContractAddedEditorEmp();
+		contractAddedEditorEmp.setMailAddress("testAddedEditor@example.com");
+		contract.setContractAddedEditorEmpList(Arrays.asList(contractAddedEditorEmp));
+		ProductContract productContract = new ProductContract();
+		productContract.setProductContractName("testProductContractName");
+		contract.setProductContractList(Arrays.asList(productContract));
+		CustomerContract customerContract = new CustomerContract();
+		customerContract.setCompanyName("testCompanyName");
+		contract.setCustomerContract(customerContract);
+		return contract;
 	}
 }
