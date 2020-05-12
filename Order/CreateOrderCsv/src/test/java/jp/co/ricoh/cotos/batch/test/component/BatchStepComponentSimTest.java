@@ -85,7 +85,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	@Test
 	public void 正常系_オーダーCSV作成_新規() throws IOException, ParseException {
 		fileDeleate(outputPath + "result_initial.csv");
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData2.sql");
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
 		// モック
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());

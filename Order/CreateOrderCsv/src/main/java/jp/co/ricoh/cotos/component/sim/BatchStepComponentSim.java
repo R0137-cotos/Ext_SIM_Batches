@@ -212,8 +212,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						List<Long> arrangementWorkIdListAssign = new ArrayList<>();
 						List<Long> arrangementWorkIdListAccept = new ArrayList<>();
 						Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(ContractId, 0);
-						System.out.println("★★★");
-						System.out.println(arrangement.getArrangementWorkList().get(0).getId());
 						if (arrangement != null) {
 							List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
 							arrangementWorkList.stream().forEach(arrangementWork -> {

@@ -43,7 +43,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 * @throws FileAlreadyExistsException
 	 */
 	@Override
-	public final CreateOrderCsvDto paramCheck(String[] args) throws FileAlreadyExistsException {
+	public CreateOrderCsvDto paramCheck(String[] args) throws FileAlreadyExistsException {
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 
 		// バッチパラメーターのチェックを実施
@@ -98,7 +98,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 * @return 処理データリスト
 	 */
 	@Override
-	public final List<CreateOrderCsvDataDto> getDataList(String contractType) {
+	public List<CreateOrderCsvDataDto> getDataList(String contractType) {
 		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<>();
 		Map<String, Object> sqlParams = new HashMap<String, Object>();
 		sqlParams.put("contractType", contractType);
