@@ -100,7 +100,6 @@ public class BatchComponentTest extends TestBase {
 		try {
 			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
-			System.out.println(e);
 			Assert.fail("テスト失敗");
 		}
 
