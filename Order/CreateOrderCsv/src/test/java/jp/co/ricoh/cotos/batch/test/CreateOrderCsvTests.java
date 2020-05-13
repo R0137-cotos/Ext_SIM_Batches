@@ -1,12 +1,6 @@
 package jp.co.ricoh.cotos.batch.test;
 
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyObject;
-
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +9,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -74,73 +67,6 @@ public class CreateOrderCsvTests extends TestBase {
 			return;
 		}
 		System.out.println("ファイル:[" + pathname + "]の削除に失敗しました");
-	}
-
-	@Test
-	public void 正常系_ジョブテスト() throws Exception {
-		fileDeleate(outputPath + "result_initial.csv");
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
-		// モック
-		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
-		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
-
-		try {
-			BatchApplication.main(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
-		} catch (Exception e) {
-			System.out.println(e);
-			Assert.fail("エラーが発生した。");
-		}
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
-		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial.csv"));
-		Assert.assertArrayEquals(expected, actuals);
-
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	public void 正常系_ジョブテスト_容量変更() throws Exception {
-		fileDeleate(outputPath + "result_initial.csv");
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataCapacityChange.sql");
-		// モック
-		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
-		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
-
-		try {
-			BatchApplication.main(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
-		} catch (Exception e) {
-			Assert.fail("エラーが発生した。");
-		}
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
-		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_capacity_change.csv"));
-		Assert.assertArrayEquals(expected, actuals);
-
-		fileDeleate(outputPath + "result_initial.csv");
-	}
-
-	@Test
-	public void 正常系_ジョブテスト_有償交換() throws Exception {
-		fileDeleate(outputPath + "result_initial.csv");
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataPaidExchange.sql");
-		// モック
-		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
-		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
-
-		try {
-			BatchApplication.main(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
-		} catch (Exception e) {
-			Assert.fail("エラーが発生した。");
-		}
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
-		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_paid_exchange.csv"));
-		Assert.assertArrayEquals(expected, actuals);
-
-		fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test
