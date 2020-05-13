@@ -87,7 +87,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Transactional
 	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
 		log.info("SIM独自処理");
-		System.out.println(orderDataList);
 		// 取得したデータを出力データのみに設定
 		Date operationDate = batchUtil.changeDate(dto.getOperationDate());
 		Date changeOperationDate = null;
@@ -171,6 +170,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				CsvMapper mapper = new CsvMapper();
 				CsvSchema schemaWithOutHeader = mapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true).schemaFor(FindCreateOrderCsvDataDto.class).withoutHeader().withColumnSeparator(',').withLineSeparator("\r\n").withNullValue("\"\"");
 
+				System.out.println("★");
+				System.out.println(OrderDataIdGroupingMap);
 				// CSV出力
 				OrderDataIdGroupingMap.entrySet().stream().sorted(Entry.comparingByKey()).forEach(map -> {
 					try {
