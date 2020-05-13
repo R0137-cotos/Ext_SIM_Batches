@@ -170,8 +170,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				CsvMapper mapper = new CsvMapper();
 				CsvSchema schemaWithOutHeader = mapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true).schemaFor(FindCreateOrderCsvDataDto.class).withoutHeader().withColumnSeparator(',').withLineSeparator("\r\n").withNullValue("\"\"");
 
-				System.out.println("★");
-				System.out.println(OrderDataIdGroupingMap);
 				// CSV出力
 				OrderDataIdGroupingMap.entrySet().stream().sorted(Entry.comparingByKey()).forEach(map -> {
 					try {

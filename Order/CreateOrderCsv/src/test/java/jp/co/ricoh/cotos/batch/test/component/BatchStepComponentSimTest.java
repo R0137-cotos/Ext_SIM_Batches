@@ -93,8 +93,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
-		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
-		dto.setTmpFile(Paths.get("output\\temp.csv").toFile());
+		dto.setCsvFile(Paths.get("output/result_initial.csv").toFile());
+		dto.setTmpFile(Paths.get("output/temp.csv").toFile());
 		dto.setOperationDate("20191018");
 		dto.setType("1");
 
@@ -147,8 +147,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
-		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
-		dto.setTmpFile(Paths.get("output\\temp.csv").toFile());
+		dto.setCsvFile(Paths.get("output/result_initial.csv").toFile());
+		dto.setTmpFile(Paths.get("output/temp.csv").toFile());
 		dto.setOperationDate("20191028");
 		dto.setType("2");
 
@@ -201,8 +201,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callContractApi(anyObject());
 
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
-		dto.setCsvFile(Paths.get("output\\result_initial.csv").toFile());
-		dto.setTmpFile(Paths.get("output\\temp.csv").toFile());
+		dto.setCsvFile(Paths.get("output/result_initial.csv").toFile());
+		dto.setTmpFile(Paths.get("output/temp.csv").toFile());
 		dto.setOperationDate("20191018");
 		dto.setType("3");
 
