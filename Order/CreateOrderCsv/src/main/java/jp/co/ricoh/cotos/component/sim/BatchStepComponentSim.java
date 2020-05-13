@@ -87,6 +87,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Transactional
 	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
 		log.info("SIM独自処理");
+		System.out.println(orderDataList);
 		// 取得したデータを出力データのみに設定
 		Date operationDate = batchUtil.changeDate(dto.getOperationDate());
 		Date changeOperationDate = null;
