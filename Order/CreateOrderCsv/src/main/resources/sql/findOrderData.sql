@@ -17,7 +17,8 @@ SELECT
   data.pic_fax_number AS pic_fax_number,
   data.pic_mail_address AS pic_mail_address,
   data.extends_parameter AS extends_parameter,
-  data.contract_detail_id AS contract_detail_id
+  data.contract_detail_id AS contract_detail_id,
+  data.updated_at AS updated_at
 FROM
  (
   SELECT
@@ -41,7 +42,8 @@ FROM
 	location.pic_fax_number,                           --İ’uæ(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–ÒFAX”Ô†
 	customer.pic_mail_address,                         --ŒÚ‹q(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–Òƒ[ƒ‹ƒAƒhƒŒƒX
 	detail.extends_parameter,                          --Œ_–ñ–¾×.Šg’£€–Ú
-	detail.id AS contract_detail_id                             --Œ_–ñ–¾×.ID
+	detail.id AS contract_detail_id,                   --Œ_–ñ–¾×.ID
+	cont.updated_at                                    --Œ_–ñ.XV“ú
   FROM contract cont                                                 --Œ_–ñ
   INNER JOIN contract_detail detail                                  --Œ_–ñ–¾×
           ON detail.contract_id = cont.id
@@ -60,5 +62,8 @@ FROM
   WHERE pm.product_class_div = 'SIM'
     AND cont.workflow_status = '3'
     AND item.cost_type != '1'
+    {{#contractType}}
+    AND JSON_EXISTS(JSON_QUERY(product.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), {{&contractType}} )
+    {{/contractType}}
  ) data
 ORDER BY id

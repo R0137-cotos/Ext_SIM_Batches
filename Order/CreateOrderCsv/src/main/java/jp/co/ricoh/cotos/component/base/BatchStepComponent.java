@@ -7,7 +7,9 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,11 +43,11 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 * @throws FileAlreadyExistsException
 	 */
 	@Override
-	public final CreateOrderCsvDto paramCheck(String[] args) throws FileAlreadyExistsException {
+	public CreateOrderCsvDto paramCheck(String[] args) throws FileAlreadyExistsException {
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 
 		// バッチパラメーターのチェックを実施
-		if (null == args || args.length != 3) {
+		if (null == args || args.length != 4) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ParameterEmptyError", new String[] { BatchConstants.BATCH_PARAMETER_LIST_NAME }));
 		}
 
@@ -76,9 +78,15 @@ public class BatchStepComponent implements IBatchStepComponent {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "DirectoryNotFoundError"));
 		}
 
+		String type = args[3];
+		if (!("1".equals(type) || "2".equals(type) || "3".equals(type))) {
+			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "CannotIdentify", new String[] { "種別" }));
+		}
+
 		dto.setCsvFile(csvFile);
 		dto.setTmpFile(tmpFile);
 		dto.setOperationDate(operationDate);
+		dto.setType(type);
 		return dto;
 	}
 
@@ -88,14 +96,13 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 * @param searchParam
 	 *            処理データ取得用パラメーター
 	 * @return 処理データリスト
-	 * @throws ParseException
 	 */
 	@Override
-	public final List<CreateOrderCsvDataDto> getDataList() {
+	public List<CreateOrderCsvDataDto> getDataList(String contractType) {
 		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<>();
-
-		orderDataList = dbUtil.loadFromSQLFile("sql/findOrderData.sql", CreateOrderCsvDataDto.class);
-
+		Map<String, Object> sqlParams = new HashMap<String, Object>();
+		sqlParams.put("contractType", contractType);
+		orderDataList = dbUtil.loadFromSQLFile("sql/findOrderData.sql", CreateOrderCsvDataDto.class, sqlParams);
 		return orderDataList;
 	}
 

@@ -38,7 +38,7 @@ cotos:
       operatorName: dummy_batch_operator
       operatorOrgName: dummy_batch_operator_org
     superUserId: SIM_AUTOARRANGEMENT_USER
-  authentication: https://dev-api-3.cotos.ricoh.co.jp/auth/api/auth
+  authentication: https://dev-api.cotos.ricoh.co.jp/auth/api/auth
   auth:
     jwt:
       secretKey: cotosSecretKey
@@ -59,3 +59,6 @@ cotos:
   # 手配APIURL
   arrangement:
     url: https://dev-api.cotos.ricoh.co.jp/arrangement/api
+  # 契約APIURL
+  contract:
+    url: https://dev-api.cotos.ricoh.co.jp/contract/api

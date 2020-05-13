@@ -135,4 +135,10 @@ public class FindCreateOrderCsvDataDto {
 	 */
 	@JsonProperty("備考")
 	private String remarks;
+
+	/**
+	 * デバイス
+	 */
+	@JsonProperty("デバイス")
+	private String device;
 }

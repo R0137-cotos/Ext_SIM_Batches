@@ -59,6 +59,11 @@ public class BatchApplication {
 		return loadRestTemplate();
 	}
 
+	@Bean(name = "forContractApi")
+	public RestTemplate loadRestTemplateForContract() {
+		return loadRestTemplate();
+	}
+
 	/**
 	 * メイン処理
 	 * 
