@@ -169,22 +169,26 @@ public class BatchApplicationTests extends TestBase {
 
 	private void データ作成区分_20_売上請求チェック(Accounting accounting, String baseDate) {
 		Contract contract = contractRepository.findOne(accounting.getContractId());
-		ContractDetail contractDetail = contract.getContractDetailList().stream().filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
+		ContractDetail contractDetail = contract.getContractDetailList().stream()
+				.filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
 		ItemContract itemContract = contractDetail.getItemContract();
 		CustomerContract customerContract = contract.getCustomerContract();
-		CommonMasterDetail taxRate = commonMasterDetailRepository.findByCommonMasterColumnNameAndAvailablePeriodBetween("sales_tax_rate", baseDate);
+		CommonMasterDetail taxRate = commonMasterDetailRepository
+				.findByCommonMasterColumnNameAndAvailablePeriodBetween("sales_tax_rate", baseDate);
 
 		// 22 仕入データパターン
 		Assert.assertTrue("作成データパターンが20(固定値)と同じであること", StringUtils.equals(accounting.getFfmDataPtn(), "20"));
 
 		// 50 契約金額
-		Assert.assertTrue("契約金額が契約明細.金額と同じであること", accounting.getFfmContractPrice().compareTo(contractDetail.getAmountSummary()) == 0);
+		Assert.assertTrue("契約金額が契約明細.金額と同じであること",
+				accounting.getFfmContractPrice().compareTo(contractDetail.getAmountSummary()) == 0);
 
 		// 84 代直区分（販売店データリンク・売上用）
 		// ※SIMは商流区分=1のみ
 		switch (contract.getCommercialFlowDiv()) {
 		case "1":
-			Assert.assertTrue("代直区分（販売店データリンク・売上用）が商流区分が1の場合2(直売)と同じであること", StringUtils.equals(accounting.getFfmDistType(), "2"));
+			Assert.assertTrue("代直区分（販売店データリンク・売上用）が商流区分が1の場合2(直売)と同じであること",
+					StringUtils.equals(accounting.getFfmDistType(), "2"));
 			break;
 		default:
 			Assert.fail("代直区分（販売店データリンク・売上用）が不正です");
@@ -195,7 +199,8 @@ public class BatchApplicationTests extends TestBase {
 		// ※SIMは商流区分=1のみ
 		switch (contract.getCommercialFlowDiv()) {
 		case "1":
-			Assert.assertTrue("商流区分が1の場合、RJ売上単価が契約明細.単価と同じであること", accounting.getFfmRjSalesPrice().compareTo(contractDetail.getUnitPrice()) == 0);
+			Assert.assertTrue("商流区分が1の場合、RJ売上単価が契約明細.単価と同じであること",
+					accounting.getFfmRjSalesPrice().compareTo(contractDetail.getUnitPrice()) == 0);
 			break;
 		default:
 			Assert.fail("RJ売上単価が不正です");
@@ -206,7 +211,8 @@ public class BatchApplicationTests extends TestBase {
 		// ※SIMは商流区分=1のみ
 		switch (contract.getCommercialFlowDiv()) {
 		case "1":
-			Assert.assertTrue("商流区分が1の場合、RJ売上金額が契約明細.金額と同じであること", accounting.getFfmRjSalesAmt().compareTo(contractDetail.getAmountSummary()) == 0);
+			Assert.assertTrue("商流区分が1の場合、RJ売上金額が契約明細.金額と同じであること",
+					accounting.getFfmRjSalesAmt().compareTo(contractDetail.getAmountSummary()) == 0);
 			break;
 		default:
 			Assert.fail("RJ売上金額が不正です");
@@ -217,34 +223,40 @@ public class BatchApplicationTests extends TestBase {
 		Assert.assertTrue("RJ売上消費税区分が1(固定値)と同じであること", StringUtils.equals(accounting.getFfmRjSalesTaxType(), "1"));
 
 		// 99 RJ売上消費税率区分
-		Assert.assertTrue("RJ売上消費税率区分が汎用マスタ明細.コード値と同じであること", StringUtils.equals(accounting.getFfmRjSalesTaxRate(), taxRate.getCodeValue()));
+		Assert.assertTrue("RJ売上消費税率区分が汎用マスタ明細.コード値と同じであること",
+				StringUtils.equals(accounting.getFfmRjSalesTaxRate(), taxRate.getCodeValue()));
 
 		// 100 RJ売上消費税額
-		Assert.assertTrue("RJ売上消費税額が汎用マスタから取得した税率区分とRJ売上金額から算出した額と同じであること", accounting.getFfmRjSalesTaxPrice().compareTo(消費税額計算_端数四捨五入(accounting.getFfmRjSalesAmt(), taxRate.getCodeValue())) == 0);
+		Assert.assertTrue("RJ売上消費税額が汎用マスタから取得した税率区分とRJ売上金額から算出した額と同じであること", accounting.getFfmRjSalesTaxPrice()
+				.compareTo(消費税額計算_端数四捨五入(accounting.getFfmRjSalesAmt(), taxRate.getCodeValue())) == 0);
 
 		// 117 R原価数量
 		Assert.assertTrue("R原価数量が契約明細.数量と同じであること", accounting.getFfmRCostCnt() == contractDetail.getQuantity());
 
 		// 118 R原価単価
 		if (accounting.getFfmRCostPrice() != null) {
-			Assert.assertTrue("R原価単価が品種（契約用）.R原価と同じであること", accounting.getFfmRCostPrice().equals(itemContract.getRCost()));
+			Assert.assertTrue("R原価単価が品種（契約用）.R原価と同じであること",
+					accounting.getFfmRCostPrice().equals(itemContract.getRCost()));
 		} else {
 			Assert.assertTrue("R原価単価が品種（契約用）.R原価と同じであること", itemContract.getRCost() == null);
 		}
 
 		// 120 R原価金額
 		if (accounting.getFfmRCostPrice() != null) {
-			Assert.assertTrue("R原価金額が品種（契約用）.R原価＊契約明細.数量と同じであること", accounting.getFfmRCostAmt().compareTo(accounting.getFfmRCostPrice().multiply(new BigDecimal(contractDetail.getQuantity()))) == 0);
+			Assert.assertTrue("R原価金額が品種（契約用）.R原価＊契約明細.数量と同じであること", accounting.getFfmRCostAmt().compareTo(
+					accounting.getFfmRCostPrice().multiply(new BigDecimal(contractDetail.getQuantity()))) == 0);
 		}
 
 		// 122 R原価消費税区分
 		Assert.assertTrue("R原価消費税区分が1(固定)であること", StringUtils.equals(accounting.getFfmRCostTaxType(), "1"));
 
 		// 123 R原価消費税率区分
-		Assert.assertTrue("R原価消費税率区分が汎用マスタ明細.コード値であること", StringUtils.equals(accounting.getFfmRCostTaxRate(), taxRate.getCodeValue()));
+		Assert.assertTrue("R原価消費税率区分が汎用マスタ明細.コード値であること",
+				StringUtils.equals(accounting.getFfmRCostTaxRate(), taxRate.getCodeValue()));
 
 		// 124 R原価消費税額
-		Assert.assertTrue("R原価消費税額が汎用マスタから取得した税率区分とR原価金額から算出した額と同じであること", accounting.getFfmRCostTaxPrice().compareTo(消費税額計算_端数四捨五入(accounting.getFfmRCostAmt(), taxRate.getCodeValue())) == 0);
+		Assert.assertTrue("R原価消費税額が汎用マスタから取得した税率区分とR原価金額から算出した額と同じであること", accounting.getFfmRCostTaxPrice()
+				.compareTo(消費税額計算_端数四捨五入(accounting.getFfmRCostAmt(), taxRate.getCodeValue())) == 0);
 
 		// 134 納品書要否区分
 		// ※SIMは商流区分=1のみ
@@ -265,11 +277,13 @@ public class BatchApplicationTests extends TestBase {
 		Assert.assertTrue("今回の請求回数が1(固定)であること", accounting.getFfmThisBillingCnt() == 1);
 
 		// 147 コメント１
-		String halfWidthCompanyKana = Optional.ofNullable(customerContract.getCompanyNameKana()).filter(s -> StringUtils.isNotEmpty(s)).map(s -> {
-			Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
-			return transliterator.transliterate(s);
-		}).orElse("");
-		Assert.assertTrue("コメント１が恒久契約識別番号 ＋ 顧客の企業名（カナ）を半角カナ変換と同じであること", StringUtils.equals(accounting.getFfmOutputComment1(), contract.getImmutableContIdentNumber() + halfWidthCompanyKana));
+		String halfWidthCompanyKana = Optional.ofNullable(customerContract.getCompanyNameKana())
+				.filter(s -> StringUtils.isNotEmpty(s)).map(s -> {
+					Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
+					return transliterator.transliterate(s);
+				}).orElse("");
+		Assert.assertTrue("コメント１が恒久契約識別番号 ＋ 顧客の企業名（カナ）を半角カナ変換と同じであること", StringUtils.equals(
+				accounting.getFfmOutputComment1(), contract.getImmutableContIdentNumber() + halfWidthCompanyKana));
 
 		// 154 納品場所識別
 		Assert.assertTrue("納品場所識別が11(固定)であること", StringUtils.equals(accounting.getFfmDstType(), "11"));
@@ -277,9 +291,11 @@ public class BatchApplicationTests extends TestBase {
 
 	private void データ作成区分_31_振替の個別チェック(Accounting accounting) {
 		Contract contract = contractRepository.findOne(accounting.getContractId());
-		ContractDetail contractDetail = contract.getContractDetailList().stream().filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
+		ContractDetail contractDetail = contract.getContractDetailList().stream()
+				.filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
 		ItemContract itemContract = contractDetail.getItemContract();
-		List<ItemDetailContract> itemDetailContractList = itemContract.getItemDetailContractList().stream().filter(idc -> idc.getInitialRunningDiv() == InitialRunningDiv.ランニング).collect(Collectors.toList());
+		List<ItemDetailContract> itemDetailContractList = itemContract.getItemDetailContractList().stream()
+				.filter(idc -> idc.getInitialRunningDiv() == InitialRunningDiv.ランニング).collect(Collectors.toList());
 		List<MvWjmoc020OrgAllInfoCom> orgMasterList = new ArrayList<>();
 
 		// 品種明細（契約用）の振替先課所コードと紐づくoM組織情報提供マスタ.CUBIC部門コードのリストを取得
@@ -297,26 +313,32 @@ public class BatchApplicationTests extends TestBase {
 
 		// 47 振替先課所コード
 		if (accounting.getFfmTrnsLocationCd() == null) {
-			Assert.assertTrue("振替先課所コードが'MoM組織情報提供マスタ.CUBIC部門コードであること", orgMasterList.stream().anyMatch(oml -> oml.getCubicOrgId() == null));
+			Assert.assertTrue("振替先課所コードが'MoM組織情報提供マスタ.CUBIC部門コードであること", orgMasterList.stream()
+					.anyMatch(oml -> oml.getCubicOrgId() == null));
 		} else {
-			Assert.assertTrue("振替先課所コードが'MoM組織情報提供マスタ.CUBIC部門コードであること", orgMasterList.stream().anyMatch(oml -> accounting.getFfmTrnsLocationCd().equals(oml.getCubicOrgId())));
+			Assert.assertTrue("振替先課所コードが'MoM組織情報提供マスタ.CUBIC部門コードであること", orgMasterList.stream()
+					.anyMatch(oml -> accounting.getFfmTrnsLocationCd().equals(oml.getCubicOrgId())));
 		}
 
 		// 83 振替先振替金額
-		Assert.assertTrue("振替先振替金額が品種明細(契約用).原価＊契約明細.数量であること", itemDetailContractList.stream().anyMatch(idc -> accounting.getFfmTrnsPrice().compareTo(idc.getPrice().multiply(new BigDecimal(contractDetail.getQuantity()))) == 0));
+		Assert.assertTrue("振替先振替金額が品種明細(契約用).原価＊契約明細.数量であること", itemDetailContractList.stream()
+				.anyMatch(idc -> accounting.getFfmTrnsPrice().compareTo(idc.getPrice().multiply(new BigDecimal(contractDetail.getQuantity()))) == 0));
 	}
 
 	private void 課金計上テーブル登録データ共通チェック(Accounting accounting) throws ParseException {
 		Contract contract = contractRepository.findOne(accounting.getContractId());
-		ContractDetail contractDetail = contract.getContractDetailList().stream().filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
+		ContractDetail contractDetail = contract.getContractDetailList().stream()
+				.filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
 		ItemContract itemContract = contractDetail.getItemContract();
 
 		// 2 RJ管理番号
-		Assert.assertTrue("RJ管理番号が契約.RJ管理番号と同じであること", StringUtils.equals(accounting.getRjManageNumber(), contract.getRjManageNumber()));
+		Assert.assertTrue("RJ管理番号が契約.RJ管理番号と同じであること",
+				StringUtils.equals(accounting.getRjManageNumber(), contract.getRjManageNumber()));
 		// 3 契約ID(COTOS_一意ID)
 		Assert.assertTrue("契約ID(COTOS_一意ID)が契約.契約IDと同じであること", accounting.getContractId() == contract.getId());
 		// 4 契約明細ID(COTOS_一意ID)
-		Assert.assertTrue("契約明細ID(COTOS_一意ID)が契約明細.契約明細IDと同じであること", accounting.getContractDetailId() == contractDetail.getId());
+		Assert.assertTrue("契約明細ID(COTOS_一意ID)が契約明細.契約明細IDと同じであること",
+				accounting.getContractDetailId() == contractDetail.getId());
 		// 5 取引年月日
 		Assert.assertNull("取引年月日がNullであること", accounting.getTransactionDate());
 		// 6 締め日
@@ -344,11 +366,14 @@ public class BatchApplicationTests extends TestBase {
 		// 26 債権債務照合キー
 		Assert.assertNull("債権債務照合キーがnullであること", accounting.getFfmMatchingKey());
 		// 27 NSPユニークキー
-		Assert.assertTrue("NSPユニークキーが契約.契約番号＋品種（契約用）.リコー品種コード＋計上IDと同じであること", StringUtils.equals(accounting.getFfmNspKey(), accounting.getFfmContractDocNo().substring(3) + itemContract.getRicohItemCode() + accounting.getId()));
+		Assert.assertTrue("NSPユニークキーが契約.契約番号＋品種（契約用）.リコー品種コード＋計上IDと同じであること",
+				StringUtils.equals(accounting.getFfmNspKey(),
+						accounting.getFfmContractDocNo().substring(3) + itemContract.getRicohItemCode() + accounting.getId()));
 		// 28 案件番号
 		Assert.assertNull("案件番号がNullであること", accounting.getFfmProjectNo());
 		// 29 契約書番号
-		Assert.assertTrue("契約書番号が契約.契約番号であること", StringUtils.equals(accounting.getFfmContractDocNo(), contract.getContractNumber()));
+		Assert.assertTrue("契約書番号が契約.契約番号であること",
+				StringUtils.equals(accounting.getFfmContractDocNo(), contract.getContractNumber()));
 		// 30 契約番号
 		Assert.assertNull("契約番号がNullであること", accounting.getFfmContractNo());
 		// 31 契約明細番号
@@ -377,11 +402,15 @@ public class BatchApplicationTests extends TestBase {
 		Assert.assertNull("契約締結日がNullであること", accounting.getFfmContractDate());
 		// 43 契約期間(開始)
 		if (accounting.getFfmContractPeriodStart() != null && contract.getServiceTermStart() != null) {
-			Assert.assertTrue("契約期間（開始）が契約.サービス開始日と同じであること", DateUtils.isSameDay(new SimpleDateFormat("yyyyMMdd").parse(accounting.getFfmContractPeriodStart()), contract.getServiceTermStart()));
+			Assert.assertTrue("契約期間（開始）が契約.サービス開始日と同じであること",
+					DateUtils.isSameDay(new SimpleDateFormat("yyyyMMdd").parse(accounting.getFfmContractPeriodStart()),
+							contract.getServiceTermStart()));
 		}
 		// 44 契約期間(終了)
 		if (accounting.getFfmContractPeriodEnd() != null && contract.getServiceTermEnd() != null) {
-			Assert.assertTrue("契約期間(終了)が契約.サービス終了日と同じであること", DateUtils.isSameDay(new SimpleDateFormat("yyyyMMdd").parse(accounting.getFfmContractPeriodEnd()), contract.getServiceTermEnd()));
+			Assert.assertTrue("契約期間(終了)が契約.サービス終了日と同じであること",
+					DateUtils.isSameDay(new SimpleDateFormat("yyyyMMdd").parse(accounting.getFfmContractPeriodEnd()),
+							contract.getServiceTermEnd()));
 		}
 		// 45 契約SSコード
 		Assert.assertNull("契約SSコードがNullであること", accounting.getFfmContractSscd());
@@ -396,7 +425,8 @@ public class BatchApplicationTests extends TestBase {
 		// 52 仕切前消費税額
 		Assert.assertNull("仕切前消費税額がNullであること", accounting.getFfmTaxPriceBeforeInvoice());
 		// 53 商品コード
-		Assert.assertTrue("商品コードが'品種（契約用）.リコー品種コードと同じであること", StringUtils.equals(accounting.getFfmProdactCd(), itemContract.getRicohItemCode()));
+		Assert.assertTrue("商品コードが'品種（契約用）.リコー品種コードと同じであること",
+				StringUtils.equals(accounting.getFfmProdactCd(), itemContract.getRicohItemCode()));
 		// 54 機種略号
 		Assert.assertNull("機種略号がNullであること", accounting.getFfmModelId());
 		// 55 機番
@@ -436,9 +466,11 @@ public class BatchApplicationTests extends TestBase {
 		// 73 売上取引日（納品日）
 		Calendar ffmSalesTradeDate = Calendar.getInstance();
 		ffmSalesTradeDate.set(Calendar.DAY_OF_MONTH, 1);
-		Assert.assertTrue("売上取引日が請求月（データ作成日）の月1日と同じであること", StringUtils.equals(accounting.getFfmSalesTradeDate(), new SimpleDateFormat("yyyyMMdd").format(ffmSalesTradeDate.getTime())));
+		Assert.assertTrue("売上取引日が請求月（データ作成日）の月1日と同じであること", StringUtils.equals(accounting.getFfmSalesTradeDate(),
+				new SimpleDateFormat("yyyyMMdd").format(ffmSalesTradeDate.getTime())));
 		// 74 得意先コード
-		Assert.assertTrue("得意先コードが契約.得意先コードと同じであること", StringUtils.equals(accounting.getFfmClientCd(), contract.getBillingCustomerSpCode()));
+		Assert.assertTrue("得意先コードが契約.得意先コードと同じであること",
+				StringUtils.equals(accounting.getFfmClientCd(), contract.getBillingCustomerSpCode()));
 		// 75 売上課所設定区分
 		Assert.assertNull("売上課所設定区分がNullであること", accounting.getFfmSalesLocationType());
 		// 76 売上課所コード
@@ -759,10 +791,12 @@ public class BatchApplicationTests extends TestBase {
 		ContractDetail detail = contractDetailRepository.findOne(contractDetailId);
 
 		// 契約明細.ランニング売上計上処理状態
-		Assert.assertTrue("契約明細.ランニング売上計上処理状態が0:正常であること", detail.getRunningAccountSalesStatus() == RunningAccountSalesStatus.正常);
+		Assert.assertTrue("契約明細.ランニング売上計上処理状態が0:正常であること",
+				detail.getRunningAccountSalesStatus() == RunningAccountSalesStatus.正常);
 
 		// 契約明細.ランニング売上計上処理日
-		Assert.assertTrue("契約明細.ランニング売上計上処理日がシステム日付であること", DateUtils.isSameDay(detail.getRunningAccountSalesDate(), new Date()));
+		Assert.assertTrue("契約明細.ランニング売上計上処理日がシステム日付であること",
+				DateUtils.isSameDay(detail.getRunningAccountSalesDate(), new Date()));
 	}
 
 	private BigDecimal 消費税額計算_端数四捨五入(BigDecimal price, String taxrate) {
