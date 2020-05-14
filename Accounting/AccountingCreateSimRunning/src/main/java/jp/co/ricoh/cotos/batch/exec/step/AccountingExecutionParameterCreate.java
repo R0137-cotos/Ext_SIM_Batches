@@ -1,5 +1,6 @@
 package jp.co.ricoh.cotos.batch.exec.step;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,8 +48,7 @@ public class AccountingExecutionParameterCreate {
 	@Autowired
 	AccountingCreateSimRunningUtil appUtil;
 
-	public Accounting createParameter(SalesCalcResultWorkForCspRunning work, String baseDate, Date execDate,
-			CommonMasterDetail tax) {
+	public Accounting createParameter(SalesCalcResultWorkForCspRunning work, String baseDate, Date execDate, CommonMasterDetail tax) {
 
 		Accounting entity = new Accounting();
 
@@ -226,7 +226,7 @@ public class AccountingExecutionParameterCreate {
 
 		// 83 振替先振替金額
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.振替.getCode())) {
-			entity.setFfmTrnsPrice(work.getCost());
+			entity.setFfmTrnsPrice(work.getCost().multiply(new BigDecimal(work.getQuantity())));
 		}
 
 		// 84 代直区分（販売店データリンク・売上用）
@@ -415,11 +415,10 @@ public class AccountingExecutionParameterCreate {
 
 		// 147 コメント１ 恒久契約識別番号 ＋ 顧客の企業名（カナ）を半角カナ変換
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
-			String halfWidthCompanyKana = Optional.ofNullable(work.getCompanyNameKana())
-					.filter(s -> StringUtils.isNotEmpty(s)).map(s -> {
-						Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
-						return transliterator.transliterate(s);
-					}).orElse("");
+			String halfWidthCompanyKana = Optional.ofNullable(work.getCompanyNameKana()).filter(s -> StringUtils.isNotEmpty(s)).map(s -> {
+				Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
+				return transliterator.transliterate(s);
+			}).orElse("");
 			entity.setFfmOutputComment1(work.getImmutableContIdentNumber() + halfWidthCompanyKana);
 		}
 		// 148 コメント２
