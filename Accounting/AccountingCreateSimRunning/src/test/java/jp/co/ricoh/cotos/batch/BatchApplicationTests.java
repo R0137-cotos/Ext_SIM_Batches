@@ -244,7 +244,7 @@ public class BatchApplicationTests extends TestBase {
 		// 120 R原価金額
 		if (accounting.getFfmRCostPrice() != null) {
 			Assert.assertTrue("R原価金額が品種（契約用）.R原価＊契約明細.数量と同じであること", accounting.getFfmRCostAmt().compareTo(
-					accounting.getFfmRCostPrice().divide(new BigDecimal(contractDetail.getQuantity()))) == 0);
+					accounting.getFfmRCostPrice().multiply(new BigDecimal(contractDetail.getQuantity()))) == 0);
 		}
 
 		// 122 R原価消費税区分
@@ -321,8 +321,8 @@ public class BatchApplicationTests extends TestBase {
 		}
 
 		// 83 振替先振替金額
-		Assert.assertTrue("振替先振替金額が品種明細(契約用).原価であること", itemDetailContractList.stream()
-				.anyMatch(idc -> accounting.getFfmTrnsPrice().compareTo(idc.getPrice()) == 0));
+		Assert.assertTrue("振替先振替金額が品種明細(契約用).原価＊契約明細.数量であること", itemDetailContractList.stream()
+				.anyMatch(idc -> accounting.getFfmTrnsPrice().compareTo(idc.getPrice().multiply(new BigDecimal(contractDetail.getQuantity()))) == 0));
 	}
 
 	private void 課金計上テーブル登録データ共通チェック(Accounting accounting) throws ParseException {
