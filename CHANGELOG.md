@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.0.20 (21/05/2020)
+- [**closed**] #6792 SIMランニング振替を回線単位にする [#62](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/62)
+
+---
+
 ## v2.0.10 (06/03/2020)
 - [**closed**] #5945 オーダーメール送信シェル修正 [#51](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/51)
 
