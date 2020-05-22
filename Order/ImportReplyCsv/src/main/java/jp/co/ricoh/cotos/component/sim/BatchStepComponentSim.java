@@ -114,13 +114,13 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		// 対象契約取得
 		List<Contract> contractList = new ArrayList<>();
 		contractNumberList.stream().forEach(conNumLst -> {
-			//契約情報取得
+			// 契約情報取得 恒久契約識別番号
 			try {
 				ContractSearchParameter searchParam = new ContractSearchParameter();
-				searchParam.setContractNumber(conNumLst);
+				searchParam.setImmutableContIdentNumber(conNumLst);
 				contractList.addAll(restApiClient.callFindTargetContract(searchParam));
 			} catch (Exception updateError) {
-				log.fatal(String.format("契約番号=" + conNumLst + "の契約取得に失敗しました。", conNumLst));
+				log.fatal(String.format("恒久契約識別番号=" + conNumLst + "の契約取得に失敗しました。", conNumLst));
 				updateError.printStackTrace();
 				return;
 			}
@@ -174,11 +174,14 @@ public class BatchStepComponentSim extends BatchStepComponent {
 							targetList.get(i).setLineNumber(dtoList.get(i).getLineNumber());
 							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
 							targetList.get(i).setInvoiceNumber(dtoList.get(i).getInvoiceNumber());
+							targetList.get(i).setDevice(dtoList.get(i).getDevice());
 						} else if (StringUtils.isNotEmpty(dtoList.get(i).getInvoiceNumber())) {
 							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
 							targetList.get(i).setInvoiceNumber(dtoList.get(i).getInvoiceNumber());
+							targetList.get(i).setDevice(dtoList.get(i).getDevice());
 						} else {
 							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
+							targetList.get(i).setDevice(dtoList.get(i).getDevice());
 						}
 						updatedExtendsParameterList.add(targetList.get(i));
 					});
