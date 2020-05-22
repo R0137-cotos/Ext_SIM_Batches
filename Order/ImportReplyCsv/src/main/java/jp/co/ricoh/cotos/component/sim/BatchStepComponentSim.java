@@ -174,11 +174,14 @@ public class BatchStepComponentSim extends BatchStepComponent {
 							targetList.get(i).setLineNumber(dtoList.get(i).getLineNumber());
 							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
 							targetList.get(i).setInvoiceNumber(dtoList.get(i).getInvoiceNumber());
+							targetList.get(i).setDevice(dtoList.get(i).getDevice());
 						} else if (StringUtils.isNotEmpty(dtoList.get(i).getInvoiceNumber())) {
 							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
 							targetList.get(i).setInvoiceNumber(dtoList.get(i).getInvoiceNumber());
+							targetList.get(i).setDevice(dtoList.get(i).getDevice());
 						} else {
 							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
+							targetList.get(i).setDevice(dtoList.get(i).getDevice());
 						}
 						updatedExtendsParameterList.add(targetList.get(i));
 					});
