@@ -88,7 +88,7 @@ public class RestApiClient {
 	 *            契約情報
 	 */
 	public void callContractApi(Contract contract) {
-		restForContract.patchForObject(COTOS_CONTRACT_URL + "/contract", contract, Void.class);
+		restForContract.put(COTOS_CONTRACT_URL + "/contract", contract, Void.class);
 	}
 
 }
