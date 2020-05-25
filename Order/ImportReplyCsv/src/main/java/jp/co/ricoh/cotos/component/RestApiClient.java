@@ -41,7 +41,7 @@ public class RestApiClient {
 	 * @param dto
 	 */
 	public List<Contract> callFindTargetContract(ContractSearchParameter searchParam) {
-		List<Contract> contract = Arrays.asList(restForContract.getForObject(COTOS_CONTRACT_URL + "/contract" + getParameterString(searchParam), Contract.class));
+		List<Contract> contract = Arrays.asList(restForContract.getForObject(COTOS_CONTRACT_URL + "/contract" + getParameterString(searchParam), Contract[].class));
 		return contract;
 	}
 
