@@ -118,7 +118,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			try {
 				ContractSearchParameter searchParam = new ContractSearchParameter();
 				searchParam.setImmutableContIdentNumber(conNumLst);
-				contractList.addAll(restApiClient.callFindTargetContract(searchParam));
+				restApiClient.callFindTargetContractList(searchParam).stream().forEach(contractTmp -> {
+					contractList.add(restApiClient.callFindContract(contractTmp.getId()));
+				});
 			} catch (Exception updateError) {
 				log.fatal(String.format("恒久契約識別番号=" + conNumLst + "の契約取得に失敗しました。", conNumLst));
 				updateError.printStackTrace();
@@ -146,7 +148,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			}
 
 			List<ProductContract> productContractList = contractMap.getValue().getProductContractList();
-			List<ReplyOrderDto> replyOrderList = contractNumberGroupingMap.get(contractMap.getKey());
+			List<ReplyOrderDto> replyOrderList = contractNumberGroupingMap.get(contractMap.getValue().getImmutableContIdentNumber());
+
 			//サービス開始希望日を設定
 			contract.setServiceTermStart(batchUtil.changeDate(replyOrderList.get(0).getDeliveryExpectedDate()));
 

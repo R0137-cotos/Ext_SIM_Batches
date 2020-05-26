@@ -40,9 +40,19 @@ public class RestApiClient {
 	 * 
 	 * @param dto
 	 */
-	public List<Contract> callFindTargetContract(ContractSearchParameter searchParam) {
+	public List<Contract> callFindTargetContractList(ContractSearchParameter searchParam) {
 		List<Contract> contract = Arrays.asList(restForContract.getForObject(COTOS_CONTRACT_URL + "/contract" + getParameterString(searchParam), Contract[].class));
 		return contract;
+	}
+
+	/**
+	 * 契約情報詳細取得
+	 *
+	 * @param contract
+	 * @return
+	 */
+	public Contract callFindContract(long contractId) {
+		return restForContract.getForObject(COTOS_CONTRACT_URL + "/contract/" + contractId, Contract.class);
 	}
 
 	/**

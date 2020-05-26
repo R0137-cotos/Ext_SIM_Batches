@@ -76,7 +76,8 @@ public class ImportReplyCsvTests extends TestBase {
 
 	@Test
 	public void 正常系_新規() throws IOException {
-		Mockito.when(restApiClient.callFindTargetContract(Mockito.anyObject())).thenReturn(dummyContract("新規"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 
@@ -90,7 +91,8 @@ public class ImportReplyCsvTests extends TestBase {
 
 	@Test
 	public void 正常系_容量変更() throws IOException {
-		Mockito.when(restApiClient.callFindTargetContract(Mockito.anyObject())).thenReturn(dummyContract("容量変更"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("容量変更"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("容量変更"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertTestData.sql");
@@ -103,7 +105,8 @@ public class ImportReplyCsvTests extends TestBase {
 
 	@Test
 	public void 正常系_有償交換() throws IOException {
-		Mockito.when(restApiClient.callFindTargetContract(Mockito.anyObject())).thenReturn(dummyContract("有償交換"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("有償交換"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("有償交換"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 
@@ -172,7 +175,7 @@ public class ImportReplyCsvTests extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData(sql);
 	}
 
-	private List<Contract> dummyContract(String type) {
+	private Contract dummyContract(String type) {
 		Contract contract = new Contract();
 		contract.setId(10L);
 		contract.setLifecycleStatus(LifecycleStatus.締結中);
@@ -199,7 +202,54 @@ public class ImportReplyCsvTests extends TestBase {
 
 		contract.setContractOperationLogList(Arrays.asList(new ContractOperationLog()));
 
-		contract.setContractNumber("CIC202001070001");
+		contract.setImmutableContIdentNumber("CIC202001070001");
+		ProductContract productContract = new ProductContract();
+		productContract.setProductMasterId(1002L);
+		productContract.setExtendsParameter("{\"tenantTakeOverFlg\":null,\"subscriptionNumber\":null,\"zuoraAccountId\":null,\"tenantId\":null,\"userId\":null}");
+		if (type.equals("新規")) {
+			productContract.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"\"},{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"\"},{\"id\":3,\"contractType\":\"新規\",\"productCode\":\"SI0000\",\"productName\":\"データSIM 初期費用\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"ssd\",\"invoiceNumber\":\"\"},{\"id\":4,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"追加1\",\"invoiceNumber\":\"\"}]}");
+		} else if (type.equals("容量変更")) {
+			productContract.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"容量変更\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"\"},{\"id\":2,\"contractType\":\"容量変更\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"\"},{\"id\":3,\"contractType\":\"容量変更\",\"productCode\":\"SI0000\",\"productName\":\"データSIM 初期費用\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"ssd\",\"invoiceNumber\":\"\"},{\"id\":4,\"contractType\":\"容量変更\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"\",\"device\":\"追加1\",\"invoiceNumber\":\"\"}]}");
+		} else if (type.equals("有償交換")) {
+			productContract.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"有償交換\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"\"},{\"id\":2,\"contractType\":\"有償交換\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"\"},{\"id\":3,\"contractType\":\"有償交換\",\"productCode\":\"SI0000\",\"productName\":\"データSIM 初期費用\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"ssd\",\"invoiceNumber\":\"\"},{\"id\":4,\"contractType\":\"有償交換\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"\",\"device\":\"追加1\",\"invoiceNumber\":\"\"}]}");
+		} else if (type.equals("失敗")) {
+			productContract.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"\"},{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"\"},{\"id\":3,\"contractType\":\"新規\",\"productCode\":\"SI0000\",\"productName\":\"データSIM 初期費用\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"ssd\",\"invoiceNumber\":\"\"},{\"id\":4,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"追加1\",\"invoiceNumber\":\"\"}]}");
+		}
+		contract.setProductContractList(Arrays.asList(productContract));
+
+		contract.setManagedEstimationDetailList(Arrays.asList(new ManagedEstimationDetail()));
+
+		return contract;
+	}
+
+	private List<Contract> dummyContractList(String type) {
+		Contract contract = new Contract();
+		contract.setId(10L);
+		contract.setLifecycleStatus(LifecycleStatus.締結中);
+		contract.setRjManageNumber("rj_manage_number");
+		contract.setEstimationId(4L);
+		contract.setServiceTermEnd(new Date());
+		ContractDetail contractDetail = new ContractDetail();
+		contractDetail.setItemContract(new ItemContract());
+		contract.setContractDetailList(Arrays.asList(contractDetail));
+
+		contract.setContractCheckResultList(Arrays.asList(new ContractCheckResult()));
+
+		contract.setContractApprovalRouteList(Arrays.asList(new ContractApprovalRoute()));
+
+		contract.setContractAttachedFileList(Arrays.asList(new ContractAttachedFile()));
+
+		contract.setContractPicSaEmp(new ContractPicSaEmp());
+
+		contract.setContractAddedEditorEmpList(Arrays.asList(new ContractAddedEditorEmp()));
+
+		contract.setDealerContractList(Arrays.asList(new DealerContract()));
+
+		contract.setCustomerContract(new CustomerContract());
+
+		contract.setContractOperationLogList(Arrays.asList(new ContractOperationLog()));
+
+		contract.setImmutableContIdentNumber("CIC202001070001");
 		ProductContract productContract = new ProductContract();
 		productContract.setProductMasterId(1002L);
 		productContract.setExtendsParameter("{\"tenantTakeOverFlg\":null,\"subscriptionNumber\":null,\"zuoraAccountId\":null,\"tenantId\":null,\"userId\":null}");
