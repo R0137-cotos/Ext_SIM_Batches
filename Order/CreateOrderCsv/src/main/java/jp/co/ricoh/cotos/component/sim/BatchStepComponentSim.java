@@ -91,7 +91,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		Date operationDate = batchUtil.changeDate(dto.getOperationDate());
 		Date changeOperationDate = null;
 		if ("2".equals(dto.getType())) {
-			changeOperationDate = businessDayUtil.getLastBusinessDayOfTheMonth(new SimpleDateFormat("YYYYMM").format(operationDate));
+			changeOperationDate = businessDayUtil.getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(new SimpleDateFormat("YYYYMM").format(operationDate));
 			changeOperationDate = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(changeOperationDate, Calendar.DAY_OF_MONTH), 3, true);
 		}
 		if ((("1".equals(dto.getType()) || "3".equals(dto.getType())) && nonBusinessDayCalendarMasterRepository.findOne(operationDate) == null) || ("2".equals(dto.getType()) && changeOperationDate.compareTo(operationDate) == 0)) {
@@ -132,7 +132,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					cal.setTimeInMillis(operationDate.getTime());
 					cal.add(Calendar.MONTH, -1);
 					Date lastBusinessDay = DateUtils.truncate(cal.getTime(), Calendar.DAY_OF_MONTH);
-					lastBusinessDay = businessDayUtil.getLastBusinessDayOfTheMonth(new SimpleDateFormat("YYYYMM").format(lastBusinessDay));
+					lastBusinessDay = businessDayUtil.getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(new SimpleDateFormat("YYYYMM").format(lastBusinessDay));
 					lastBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(lastBusinessDay, Calendar.DAY_OF_MONTH), 2, true);
 					return lastBusinessDay.compareTo(DateUtils.truncate(o.getUpdatedAt(), Calendar.DAY_OF_MONTH)) <= 0;
 				}).collect(Collectors.toList());
