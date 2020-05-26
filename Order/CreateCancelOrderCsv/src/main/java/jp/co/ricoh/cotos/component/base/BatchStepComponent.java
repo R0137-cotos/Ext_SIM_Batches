@@ -72,7 +72,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 			// 処理日付から"yyyyMM"を文字列で取得
 			String yyyyMM = operationDate.format(yyyyMMformatter);
 			// 処理日当月の最終営業日
-			Date lastBusinessDayTmp = businessDayUtil.getLastBusinessDayOfTheMonth(yyyyMM);
+			Date lastBusinessDayTmp = businessDayUtil.getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(yyyyMM);
 			if (lastBusinessDayTmp == null) {
 				throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "APIGetFailsError", new String[] { "営業日", "月末最終営業日取得" }));
 			}

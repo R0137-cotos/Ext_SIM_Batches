@@ -108,7 +108,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			String cancelMonth = param.getOperationDate().format(yyyyMMFormatter);
 
 			// 処理年月日当月最終営業日
-			Date lastBusinessDayOfTheMonth = businessDayUtil.getLastBusinessDayOfTheMonth(cancelMonth);
+			Date lastBusinessDayOfTheMonth = businessDayUtil.getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(cancelMonth);
 			if (lastBusinessDayOfTheMonth == null) {
 				log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "解約手配CSV作成" }).getMsg());
 				return;
