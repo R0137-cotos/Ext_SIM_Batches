@@ -125,19 +125,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				return false;
 			}).collect(Collectors.toList());
 
-			if ("2".equals(dto.getType())) {
-				// 契約.更新日時 >= 処理年月日前月末日営業日 - 3
-				orderDataList = orderDataList.stream().filter(o -> {
-					Calendar cal = Calendar.getInstance();
-					cal.setTimeInMillis(operationDate.getTime());
-					cal.add(Calendar.MONTH, -1);
-					Date lastBusinessDay = DateUtils.truncate(cal.getTime(), Calendar.DAY_OF_MONTH);
-					lastBusinessDay = businessDayUtil.getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(new SimpleDateFormat("YYYYMM").format(lastBusinessDay));
-					lastBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(lastBusinessDay, Calendar.DAY_OF_MONTH), 2, true);
-					return lastBusinessDay.compareTo(DateUtils.truncate(o.getUpdatedAt(), Calendar.DAY_OF_MONTH)) <= 0;
-				}).collect(Collectors.toList());
-			}
-
 			if (0 == orderDataList.size()) {
 				log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "オーダーCSV作成" }).getMsg());
 			} else {
