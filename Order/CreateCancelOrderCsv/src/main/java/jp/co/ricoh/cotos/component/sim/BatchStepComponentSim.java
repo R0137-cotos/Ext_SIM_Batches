@@ -119,10 +119,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			LocalDate lastDayOfTheMonth = LocalDate.of(param.getOperationDate().getYear(), param.getOperationDate().getMonthValue(), LocalDate.of(param.getOperationDate().getYear(), param.getOperationDate().getMonthValue(), 1).lengthOfMonth());
 
 			// 全解約分の抽出
-			// filter:ライフサイクル=解約手続き中
+			// filter:ライフサイクル=解約予定日待ち
 			// filter:解約申込日 < 処理年月日当月最終営業日-2営業日
 			// filter:解約予定日=処理年月日当月末日
-			List<CancelOrderEntity> allCancelList = cancelOrderList.stream().filter(e -> Contract.LifecycleStatus.解約手続き中.toString().equals(e.getLifecycleStatus())).filter(e -> e.getCancelApplicationDate() != null).filter(e -> e.getCancelApplicationDate().isBefore(lastDayOfTheMonthMinusTwoBusinessDays)).filter(e -> e.getCancelScheduledDate() != null).filter(e -> e.getCancelScheduledDate().equals(lastDayOfTheMonth)).collect(Collectors.toList());
+			List<CancelOrderEntity> allCancelList = cancelOrderList.stream().filter(e -> Contract.LifecycleStatus.解約予定日待ち.toString().equals(e.getLifecycleStatus())).filter(e -> e.getCancelApplicationDate() != null).filter(e -> e.getCancelApplicationDate().isBefore(lastDayOfTheMonthMinusTwoBusinessDays)).filter(e -> e.getCancelScheduledDate() != null).filter(e -> e.getCancelScheduledDate().equals(lastDayOfTheMonth)).collect(Collectors.toList());
 
 			// 数量減分の抽出
 			// filter:ライフサイクル=作成完了
