@@ -89,11 +89,17 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		log.info("SIM独自処理");
 		// 取得したデータを出力データのみに設定
 		Date operationDate = batchUtil.changeDate(dto.getOperationDate());
+		// 容量変更データをオーダーCSVに載せる日付(本日付以外では容量変更データをオーダーCSVに載せない)
 		Date changeOperationDate = null;
 		if ("2".equals(dto.getType())) {
 			changeOperationDate = businessDayUtil.getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(new SimpleDateFormat("YYYYMM").format(operationDate));
-			changeOperationDate = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(changeOperationDate, Calendar.DAY_OF_MONTH), 3, true);
+			// 処理日当月の最終営業日-2営業日を設定する
+			changeOperationDate = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(changeOperationDate, Calendar.DAY_OF_MONTH), 2, true);
 		}
+		// 以下条件の場合オーダーCSV出力する
+		// 契約種別：新規  かつ 処理日付が営業日である
+		// または 契約種別：有償交換 かつ 処理日付が営業日である
+		// または 契約種別：容量交換 かつ 処理日当月最終営業日 - 2営業日
 		if ((("1".equals(dto.getType()) || "3".equals(dto.getType())) && nonBusinessDayCalendarMasterRepository.findOne(operationDate) == null) || ("2".equals(dto.getType()) && changeOperationDate.compareTo(operationDate) == 0)) {
 			orderDataList = orderDataList.stream().filter(o -> {
 				int orderCsvCreationStatus = 1;
