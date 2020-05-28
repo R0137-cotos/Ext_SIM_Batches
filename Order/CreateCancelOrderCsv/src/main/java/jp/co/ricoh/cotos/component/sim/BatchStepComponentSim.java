@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -113,23 +112,19 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "解約手配CSV作成" }).getMsg());
 				return;
 			}
-			// 処理年月日当月最終営業日-2営業日
-			LocalDate lastDayOfTheMonthMinusTwoBusinessDays = businessDayUtil.getBusinessDateNumberBusinessDaysBeforeBaseDate(lastBusinessDayOfTheMonth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), 2);
 			// 処理年月日当月末日
 			LocalDate lastDayOfTheMonth = LocalDate.of(param.getOperationDate().getYear(), param.getOperationDate().getMonthValue(), LocalDate.of(param.getOperationDate().getYear(), param.getOperationDate().getMonthValue(), 1).lengthOfMonth());
 
 			// 全解約分の抽出
 			// filter:ライフサイクル=解約予定日待ち
-			// filter:解約申込日 < 処理年月日当月最終営業日-2営業日
 			// filter:解約予定日=処理年月日当月末日
-			List<CancelOrderEntity> allCancelList = cancelOrderList.stream().filter(e -> Contract.LifecycleStatus.解約予定日待ち.toString().equals(e.getLifecycleStatus())).filter(e -> e.getCancelApplicationDate() != null).filter(e -> e.getCancelApplicationDate().isBefore(lastDayOfTheMonthMinusTwoBusinessDays)).filter(e -> e.getCancelScheduledDate() != null).filter(e -> e.getCancelScheduledDate().equals(lastDayOfTheMonth)).collect(Collectors.toList());
+			List<CancelOrderEntity> allCancelList = cancelOrderList.stream().filter(e -> Contract.LifecycleStatus.解約予定日待ち.toString().equals(e.getLifecycleStatus())).filter(e -> e.getCancelScheduledDate() != null).filter(e -> e.getCancelScheduledDate().equals(lastDayOfTheMonth)).collect(Collectors.toList());
 
 			// 数量減分の抽出
 			// filter:ライフサイクル=作成完了
 			// filter:契約種別=契約変更
-			// filter:申込日 < 処理年月日当月最終営業日-2営業日
 			// filter:サービス利用希望日=処理年月日当月末日
-			List<CancelOrderEntity> partCancelList = cancelOrderList.stream().filter(e -> Contract.LifecycleStatus.作成完了.toString().equals(e.getLifecycleStatus())).filter(e -> Contract.ContractType.契約変更.toString().equals(e.getContractType())).filter(e -> e.getApplicationDate() != null).filter(e -> e.getApplicationDate().isBefore(lastDayOfTheMonthMinusTwoBusinessDays)).filter(e -> e.getConclusionPreferredDate() != null).filter(e -> e.getConclusionPreferredDate().equals(lastDayOfTheMonth)).collect(Collectors.toList());
+			List<CancelOrderEntity> partCancelList = cancelOrderList.stream().filter(e -> Contract.LifecycleStatus.作成完了.toString().equals(e.getLifecycleStatus())).filter(e -> Contract.ContractType.契約変更.toString().equals(e.getContractType())).filter(e -> e.getConclusionPreferredDate() != null).filter(e -> e.getConclusionPreferredDate().equals(lastDayOfTheMonth)).collect(Collectors.toList());
 
 			// CSV出力用DTOリスト
 			List<CancelOrderCsvDto> csvDtoList = new ArrayList<>();
