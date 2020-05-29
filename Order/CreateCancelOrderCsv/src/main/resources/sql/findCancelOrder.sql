@@ -25,7 +25,7 @@ WHERE
   pm.product_class_div = 'SIM'
   AND ic.cost_type != '1' 
   AND ( 
-    c.lifecycle_status = '7'
+    c.lifecycle_status = '8'
     AND c.workflow_status = '3'
   ) 
   OR ( 
