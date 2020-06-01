@@ -1,7 +1,8 @@
 SELECT
   rownum AS id,
   data.contract_id AS contract_id_temp,
-  data.immutable_cont_ident_number AS contract_number,
+  data.contract_number AS contract_number,
+  data.contract_branch_number AS contract_branch_number,
   data.quantity AS quantity,
   data.ricoh_item_code AS ricoh_item_code,
   data.item_contract_name AS item_contract_name,
@@ -23,7 +24,8 @@ FROM
  (
   SELECT
 	cont.id AS contract_id,                            --契約.契約ID
-	cont.immutable_cont_ident_number,                  --契約.恒久契約識別番号
+	cont.contract_number,                              --契約.契約番号
+	cont.contract_branch_number,                       --契約.契約番号枝番
 	detail.quantity,                                   --契約明細.数量
 	item.ricoh_item_code,                              --品種(契約用).リコー品種コード
 	item.item_contract_name,                           --品種(契約用).商品名

@@ -20,9 +20,14 @@ public class CreateOrderCsvDataDto {
 	private long contractIdTemp;
 
 	/**
-	 * 契約No
+	 * 契約番号
 	 */
 	private String contractNumber;
+
+	/**
+	 * 契約番号枝番
+	 */
+	private int contractBranchNumber;
 
 	/**
 	 * 数量

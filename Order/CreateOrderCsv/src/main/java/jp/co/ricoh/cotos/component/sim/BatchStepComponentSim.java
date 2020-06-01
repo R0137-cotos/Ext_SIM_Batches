@@ -251,7 +251,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		FindCreateOrderCsvDataDto orderCsvEntity = new FindCreateOrderCsvDataDto();
 		orderCsvEntity.setContractIdTemp(orderData.getContractIdTemp());
 		orderCsvEntity.setContractDetailId(orderData.getContractDetailId());
-		orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%03d", i + 1));
+		orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%02d", orderData.getContractBranchNumber()) + String.format("%03d", i + 1));
 		orderCsvEntity.setRicohItemCode(orderData.getRicohItemCode());
 		orderCsvEntity.setItemContractName(orderData.getItemContractName());
 		orderCsvEntity.setOrderDate(batchUtil.changeFormatString(operationDate));

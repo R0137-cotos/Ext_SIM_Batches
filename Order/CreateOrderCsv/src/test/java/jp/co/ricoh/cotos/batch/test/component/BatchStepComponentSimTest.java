@@ -109,6 +109,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setId(1L);
 		createOrderCsvDataDto.setContractIdTemp(1L);
 		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
 		createOrderCsvDataDto.setQuantity("1");
 		createOrderCsvDataDto.setRicohItemCode("SI0001");
 		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
@@ -167,6 +168,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setId(1L);
 		createOrderCsvDataDto.setContractIdTemp(1L);
 		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
 		createOrderCsvDataDto.setQuantity("1");
 		createOrderCsvDataDto.setRicohItemCode("SI0001");
 		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
@@ -227,6 +229,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setId(1L);
 		createOrderCsvDataDto.setContractIdTemp(1);
 		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
 		createOrderCsvDataDto.setQuantity("1");
 		createOrderCsvDataDto.setRicohItemCode("SI0001");
 		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
@@ -288,6 +291,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setId(1L);
 		createOrderCsvDataDto.setContractIdTemp(1);
 		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
 		createOrderCsvDataDto.setQuantity("1");
 		createOrderCsvDataDto.setRicohItemCode("SI0001");
 		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
@@ -346,6 +350,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setId(1L);
 		createOrderCsvDataDto.setContractIdTemp(1);
 		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
 		createOrderCsvDataDto.setQuantity("1");
 		createOrderCsvDataDto.setRicohItemCode("SI0001");
 		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
@@ -405,6 +410,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setId(1L);
 		createOrderCsvDataDto.setContractIdTemp(1);
 		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
 		createOrderCsvDataDto.setQuantity("1");
 		createOrderCsvDataDto.setRicohItemCode("SI0001");
 		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
