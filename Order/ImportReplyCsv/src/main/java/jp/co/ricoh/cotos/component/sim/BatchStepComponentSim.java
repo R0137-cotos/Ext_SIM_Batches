@@ -230,7 +230,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	}
 
 	private String substringContractNumber(String number) {
-		return number.substring(0, 15);
+		return number.substring(0, 17);
 	}
 
 	/**
