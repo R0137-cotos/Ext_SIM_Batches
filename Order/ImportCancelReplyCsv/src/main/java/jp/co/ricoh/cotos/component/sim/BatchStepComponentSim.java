@@ -111,7 +111,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		}
 
 		// 枝番削除した契約番号をキーとしたMap
-		// リプライCSVの枝番削除した契約番号(契約番号の上位15桁)が更新対象契約番号
+		// リプライCSVの枝番削除した契約番号(契約番号の上位17桁)が更新対象契約番号
 		Map<String, List<ReplyOrderDto>> contractNumberGroupingMapFromCsv = csvlist.stream().collect(Collectors.groupingBy(dto -> substringContractNumber(dto.getContractId()), Collectors.mapping(dto -> dto, Collectors.toList())));
 		// 枝番削除した契約番号のリスト
 		List<String> contractNumberListFromCsv = contractNumberGroupingMapFromCsv.entrySet().stream().map(map -> map.getKey()).map(c -> substringContractNumber(c)).collect(Collectors.toList());
@@ -346,7 +346,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	}
 
 	/**
-	 * 枝番削除した契約番号(契約番号の上位15桁)を返す
+	 * 枝番削除した契約番号(契約番号の上位17桁)を返す
 	 * @param number 契約番号
 	 * @return 枝番削除した契約番号
 	 */
@@ -355,10 +355,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			return null;
 		}
 		number = trimDoubleQuote(number);
-		if (number.length() < 15) {
+		if (number.length() < 17) {
 			return null;
 		}
-		return number.substring(0, 15);
+		return number.substring(0, 17);
 	}
 
 	/**

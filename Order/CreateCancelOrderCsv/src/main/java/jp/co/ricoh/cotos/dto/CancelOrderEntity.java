@@ -26,6 +26,11 @@ public class CancelOrderEntity {
 	 * 契約番号
 	 */
 	private String contractNumber;
+	
+	/**
+	 * 契約番号枝番
+	 */
+	private int contractBranchNumber;
 
 	/**
 	 * 商品コード

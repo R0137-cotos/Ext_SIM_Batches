@@ -23,7 +23,7 @@ WHERE
     AND c.contract_type = '2'
   )) 
 {{#contractNumberList}}
-	AND c.contract_number IN ({{&contractNumberList}})
+	AND c.contract_number || LPAD(c.contract_branch_number, 2, '0') IN ({{&contractNumberList}})
 {{/contractNumberList}}
 ORDER BY
   c.id

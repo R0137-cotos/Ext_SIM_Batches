@@ -222,10 +222,11 @@ public class BatchStepComponentSimTest extends TestBase {
 		entity.setConclusionPreferredDate(LocalDate.of(2019, 6, 30));
 		entity.setContractIdTemp(140);
 		entity.setContractNumber("CC2020041400140");
+		entity.setContractBranchNumber(1);
 		entity.setContractType("1");
 		entity.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"915868\",\"productName\":\"リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料\",\"lineNumber\":\"11111\",\"serialNumber\":\"1\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"11\"}]}");
 		entity.setItemContractName("リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料");
-		entity.setLifecycleStatus("7");
+		entity.setLifecycleStatus("8");
 		entity.setRicohItemCode("915868");
 		cancelOrderEntityList.add(entity);
 

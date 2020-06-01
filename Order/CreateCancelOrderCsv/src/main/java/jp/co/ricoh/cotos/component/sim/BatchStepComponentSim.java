@@ -173,7 +173,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					extendsParameterIteranceDtoList.stream().filter(epi -> orderData.getRicohItemCode().equals(epi.getProductCode())).forEach(j -> {
 						CancelOrderCsvDto orderCsvEntity = new CancelOrderCsvDto();
 						orderCsvEntity.setContractIdTemp(orderData.getContractIdTemp());
-						orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%03d", branchNumberIndex[0] + 1));
+						orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%02d", orderData.getContractBranchNumber()) + String.format("%03d", branchNumberIndex[0] + 1));
 						orderCsvEntity.setRicohItemCode(orderData.getRicohItemCode());
 						orderCsvEntity.setItemContractName(orderData.getItemContractName());
 						orderCsvEntity.setOrderDate(orderDate);
@@ -228,7 +228,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					extendsParameterIteranceDtoList.stream().filter(epi -> "解約".equals(epi.getContractType())).filter(epi -> orderData.getRicohItemCode().equals(epi.getProductCode())).forEach(j -> {
 						CancelOrderCsvDto orderCsvEntity = new CancelOrderCsvDto();
 						orderCsvEntity.setContractIdTemp(orderData.getContractIdTemp());
-						orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%03d", branchNumberIndex[0] + 1));
+						orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%02d", orderData.getContractBranchNumber()) + String.format("%03d", branchNumberIndex[0] + 1));
 						orderCsvEntity.setRicohItemCode(orderData.getRicohItemCode());
 						orderCsvEntity.setItemContractName(orderData.getItemContractName());
 						orderCsvEntity.setOrderDate(orderDate);
