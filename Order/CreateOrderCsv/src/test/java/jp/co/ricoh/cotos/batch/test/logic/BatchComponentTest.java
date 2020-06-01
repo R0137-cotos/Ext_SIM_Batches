@@ -126,6 +126,7 @@ public class BatchComponentTest extends TestBase {
 			Assert.fail("テスト失敗");
 		}
 
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 
@@ -145,6 +146,7 @@ public class BatchComponentTest extends TestBase {
 			Assert.fail("テスト失敗");
 		}
 
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 
@@ -233,6 +235,7 @@ public class BatchComponentTest extends TestBase {
 			Assert.fail("テスト失敗");
 		}
 
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 
@@ -252,6 +255,7 @@ public class BatchComponentTest extends TestBase {
 			Assert.fail("テスト失敗");
 		}
 
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 
@@ -294,6 +298,7 @@ public class BatchComponentTest extends TestBase {
 			Assert.fail("テスト失敗");
 		}
 
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 
@@ -313,6 +318,7 @@ public class BatchComponentTest extends TestBase {
 			Assert.fail("テスト失敗");
 		}
 
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 
