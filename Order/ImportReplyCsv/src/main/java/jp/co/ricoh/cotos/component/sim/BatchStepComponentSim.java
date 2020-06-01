@@ -117,7 +117,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			// 契約情報取得 恒久契約識別番号
 			try {
 				ContractSearchParameter searchParam = new ContractSearchParameter();
-				searchParam.setImmutableContIdentNumber(conNumLst);
+				searchParam.setContractNumber(conNumLst.substring(0, 15));
+				searchParam.setContractBranchNumber(conNumLst.substring(16, 17));
 				restApiClient.callFindTargetContractList(searchParam).stream().forEach(contractTmp -> {
 					contractList.add(restApiClient.callFindContract(contractTmp.getId()));
 				});
@@ -148,7 +149,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			}
 
 			List<ProductContract> productContractList = contractMap.getValue().getProductContractList();
-			List<ReplyOrderDto> replyOrderList = contractNumberGroupingMap.get(contractMap.getValue().getImmutableContIdentNumber());
+			List<ReplyOrderDto> replyOrderList = contractNumberGroupingMap.get(contractMap.getValue().getContractNumber() + String.format("%02d", contractMap.getValue().getContractBranchNumber()));
 
 			//サービス開始希望日を設定
 			contract.setServiceTermStart(batchUtil.changeDate(replyOrderList.get(0).getDeliveryExpectedDate()));

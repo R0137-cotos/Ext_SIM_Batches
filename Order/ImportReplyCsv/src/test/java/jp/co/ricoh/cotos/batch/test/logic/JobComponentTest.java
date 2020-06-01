@@ -220,7 +220,8 @@ public class JobComponentTest extends TestBase {
 
 		contract.setContractOperationLogList(Arrays.asList(new ContractOperationLog()));
 
-		contract.setImmutableContIdentNumber("CIC202001070001");
+		contract.setContractNumber("CC2020010700001");
+		contract.setContractBranchNumber(1);
 		ProductContract productContract = new ProductContract();
 		productContract.setProductMasterId(1002L);
 		productContract.setExtendsParameter("{\"tenantTakeOverFlg\":null,\"subscriptionNumber\":null,\"zuoraAccountId\":null,\"tenantId\":null,\"userId\":null}");
@@ -267,7 +268,8 @@ public class JobComponentTest extends TestBase {
 
 		contract.setContractOperationLogList(Arrays.asList(new ContractOperationLog()));
 
-		contract.setImmutableContIdentNumber("CIC202001070001");
+		contract.setContractNumber("CC2020010700001");
+		contract.setContractBranchNumber(1);
 		ProductContract productContract = new ProductContract();
 		productContract.setProductMasterId(1002L);
 		productContract.setExtendsParameter("{\"tenantTakeOverFlg\":null,\"subscriptionNumber\":null,\"zuoraAccountId\":null,\"tenantId\":null,\"userId\":null}");
