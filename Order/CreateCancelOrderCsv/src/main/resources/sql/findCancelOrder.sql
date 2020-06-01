@@ -2,6 +2,7 @@ SELECT
   rownum AS id
   , c.id AS contract_id_temp
   , c.contract_number AS contract_number
+  , c.contract_branch_number AS contract_branch_number
   , ic.ricoh_item_code AS ricoh_item_code
   , ic.item_contract_name AS item_contract_name
   , pc.extends_parameter_iterance  AS extends_parameter_iterance
