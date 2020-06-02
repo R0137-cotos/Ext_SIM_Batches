@@ -7,7 +7,7 @@ where
 AND
 	c.workflow_status = '3'
 {{#contractNumberList}}
-	AND c.immutable_cont_ident_number IN ({{&contractNumberList}})
+	AND c.contract_number || LPAD(c.contract_branch_number, 2, '0') IN ({{&contractNumberList}})
 {{/contractNumberList}}
 order by
 	c.id
