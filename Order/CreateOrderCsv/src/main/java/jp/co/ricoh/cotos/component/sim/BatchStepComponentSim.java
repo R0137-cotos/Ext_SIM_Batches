@@ -393,7 +393,12 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				orderCsvRow.setPicFaxNumber(orderData.getPicFaxNumber());
 				orderCsvRow.setPicMailAddress(orderData.getPicMailAddress());
 				orderCsvRow.setLineNumber(targetItemCodeParameterList.get(index).getLineNumber());
-				orderCsvRow.setSerialNumber(targetItemCodeParameterList.get(index).getSerialNumber());
+				// ICCIDは容量変更の場合のみ設定する
+				if ("2".equals(dto.getType())) {
+					orderCsvRow.setSerialNumber(targetItemCodeParameterList.get(index).getSerialNumber());
+				} else {
+					orderCsvRow.setSerialNumber("");
+				}
 				orderCsvRow.setDeliveryExpectedDate("");
 				orderCsvRow.setInvoiceNumber("");
 				orderCsvRow.setRemarks("");
