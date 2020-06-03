@@ -78,7 +78,7 @@ public class JobComponentTest extends TestBase {
 	@AfterClass
 	public static void exit() throws Exception {
 		if (null != context) {
-			context.getBean(DBConfig.class).clearData();
+			// context.getBean(DBConfig.class).clearData();
 			context.stop();
 		}
 	}
@@ -230,7 +230,7 @@ public class JobComponentTest extends TestBase {
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/initial_capacity_change.csv"));
 		Assert.assertArrayEquals(expected, actuals);
 
-		fileDeleate(outputPath + "result_initial.csv");
+		// fileDeleate(outputPath + "result_initial.csv");
 	}
 
 	@Test

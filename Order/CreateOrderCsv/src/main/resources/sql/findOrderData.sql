@@ -19,7 +19,8 @@ SELECT
   data.pic_mail_address AS pic_mail_address,
   data.extends_parameter AS extends_parameter,
   data.contract_detail_id AS contract_detail_id,
-  data.updated_at AS updated_at
+  data.updated_at AS updated_at,
+  data.extends_parameter_iterance AS extends_parameter_iterance
 FROM
  (
   SELECT
@@ -45,7 +46,8 @@ FROM
 	customer.pic_mail_address,                         --顧客(契約用).MoM非連携_担当者メールアドレス
 	detail.extends_parameter,                          --契約明細.拡張項目
 	detail.id AS contract_detail_id,                   --契約明細.ID
-	cont.updated_at                                    --契約.更新日時
+	cont.updated_at,                                   --契約.更新日時
+	product.extends_parameter_iterance                 --商品(契約用).拡張項目繰返
   FROM contract cont                                                 --契約
   INNER JOIN contract_detail detail                                  --契約明細
           ON detail.contract_id = cont.id

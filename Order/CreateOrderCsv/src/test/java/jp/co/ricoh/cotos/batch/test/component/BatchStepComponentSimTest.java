@@ -245,6 +245,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
 		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
 		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"容量変更\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"2\",\"serialNumber\":\"22\",\"device\":\"\",\"invoiceNumber\":\"\"}]}");
 		createOrderCsvDataDto.setContractDetailId(11L);
 		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2019-09-27 12:09:10"));
 		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
@@ -307,6 +308,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
 		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
 		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"容量変更\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"2\",\"serialNumber\":\"22\",\"device\":\"\",\"invoiceNumber\":\"\"}]}");
 		createOrderCsvDataDto.setContractDetailId(11L);
 		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2019-09-27 12:09:10"));
 		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
@@ -366,6 +368,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
 		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
 		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"有償交換\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"2\",\"serialNumber\":\"22\",\"device\":\"\",\"invoiceNumber\":\"\"}]}");
 		createOrderCsvDataDto.setContractDetailId(11L);
 		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
 		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
@@ -426,6 +429,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
 		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
 		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"有償交換\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"2\",\"serialNumber\":\"22\",\"device\":\"\",\"invoiceNumber\":\"\"}]}");
 		createOrderCsvDataDto.setContractDetailId(11L);
 		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
 		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
