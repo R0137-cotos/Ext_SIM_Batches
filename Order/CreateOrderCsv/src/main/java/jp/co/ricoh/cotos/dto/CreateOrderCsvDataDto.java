@@ -100,7 +100,7 @@ public class CreateOrderCsvDataDto {
 	private String picMailAddress;
 
 	/**
-	 * 拡張項目
+	 * 契約明細.拡張項目
 	 */
 	private String extendsParameter;
 
@@ -113,4 +113,9 @@ public class CreateOrderCsvDataDto {
 	 * 更新日時
 	 */
 	private Date updatedAt;
+
+	/**
+	 * 商品(契約用).拡張項目繰返
+	 */
+	private String extendsParameterIterance;
 }

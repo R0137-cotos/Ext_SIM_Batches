@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,13 +21,18 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvGenerator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -47,7 +53,10 @@ import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
+import jp.co.ricoh.cotos.dto.ExtendsParameterDtoComparator;
 import jp.co.ricoh.cotos.dto.FindCreateOrderCsvDataDto;
+import jp.co.ricoh.cotos.dto.SIMExtendsParameterIteranceDto;
+import jp.co.ricoh.jmo.util.StringUtil;
 import lombok.extern.log4j.Log4j;
 
 @Component("SIM")
@@ -81,14 +90,17 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Autowired
 	BusinessDayUtil businessDayUtil;
 
+	@Autowired
+	ObjectMapper om;
+
 	private static final String headerFilePath = "file/header.csv";
 
 	@Override
 	@Transactional
 	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
 		log.info("SIM独自処理");
-		// 取得したデータを出力データのみに設定
-		Date operationDate = batchUtil.changeDate(dto.getOperationDate());
+		// 処理日
+		Date operationDate = batchUtil.toDate(dto.getOperationDate());
 		// 容量変更データをオーダーCSVに載せる日付(本日付以外では容量変更データをオーダーCSVに載せない)
 		Date changeOperationDate = null;
 		if ("2".equals(dto.getType())) {
@@ -97,17 +109,21 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			changeOperationDate = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(changeOperationDate, Calendar.DAY_OF_MONTH), 2, true);
 		}
 		// 以下条件の場合オーダーCSV出力する
-		// 契約種別：新規  かつ 処理日付が営業日である
+		// １．オーダーCSV作成状態:0(未作成)である
+		// ２．契約種別：新規  かつ 処理日付が営業日である
 		// または 契約種別：有償交換 かつ 処理日付が営業日である
 		// または 契約種別：容量交換 かつ 処理日当月最終営業日 - 2営業日
 		if ((("1".equals(dto.getType()) || "3".equals(dto.getType())) && nonBusinessDayCalendarMasterRepository.findOne(operationDate) == null) || ("2".equals(dto.getType()) && changeOperationDate.compareTo(operationDate) == 0)) {
 			orderDataList = orderDataList.stream().filter(o -> {
+				// オーダーCSV作成状態 0:未作成 1:作成済
 				int orderCsvCreationStatus = 1;
 				try {
+					// 契約明細.拡張項目.オーダーCSV作成状態を取得
 					orderCsvCreationStatus = batchUtil.getOrderCsvCreationStatus(o.getExtendsParameter());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+
 				return orderCsvCreationStatus == 0;
 			}).filter(o -> {
 				Date shortBusinessDay = null;
@@ -135,30 +151,60 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				log.info(messageUtil.createMessageInfo("BatchTargetNoDataInfo", new String[] { "オーダーCSV作成" }).getMsg());
 			} else {
 				List<FindCreateOrderCsvDataDto> findOrderDataList = new ArrayList<>();
+				// オーダーを契約番号ごとにグルーピングしたマップ
+				// 契約番号ごとに枝番(連番)を付与するため契約番号でグルーピングしてforEachで回す
 				Map<String, List<CreateOrderCsvDataDto>> contractNumberGroupingMap = orderDataList.stream().collect(Collectors.groupingBy(order -> order.getContractNumber(), Collectors.mapping(order -> order, Collectors.toList())));
 
 				if ("1".equals(dto.getType())) {
+					// 契約種別：新規 の場合
+					// オーダーCSVは一行あたりに一商品一つずつを出力する
+					// 同じ契約内では商品コードごとに契約IDの末尾に連番を付与する(同一商品の場合同一の契約IDとなる)
 					contractNumberGroupingMap.entrySet().stream().forEach(orderDataMap -> {
+						// 契約IDに紐づく契約明細の数だけ回す
 						IntStream.range(0, orderDataMap.getValue().size()).forEach(i -> {
 							CreateOrderCsvDataDto orderData = orderDataMap.getValue().get(i);
+							// 契約明細の数量分だけ行を作成する
 							int itemQuantity = Integer.parseInt(orderData.getQuantity());
+							// 契約明細ごとに商品コードが分かれているので、iが求める連番になる
 							IntStream.range(0, itemQuantity).forEach(k -> {
-								findOrderDataList.add(getOrderCsvEntity(orderData, operationDate, i));
+								findOrderDataList.add(createOrderCsvRowDataForNew(orderData, operationDate, i));
 							});
 						});
 					});
 				} else {
+					// 契約種別：容量変更 or 有償交換 の場合
+					// オーダーCSVは一行あたりに一商品一つずつを出力する
+					// 同じ契約内では商品コードごとに契約IDの末尾に連番を付与する(同一商品の場合連番まで含めて同一の契約IDとなる)
 					contractNumberGroupingMap.entrySet().stream().forEach(orderDataMap -> {
 						IntStream.range(0, orderDataMap.getValue().size()).forEach(i -> {
+							// 契約明細単位のオーダーデータを取得
 							CreateOrderCsvDataDto orderData = orderDataMap.getValue().get(i);
-							findOrderDataList.add(getOrderCsvEntity(orderData, operationDate, i));
+							// 契約明細に載っている数量分だけ行を作成する
+							int itemQuantity = Integer.parseInt(orderData.getQuantity());
+							// 契約明細に紐づく品種コード
+							String ricohItemCode = orderData.getRicohItemCode();
+							// 数量分の行を一行ずつ作成する
+							IntStream.range(0, itemQuantity).forEach(index -> {
+								try {
+									findOrderDataList.add(createOrderCsvRowDataForPlanChange(orderData, operationDate, dto, i, index, ricohItemCode));
+								} catch (JsonParseException e) {
+									e.printStackTrace();
+								} catch (JsonMappingException e) {
+									e.printStackTrace();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							});
 						});
 					});
 				}
 
+				// CSV出力に成功した契約IDのリスト
 				List<Long> successIdList = new ArrayList<>();
+				// CSV出力に失敗した契約IDのリスト
 				List<Long> failedIdList = new ArrayList<>();
 
+				// 出力対象オーダーを契約IDでグルーピングしたマップ
 				Map<Long, List<FindCreateOrderCsvDataDto>> OrderDataIdGroupingMap = findOrderDataList.stream().collect(Collectors.groupingBy(findOrderData -> findOrderData.getContractIdTemp(), Collectors.mapping(findOrderData -> findOrderData, Collectors.toList())));
 				CsvMapper mapper = new CsvMapper();
 				CsvSchema schemaWithOutHeader = mapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true).schemaFor(FindCreateOrderCsvDataDto.class).withoutHeader().withColumnSeparator(',').withLineSeparator("\r\n").withNullValue("\"\"");
@@ -247,11 +293,23 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		}
 	}
 
-	public FindCreateOrderCsvDataDto getOrderCsvEntity(CreateOrderCsvDataDto orderData, Date operationDate, int i) {
+	/**
+	 * オーダーCSV行作成(契約種別：新規)
+	 * @param orderData　オーダーデータ
+	 * @param operationDate 処理日
+	 * @param serialCount 契約番号末尾に付与する連番
+	 * @return オーダーCSV行
+	 */
+	public FindCreateOrderCsvDataDto createOrderCsvRowDataForNew(CreateOrderCsvDataDto orderData, Date operationDate, int serialCount) {
+
+		if (orderData == null) {
+			return null;
+		}
+
 		FindCreateOrderCsvDataDto orderCsvEntity = new FindCreateOrderCsvDataDto();
 		orderCsvEntity.setContractIdTemp(orderData.getContractIdTemp());
 		orderCsvEntity.setContractDetailId(orderData.getContractDetailId());
-		orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%02d", orderData.getContractBranchNumber()) + String.format("%03d", i + 1));
+		orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%02d", orderData.getContractBranchNumber()) + String.format("%03d", serialCount + 1));
 		orderCsvEntity.setRicohItemCode(orderData.getRicohItemCode());
 		orderCsvEntity.setItemContractName(orderData.getItemContractName());
 		orderCsvEntity.setOrderDate(batchUtil.changeFormatString(operationDate));
@@ -272,5 +330,102 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		orderCsvEntity.setRemarks("");
 
 		return orderCsvEntity;
+	}
+
+	/**
+	 * オーダーCSV行作成(契約種別：容量変更,有償交換)
+	 * @param orderData オーダーデータ
+	 * @param operationDate 処理日
+	 * @param dto バッチ起動引数のDTO
+	 * @param serialCount 契約番号末尾に付与する連番
+	 * @param index 拡張項目繰返のインデックス
+	 * @param targetRicohItemCode オーダーCSVに載せる対象のリコー品種コード
+	 * @return オーダーCSV行
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	public FindCreateOrderCsvDataDto createOrderCsvRowDataForPlanChange(CreateOrderCsvDataDto orderData, Date operationDate, CreateOrderCsvDto dto, int serialCount, int index, String targetRicohItemCode) throws JsonParseException, JsonMappingException, IOException {
+
+		if (orderData == null) {
+			return null;
+		}
+
+		// オーダーCSV行
+		FindCreateOrderCsvDataDto orderCsvRow = new FindCreateOrderCsvDataDto();
+
+		if (!StringUtil.isEmpty(orderData.getExtendsParameterIterance())) {
+			List<SIMExtendsParameterIteranceDto> extendsParameterIteranceList = readJson(orderData.getExtendsParameterIterance());
+
+			// 商品コードの昇順にソート
+			Collections.sort(extendsParameterIteranceList, new ExtendsParameterDtoComparator());
+
+			// フィルター用契約種別(ラムダ式内部で利用するため配列で定義)
+			String[] filterContractType = { "容量変更" };
+			// 商品名用の接頭語
+			String prefix = "【容量変更】";
+			// バッチ起動引数の種別によってフィルター用契約種別を決定
+			if ("3".equals(dto.getType())) {
+				filterContractType[0] = "有償交換";
+				prefix = "【再発行】";
+			}
+
+			// 対象商品コードで絞り込んだリスト
+			// filter:商品コード=対象商品コード
+			// filter:契約種別=フィルター用契約種別
+			List<SIMExtendsParameterIteranceDto> targetItemCodeParameterList = extendsParameterIteranceList.stream().filter(e -> targetRicohItemCode.equals(e.getProductCode())).filter(e -> filterContractType[0].equals(e.getContractType())).collect(Collectors.toList());
+
+			if (!CollectionUtils.isEmpty(targetItemCodeParameterList) && targetItemCodeParameterList.size() >= index) {
+				orderCsvRow.setContractIdTemp(orderData.getContractIdTemp());
+				orderCsvRow.setContractDetailId(orderData.getContractDetailId());
+				orderCsvRow.setContractId(orderData.getContractNumber() + String.format("%02d", orderData.getContractBranchNumber()) + String.format("%03d", serialCount + 1));
+				orderCsvRow.setRicohItemCode(orderData.getRicohItemCode());
+				orderCsvRow.setItemContractName(prefix + orderData.getItemContractName());
+				orderCsvRow.setOrderDate(batchUtil.changeFormatString(operationDate));
+				orderCsvRow.setConclusionPreferredDate(batchUtil.changeFormatString(orderData.getConclusionPreferredDate()));
+				orderCsvRow.setPicName(orderData.getPicName());
+				orderCsvRow.setPicNameKana(orderData.getPicNameKana());
+				orderCsvRow.setPostNumber(orderData.getPostNumber());
+				orderCsvRow.setAddress(orderData.getAddress());
+				orderCsvRow.setCompanyName(orderData.getCompanyName());
+				orderCsvRow.setOfficeName(orderData.getOfficeName());
+				orderCsvRow.setPicPhoneNumber(orderData.getPicPhoneNumber());
+				orderCsvRow.setPicFaxNumber(orderData.getPicFaxNumber());
+				orderCsvRow.setPicMailAddress(orderData.getPicMailAddress());
+				orderCsvRow.setLineNumber(targetItemCodeParameterList.get(index).getLineNumber());
+				// ICCIDは容量変更の場合のみ設定する
+				if ("2".equals(dto.getType())) {
+					orderCsvRow.setSerialNumber(targetItemCodeParameterList.get(index).getSerialNumber());
+				} else {
+					orderCsvRow.setSerialNumber("");
+				}
+				orderCsvRow.setDeliveryExpectedDate("");
+				orderCsvRow.setInvoiceNumber("");
+				orderCsvRow.setRemarks("");
+
+				return orderCsvRow;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * 拡張項目文字列をオブジェクトに変換する
+	 * @param extendsParameterIterance 拡張項目繰返(文字列)
+	 * @return 拡張項目繰返オブジェクト
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	private List<SIMExtendsParameterIteranceDto> readJson(String extendsParameterIterance) throws JsonParseException, JsonMappingException, IOException {
+		HashMap<String, HashMap<String, Object>> basicContentsJsonMap = om.readValue(extendsParameterIterance, new TypeReference<Object>() {
+		});
+
+		String extendsJson = om.writeValueAsString(basicContentsJsonMap.get("extendsParameterList"));
+		List<SIMExtendsParameterIteranceDto> extendsParameterList = om.readValue(extendsJson, new TypeReference<List<SIMExtendsParameterIteranceDto>>() {
+		});
+
+		return extendsParameterList;
 	}
 }

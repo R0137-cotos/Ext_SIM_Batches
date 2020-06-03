@@ -25,7 +25,7 @@ public class BatchUtil {
 	 *            文字列の日付
 	 * @return Date型の日付
 	 */
-	public Date changeDate(String yyyyMMdd) {
+	public Date toDate(String yyyyMMdd) {
 		try {
 			return new SimpleDateFormat("yyyyMMdd").parse(yyyyMMdd);
 		} catch (ParseException e1) {

@@ -146,8 +146,8 @@ public class BatchStepComponentTest extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
 		String contractType = "'$?(@.contractType == \"新規\")'";
 		try {
-			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
-			Assert.assertEquals(9, serchMailTargetDtoList.size());
+			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
+			Assert.assertEquals(9, csvOrderList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail("異常終了");
@@ -161,8 +161,8 @@ public class BatchStepComponentTest extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataCapacityChange.sql");
 		String contractType = "'$?(@.contractType == \"容量変更\")'";
 		try {
-			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
-			Assert.assertEquals(9, serchMailTargetDtoList.size());
+			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
+			Assert.assertEquals(8, csvOrderList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail("異常終了");
@@ -176,8 +176,8 @@ public class BatchStepComponentTest extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataPaidExchange.sql");
 		String contractType = "'$?(@.contractType == \"有償交換\")'";
 		try {
-			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
-			Assert.assertEquals(9, serchMailTargetDtoList.size());
+			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
+			Assert.assertEquals(8, csvOrderList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail("異常終了");
@@ -190,8 +190,8 @@ public class BatchStepComponentTest extends TestBase {
 		fileDeleate(outputPath + "result_initial.csv");
 		String contractType = "'$?(@.contractType == \"新規\")'";
 		try {
-			List<CreateOrderCsvDataDto> serchMailTargetDtoList = batchStepComponent.getDataList(contractType);
-			Assert.assertEquals(0, serchMailTargetDtoList.size());
+			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
+			Assert.assertEquals(0, csvOrderList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail("異常終了");
