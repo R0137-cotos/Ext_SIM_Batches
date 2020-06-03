@@ -177,7 +177,7 @@ public class BatchStepComponentTest extends TestBase {
 		String contractType = "'$?(@.contractType == \"有償交換\")'";
 		try {
 			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
-			Assert.assertEquals(9, csvOrderList.size());
+			Assert.assertEquals(8, csvOrderList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail("異常終了");
