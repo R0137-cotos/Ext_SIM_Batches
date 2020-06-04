@@ -381,7 +381,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			// filter:契約種別=フィルター用契約種別
 			List<SIMExtendsParameterIteranceDto> targetItemCodeParameterList = extendsParameterIteranceList.stream().filter(e -> targetRicohItemCode.equals(e.getProductCode())).filter(e -> filterContractType[0].equals(e.getContractType())).collect(Collectors.toList());
 
-			if (!CollectionUtils.isEmpty(targetItemCodeParameterList) && targetItemCodeParameterList.size() >= index) {
+			// 容量変更・有償交換のオーダーCSVは「新規」の行を含まない
+			// index(明細数)より拡張項目繰返を対象商品コードで絞り込んだリストの方が少ない場合はCSV行を作成しない
+			if (!CollectionUtils.isEmpty(targetItemCodeParameterList) && targetItemCodeParameterList.size() > index) {
 				orderCsvRow.setContractIdTemp(orderData.getContractIdTemp());
 				orderCsvRow.setContractDetailId(orderData.getContractDetailId());
 				orderCsvRow.setContractId(orderData.getContractNumber() + String.format("%02d", orderData.getContractBranchNumber()) + String.format("%03d", serialCount + 1));
