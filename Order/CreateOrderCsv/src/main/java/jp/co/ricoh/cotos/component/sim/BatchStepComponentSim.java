@@ -167,7 +167,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 							int itemQuantity = Integer.parseInt(orderData.getQuantity());
 							// 契約明細ごとに商品コードが分かれているので、iが求める連番になる
 							IntStream.range(0, itemQuantity).forEach(k -> {
-								findOrderDataList.add(createOrderCsvRowDataForNew(orderData, operationDate, i));
+								FindCreateOrderCsvDataDto csvRowData = createOrderCsvRowDataForNew(orderData, operationDate, i);
+								if (csvRowData != null) {
+									findOrderDataList.add(csvRowData);
+								}
 							});
 						});
 					});
@@ -186,7 +189,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 							// 数量分の行を一行ずつ作成する
 							IntStream.range(0, itemQuantity).forEach(index -> {
 								try {
-									findOrderDataList.add(createOrderCsvRowDataForPlanChange(orderData, operationDate, dto, i, index, ricohItemCode));
+									FindCreateOrderCsvDataDto csvRowData = createOrderCsvRowDataForPlanChange(orderData, operationDate, dto, i, index, ricohItemCode);
+									if (csvRowData != null) {
+										findOrderDataList.add(csvRowData);
+									}
 								} catch (JsonParseException e) {
 									e.printStackTrace();
 								} catch (JsonMappingException e) {
