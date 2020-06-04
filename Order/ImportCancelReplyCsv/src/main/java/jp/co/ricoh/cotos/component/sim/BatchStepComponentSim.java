@@ -124,8 +124,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		List<Contract> contractList = dbUtil.loadFromSQLFile("sql/findTargetContract.sql", Contract.class, queryParams);
 
 		// 全解約分の抽出
-		// filter:ライフサイクル=解約手続き中
-		List<Contract> allCancelList = contractList.stream().filter(e -> Contract.LifecycleStatus.解約手続き中.toString().equals(e.getLifecycleStatus().toString())).collect(Collectors.toList());
+		// filter:ライフサイクル=解約予定日待ち
+		List<Contract> allCancelList = contractList.stream().filter(e -> Contract.LifecycleStatus.解約予定日待ち.toString().equals(e.getLifecycleStatus().toString())).collect(Collectors.toList());
 
 		// 数量減分の抽出
 		// filter:ライフサイクル=作成完了
