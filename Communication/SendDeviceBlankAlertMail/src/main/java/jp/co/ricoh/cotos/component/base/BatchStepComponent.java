@@ -48,7 +48,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 		if (null == args || args.length == 0) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(getSysdate());
-			calendar.add(Calendar.DAY_OF_MONTH, 14);
+			calendar.add(Calendar.DAY_OF_MONTH, -14);
 			operationDate = sdf.format(calendar.getTime());
 		} else if (args.length > 1) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ParameterEmptyError", new String[] { BatchConstants.BATCH_PARAMETER_LIST_NAME }));
