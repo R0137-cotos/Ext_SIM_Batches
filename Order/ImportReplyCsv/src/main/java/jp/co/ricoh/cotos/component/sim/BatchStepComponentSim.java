@@ -170,6 +170,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				List<ExtendsParameterDto> updatedExtendsParameterList = new ArrayList<>();
 				replyOrderProductGroupingMap.entrySet().stream().forEach(replyMap -> {
 					List<ReplyOrderDto> dtoList = replyMap.getValue();
+					// リプライCSVに商品コードが載っているものだけ絞り込む
 					List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyMap.getKey())).collect(Collectors.toList());
 					IntStream.range(0, dtoList.size()).forEach(i -> {
 						// 回線番号Nullチェック
@@ -189,6 +190,12 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						}
 						updatedExtendsParameterList.add(targetList.get(i));
 					});
+					// リプライCSVに商品コードが載っていない拡張項目繰返は値を変更しない
+					List<ExtendsParameterDto> notTargetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyMap.getKey())).collect(Collectors.toList());
+					if (!CollectionUtils.isEmpty(notTargetList)) {
+						// 拡張項目繰返をupdatedExtendsParameterListの内容で上書くので、値を変更しない拡張項目繰返行も追加しておく
+						updatedExtendsParameterList.addAll(notTargetList);
+					}
 				});
 
 				// 拡張項目繰返への設定値をIDの昇順でソート
