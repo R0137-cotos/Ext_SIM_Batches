@@ -232,9 +232,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					// 拡張項目繰返の内、更新対象でないリスト
 					List<ExtendsParameterDto> notTargetList = extendsParameterList.stream().filter(e -> !"解約".equals(trimDoubleQuote(e.getContractType()))).collect(Collectors.toList());
 					if (targetList != null) {
-						// 拡張項目繰返の内、更新対象であるリストの解約日を更新して拡張項目繰返更新用リストに格納
+						// 拡張項目繰返の内、更新対象であるリストのサービス利用希望日を更新して拡張項目繰返更新用リストに格納
 						IntStream.range(0, targetList.size()).forEach(j -> {
-							targetList.get(j).setCancelDate(contract.getCancelScheduledDate().toString());
+							targetList.get(j).setCancelDate(contract.getConclusionPreferredDate().toString());
 							updatedExtendsParameterList.add(targetList.get(j));
 						});
 					}
