@@ -34,8 +34,8 @@ Log.Info "ファイル名：${FILE_NAME}" >> ${LOG_FILE_PATH}
 ### 処理実行
 ################################################
 SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI003} "${DIR_PATH}" "${FILE_NAME}" > ${PROCESS_LOG_FILE_PATH}
-
-if [  $? != 0 ]; then
+BATCH_RET=$?
+if [  ${BATCH_RET} != 0 ]; then
   Log.Error "BTCOSI003:[SB]リプライCSV取込に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
   exit 1
 fi
