@@ -37,11 +37,11 @@ Log.Info "ファイル名：${FILE_NAME}" >> ${LOG_FILE_PATH}
 ### 処理実行
 ################################################
 SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI007} "${OPERATION_DATE}" "${DIR_PATH}" "${FILE_NAME}" > ${PROCESS_LOG_FILE_PATH}
-
-if [ $? == 1 ]; then
+BATCH_RET=$?
+if [  ${BATCH_RET} == 1 ]; then
   Log.Error "BTCOSI007:[SB]解約手配CSV作成に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
   exit 1
-elif [ $? == 2 ]; then
+elif [  ${BATCH_RET} == 2 ]; then
   Log.Info "BTCOSI007:処理対象日付ではありませんでした。解約手配CSV作成処理は「月末営業日-2営業日」のみ処理を実行します。" >> ${LOG_FILE_PATH};
 fi
 
