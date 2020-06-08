@@ -168,7 +168,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				// 契約情報更新処理を実施
 				if (callUpdateContractApi(contract)) {
 					// 成功した場合 手配情報業務完了処理を実施
-					hasNoArrangementError = callCompleteArrangementApi(contract);
+					hasNoArrangementError = callCompleteArrangementApi(contract, true);
 				} else {
 					// 失敗した場合エラーログを出力しスキップする
 					log.fatal(String.format("契約ID=%dの契約更新に失敗しました。", contract.getId()));
@@ -274,7 +274,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				// 契約情報更新処理を実施
 				if (callUpdateContractApi(contract)) {
 					// 成功した場合 手配情報更新処理を実施
-					hasNoArrangementError = callCompleteArrangementApi(contract);
+					hasNoArrangementError = callCompleteArrangementApi(contract, false);
 				} else {
 					// 失敗した場合エラーログを出力しスキップする
 					log.fatal(String.format("契約ID=%dの契約更新に失敗しました。", contract.getId()));
@@ -315,14 +315,15 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	/**
 	 * 手配情報業務完了API呼び出し
 	 * @param contract 契約情報
+	 * @param allCancelFlg 全解約フラグ
 	 * @return true:API実行結果エラー無し false:API実行結果エラー有り
 	 */
-	private boolean callCompleteArrangementApi(Contract contract) {
+	private boolean callCompleteArrangementApi(Contract contract, boolean allCancelFlg) {
 		if (contract == null) {
 			return false;
 		}
 
-		Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(contract.getId(), 0);
+		Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(contract.getId(), allCancelFlg ? 1 : 0);
 		if (arrangement == null) {
 			log.fatal(String.format("契約ID=%dの手配情報が存在しません。", contract.getId()));
 			return false;
