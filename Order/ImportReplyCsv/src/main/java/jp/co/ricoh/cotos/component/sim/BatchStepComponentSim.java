@@ -191,7 +191,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						updatedExtendsParameterList.add(targetList.get(i));
 					});
 					// リプライCSVに商品コードが載っていない拡張項目繰返は値を変更しない
-					List<ExtendsParameterDto> notTargetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyMap.getKey())).collect(Collectors.toList());
+					List<ExtendsParameterDto> notTargetList = extendsParameterList.stream().filter(e -> !e.getProductCode().equals(replyMap.getKey())).collect(Collectors.toList());
 					if (!CollectionUtils.isEmpty(notTargetList)) {
 						// 拡張項目繰返をupdatedExtendsParameterListの内容で上書くので、値を変更しない拡張項目繰返行も追加しておく
 						updatedExtendsParameterList.addAll(notTargetList);
