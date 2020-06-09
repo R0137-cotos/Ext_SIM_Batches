@@ -350,7 +350,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				arrangementError.printStackTrace();
 				hasNoError[0] = false;
 			}
-			if (!hasNoError[0]) {
+			if (hasNoError[0]) {
 				// 手配業務受付APIを実行
 				try {
 					batchUtil.callAcceptWorkApi(arrangementWorkIdList);
@@ -360,7 +360,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					hasNoError[0] = false;
 				}
 			}
-			if (!hasNoError[0]) {
+			if (hasNoError[0]) {
 				// 手配情報業務完了APIを実行
 				try {
 					batchUtil.callCompleteArrangement(work.getId());
