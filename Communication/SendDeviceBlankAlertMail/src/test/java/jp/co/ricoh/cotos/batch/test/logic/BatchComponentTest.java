@@ -62,7 +62,7 @@ public class BatchComponentTest extends TestBase {
 			List<ErrorInfo> messageInfo = e.getErrorInfoList();
 			Assert.assertEquals(1, messageInfo.size());
 			Assert.assertEquals(messageInfo.get(0).getErrorId(), "ROT00001");
-			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "パラメータ「サービス開始日」が設定されていません。");
+			Assert.assertEquals(messageInfo.get(0).getErrorMessage(), "パラメータ「処理日」が設定されていません。");
 		}
 	}
 
