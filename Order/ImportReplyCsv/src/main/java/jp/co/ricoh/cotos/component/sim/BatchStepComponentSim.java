@@ -164,51 +164,32 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 				List<ExtendsParameterDto> updatedExtendsParameterList = new ArrayList<>();
 				replyOrderList.stream().forEach(replyOrder -> {
+					ExtendsParameterDto extendsParameterDto = null;
 					// 新規:リプライCSVの商品コードが一致するかつ回線番号が存在しないデータを更新する
-					List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).//
-					stream().filter(e -> e.getLineNumber() == null).collect(Collectors.toList());
+					List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> "".equals(e.getLineNumber())).collect(Collectors.toList());
 					if (!targetList.isEmpty()) {
-						targetList.stream().forEach(row -> {
-							if (updatedExtendsParameterList.stream().filter(f -> f.getId() == row.getId()).count() == 0) {
-								row.setLineNumber(replyOrder.getLineNumber());
-								row.setSerialNumber(replyOrder.getSerialNumber());
-								row.setDevice(replyOrder.getDevice());
-								updatedExtendsParameterList.add(row);
-								return;
-							}
-						});
+						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
+						if (extendsParameterDto != null) {
+							updatedExtendsParameterList.add(extendsParameterDto);
+						}
 					}
 
 					// 容量変更:リプライCSVの商品コード、回線番号が一致するかつ送り状番号が未設定のデータを更新する
-					targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).//
-					stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).//
-					stream().filter(e -> "".equals(e.getInvoiceNumber())).collect(Collectors.toList());
+					targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).stream().filter(e -> "".equals(e.getInvoiceNumber())).collect(Collectors.toList());
 					if (!targetList.isEmpty()) {
-						targetList.stream().forEach(row -> {
-							if (updatedExtendsParameterList.stream().filter(f -> f.getId() == row.getId()).count() == 0) {
-								row.setLineNumber(replyOrder.getLineNumber());
-								row.setDevice(replyOrder.getDevice());
-								updatedExtendsParameterList.add(row);
-								return;
-							}
-						});
+						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
+						if (extendsParameterDto != null) {
+							updatedExtendsParameterList.add(extendsParameterDto);
+						}
 					}
 
-					// 有償交換:リプライCSVの商品コード、回線番号が一致するかつ送り状番号が未設定のデータを更新する
-					targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).//
-					stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).//
-					stream().filter(e -> !"".equals(e.getInvoiceNumber())).collect(Collectors.toList());
+					// 有償交換:リプライCSVの商品コード、回線番号が一致するかつ送り状番号が設定のデータを更新する
+					targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).stream().filter(e -> !"".equals(e.getInvoiceNumber())).collect(Collectors.toList());
 					if (!targetList.isEmpty()) {
-						targetList.stream().forEach(row -> {
-							if (updatedExtendsParameterList.stream().filter(f -> f.getId() == row.getId()).count() == 0) {
-								row.setLineNumber(replyOrder.getLineNumber());
-								row.setSerialNumber(replyOrder.getSerialNumber());
-								row.setInvoiceNumber(replyOrder.getInvoiceNumber());
-								row.setDevice(replyOrder.getDevice());
-								updatedExtendsParameterList.add(row);
-								return;
-							}
-						});
+						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
+						if (extendsParameterDto != null) {
+							updatedExtendsParameterList.add(extendsParameterDto);
+						}
 					}
 				});
 
@@ -314,4 +295,18 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		return hasNoError[0];
 	}
 
+	private ExtendsParameterDto addExtendsParameterDto(List<ExtendsParameterDto> targetList, List<ExtendsParameterDto> updatedExtendsParameterList, ReplyOrderDto replyOrder) {
+		ExtendsParameterDto extendsParameterDto = null;
+		for (ExtendsParameterDto row : targetList) {
+			if (updatedExtendsParameterList.stream().filter(f -> f.getId() == row.getId()).count() == 0) {
+				row.setLineNumber(replyOrder.getLineNumber());
+				row.setSerialNumber(replyOrder.getSerialNumber());
+				row.setDevice(replyOrder.getDevice());
+				row.setInvoiceNumber(replyOrder.getInvoiceNumber());
+				extendsParameterDto = row;
+				break;
+			}
+		}
+		return extendsParameterDto;
+	}
 }
