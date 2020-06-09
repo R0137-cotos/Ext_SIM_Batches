@@ -45,7 +45,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 		String operationDate = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		// バッチパラメーターのチェックを実施
-		if (null == args || args.length == 0) {
+		if (null == args || args.length == 0 || (args.length == 1 && "".equals(args[0]))) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(getSysdate());
 			calendar.add(Calendar.DAY_OF_MONTH, -14);

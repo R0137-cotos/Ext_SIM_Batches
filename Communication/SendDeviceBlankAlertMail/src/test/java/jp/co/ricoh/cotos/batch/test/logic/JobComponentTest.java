@@ -78,4 +78,13 @@ public class JobComponentTest extends TestBase {
 			Assert.assertEquals("ステータス", 1, e.getStatus());
 		}
 	}
+
+	@Test
+	public void 正常系_JOB_日付空文字() {
+		context.getBean(DBConfig.class).initTargetTestData("sql/NoParamSendDeviceBlankAlertMailTests.sql");
+		Calendar cal = Calendar.getInstance();
+		cal.set(2020, 2, 16, 11, 59, 59);
+		Mockito.doReturn(cal.getTime()).when(batchStepComponent).getSysdate();
+		jobComponent.run(new String[] { "" });
+	}
 }
