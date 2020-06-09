@@ -58,10 +58,15 @@ public class ImportCancelReplyCsvTests extends TestBase {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void 正常系() throws IOException {
 		// 契約情報更新APIを無効にする
 		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
+		// 手配業務受付APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
 		// 手配情報完了APIを無効にする
 		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
