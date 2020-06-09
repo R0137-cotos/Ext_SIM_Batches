@@ -13,12 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.persistence.EntityManager;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -154,9 +152,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			//サービス開始希望日を設定
 			contract.setServiceTermStart(batchUtil.changeDate(replyOrderList.get(0).getDeliveryExpectedDate()));
 
-			//商品コードでグルーピング
-			Map<String, List<ReplyOrderDto>> replyOrderProductGroupingMap = replyOrderList.stream().collect(Collectors.groupingBy(dto -> dto.getRicohItemCode(), Collectors.mapping(dto -> dto, Collectors.toList())));
-
 			//拡張項目繰り返しを設定
 			for (ProductContract p : productContractList) {
 				String extendsParameterIterance = p.getExtendsParameterIterance();
@@ -168,33 +163,59 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				}
 
 				List<ExtendsParameterDto> updatedExtendsParameterList = new ArrayList<>();
-				replyOrderProductGroupingMap.entrySet().stream().forEach(replyMap -> {
-					List<ReplyOrderDto> dtoList = replyMap.getValue();
-					// リプライCSVに商品コードが載っているものだけ絞り込む
-					List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyMap.getKey())).collect(Collectors.toList());
-					IntStream.range(0, dtoList.size()).forEach(i -> {
-						// 回線番号Nullチェック
-						// リプライデータの送り状番号ブランクチェック
-						if (!(dtoList.get(i).getLineNumber().equals(targetList.get(i).getLineNumber()))) {
-							targetList.get(i).setLineNumber(dtoList.get(i).getLineNumber());
-							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
-							targetList.get(i).setInvoiceNumber(dtoList.get(i).getInvoiceNumber());
-							targetList.get(i).setDevice(dtoList.get(i).getDevice());
-						} else if (StringUtils.isNotEmpty(dtoList.get(i).getInvoiceNumber())) {
-							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
-							targetList.get(i).setInvoiceNumber(dtoList.get(i).getInvoiceNumber());
-							targetList.get(i).setDevice(dtoList.get(i).getDevice());
-						} else {
-							targetList.get(i).setSerialNumber(dtoList.get(i).getSerialNumber());
-							targetList.get(i).setDevice(dtoList.get(i).getDevice());
-						}
-						updatedExtendsParameterList.add(targetList.get(i));
-					});
-					// リプライCSVに商品コードが載っていない拡張項目繰返は値を変更しない
-					List<ExtendsParameterDto> notTargetList = extendsParameterList.stream().filter(e -> !e.getProductCode().equals(replyMap.getKey())).collect(Collectors.toList());
-					if (!CollectionUtils.isEmpty(notTargetList)) {
-						// 拡張項目繰返をupdatedExtendsParameterListの内容で上書くので、値を変更しない拡張項目繰返行も追加しておく
-						updatedExtendsParameterList.addAll(notTargetList);
+				replyOrderList.stream().forEach(replyOrder -> {
+					// 新規:リプライCSVの商品コードが一致するかつ回線番号が存在しないデータを更新する
+					List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).//
+					stream().filter(e -> e.getLineNumber() == null).collect(Collectors.toList());
+					if (!targetList.isEmpty()) {
+						targetList.stream().forEach(row -> {
+							if (updatedExtendsParameterList.stream().filter(f -> f.getId() == row.getId()).count() == 0) {
+								row.setLineNumber(replyOrder.getLineNumber());
+								row.setSerialNumber(replyOrder.getSerialNumber());
+								row.setDevice(replyOrder.getDevice());
+								updatedExtendsParameterList.add(row);
+								return;
+							}
+						});
+					}
+
+					// 容量変更:リプライCSVの商品コード、回線番号が一致するかつ送り状番号が未設定のデータを更新する
+					targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).//
+					stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).//
+					stream().filter(e -> "".equals(e.getInvoiceNumber())).collect(Collectors.toList());
+					if (!targetList.isEmpty()) {
+						targetList.stream().forEach(row -> {
+							if (updatedExtendsParameterList.stream().filter(f -> f.getId() == row.getId()).count() == 0) {
+								row.setLineNumber(replyOrder.getLineNumber());
+								row.setDevice(replyOrder.getDevice());
+								updatedExtendsParameterList.add(row);
+								return;
+							}
+						});
+					}
+
+					// 有償交換:リプライCSVの商品コード、回線番号が一致するかつ送り状番号が未設定のデータを更新する
+					targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).//
+					stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).//
+					stream().filter(e -> !"".equals(e.getInvoiceNumber())).collect(Collectors.toList());
+					if (!targetList.isEmpty()) {
+						targetList.stream().forEach(row -> {
+							if (updatedExtendsParameterList.stream().filter(f -> f.getId() == row.getId()).count() == 0) {
+								row.setLineNumber(replyOrder.getLineNumber());
+								row.setSerialNumber(replyOrder.getSerialNumber());
+								row.setInvoiceNumber(replyOrder.getInvoiceNumber());
+								row.setDevice(replyOrder.getDevice());
+								updatedExtendsParameterList.add(row);
+								return;
+							}
+						});
+					}
+				});
+
+				// リプライCSVに存在しないデータを追加
+				extendsParameterList.stream().forEach(e -> {
+					if (updatedExtendsParameterList.stream().filter(f -> f.getId() == e.getId()).count() == 0) {
+						updatedExtendsParameterList.add(e);
 					}
 				});
 
