@@ -34,6 +34,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.Arrangement;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
+import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork.WorkflowStatus;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
@@ -329,17 +330,45 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			return false;
 		}
 
+		List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
+		List<Long> arrangementWorkIdList = new ArrayList<>();
+		arrangement.getArrangementWorkList().stream().forEach(arrangementWork -> {
+			if (arrangementWork.getArrangementPicWorkerEmp() == null && arrangementWork.getWorkflowStatus() == WorkflowStatus.受付待ち) {
+				arrangementWorkIdList.add(arrangementWork.getId());
+			}
+		});
+
 		// エラー無しか ラムダ式で利用するため配列とする
 		boolean[] hasNoError = { true };
 
-		List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
 		arrangementWorkList.stream().forEach(work -> {
+			// 手配担当者登録APIを実行
 			try {
-				batchUtil.callCompleteArrangement(work.getId());
+				batchUtil.callAssignWorker(arrangementWorkIdList);
 			} catch (Exception arrangementError) {
-				log.fatal(String.format("契約ID=%dの手配情報業務完了に失敗したため、処理をスキップします。", contract.getId()));
+				log.fatal(String.format("契約ID=%dの担当者登録に失敗したため、処理をスキップします。"));
 				arrangementError.printStackTrace();
 				hasNoError[0] = false;
+			}
+			if (!hasNoError[0]) {
+				// 手配業務受付APIを実行
+				try {
+					batchUtil.callAcceptWorkApi(arrangementWorkIdList);
+				} catch (Exception arrangementError) {
+					log.fatal(String.format("契約ID=%dの手配情報業務受付に失敗したため、処理をスキップします。", contract.getId()));
+					arrangementError.printStackTrace();
+					hasNoError[0] = false;
+				}
+			}
+			if (!hasNoError[0]) {
+				// 手配情報業務完了APIを実行
+				try {
+					batchUtil.callCompleteArrangement(work.getId());
+				} catch (Exception arrangementError) {
+					log.fatal(String.format("契約ID=%dの手配情報業務完了に失敗したため、処理をスキップします。", contract.getId()));
+					arrangementError.printStackTrace();
+					hasNoError[0] = false;
+				}
 			}
 		});
 
