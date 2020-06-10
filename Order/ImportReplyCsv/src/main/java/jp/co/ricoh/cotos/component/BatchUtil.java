@@ -10,60 +10,21 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.dto.ExtendsParameterDto;
 import jp.co.ricoh.cotos.dto.ThrowableFunction;
-import lombok.Setter;
 
 @Component
 public class BatchUtil {
 
-	@Setter
-	@Autowired
-	@Qualifier("forContractApi")
-	RestTemplate restForContract;
-
-	@Setter
-	@Autowired
-	@Qualifier("forArrangementApi")
-	RestTemplate restForArrangement;
-
-	@Value("${cotos.contract.url}")
-	String COTOS_CONTRACT_URL;
-
-	@Value("${cotos.arrangement.url}")
-	String COTOS_ARRANGEMENT_URL;
-
 	@Autowired
 	ObjectMapper om;
-
-	/**
-	 * 契約情報更新APIを呼び出す
-	 * 
-	 * @param dto
-	 */
-	public void callUpdateContract(Contract contract) {
-		restForContract.put(COTOS_CONTRACT_URL + "/contract", contract);
-	}
-
-	/**
-	 * 契約情報更新APIを呼び出す
-	 * 
-	 * @param dto
-	 */
-	public void callCompleteArrangement(long arrangementWorkId) {
-		restForArrangement.patchForObject(COTOS_ARRANGEMENT_URL + "/arrangementWork/" + arrangementWorkId + "/completeWork", null, Void.class);
-	}
 
 	/**
 	 * 文字列を日付に変換する
