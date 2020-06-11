@@ -33,6 +33,7 @@ WHERE
     c.lifecycle_status = '2'
     AND c.workflow_status = '3'
     AND c.contract_type = '2'
+    AND JSON_EXISTS(JSON_QUERY(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), '$?(@.contractType == "解約")')
   ) 
 ORDER BY
   c.id
