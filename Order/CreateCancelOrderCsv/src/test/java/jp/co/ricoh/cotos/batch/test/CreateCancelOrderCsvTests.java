@@ -203,32 +203,6 @@ public class CreateCancelOrderCsvTests extends TestBase {
 	}
 
 	@Test
-	public void 異常系_拡張項目繰返がJSON形式でない_数量減分() throws IOException {
-		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonParseErrorTestData2.sql");
-
-		// 2019年6月の非営業日は以下を想定
-		// 2019/06/01 
-		// 2019/06/02
-		// 2019/06/08
-		// 2019/06/09
-		// 2019/06/15
-		// 2019/06/16
-		// 2019/06/22
-		// 2019/06/23
-		// 2019/06/29
-		// 2019/06/30
-
-		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
-		try {
-			BatchApplication.main(new String[] { "20190626", filePath, fileName });
-			Assert.fail("JSON形式のparse失敗エラーが発生しなかった。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
-		}
-	}
-
-	@Test
 	public void 異常系_拡張項目繰返でJSONマッピングエラー_全解約分() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonMappingErrorTestData1.sql");
 

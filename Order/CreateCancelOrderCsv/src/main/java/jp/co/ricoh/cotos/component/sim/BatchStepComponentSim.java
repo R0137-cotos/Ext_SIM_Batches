@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.CancelOrderCsvDto;
 import jp.co.ricoh.cotos.dto.CancelOrderEntity;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvParameter;
+import jp.co.ricoh.cotos.dto.ExtendsParameterDtoComparator;
 import jp.co.ricoh.cotos.dto.SIMExtendsParameterIteranceDto;
 import lombok.extern.log4j.Log4j;
 
@@ -159,10 +161,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 							throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
 						}
 					}
-					
+
 					// 追加行有無判定のためCSVのリストサイズを保存
 					int csvListSize = 0;
-					if(csvDtoList != null) {
+					if (csvDtoList != null) {
 						csvListSize = csvDtoList.size();
 					}
 
@@ -183,7 +185,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 						csvDtoList.add(orderCsvEntity);
 					});
-					
+
 					// CSVリストに追加が発生した場合枝番用インデックスを加算する
 					if (csvDtoList != null && csvListSize != csvDtoList.size()) {
 						branchNumberIndex[0] = branchNumberIndex[0] + 1;
@@ -191,57 +193,63 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				});
 			});
 
-			// 枝番用インデックス 初期化
-			branchNumberIndex[0] = 0;
+
 
 			// 数量減分のマップを回す
 			partCancelListContractNumberGroupingMap.entrySet().stream().forEach(orderDataMap -> {
-				IntStream.range(0, orderDataMap.getValue().size()).forEach(i -> {
-					// 枝番用インデックス ラムダ式の内部で利用するため配列にする
-					CancelOrderEntity orderData = orderDataMap.getValue().get(i);
-					List<SIMExtendsParameterIteranceDto> extendsParameterIteranceDtoList = new ArrayList<>();
-					// 拡張項目繰返を読み込み
-					if (orderData.getExtendsParameterIterance() != null) {
-						try {
-							extendsParameterIteranceDtoList = readJson(orderData.getExtendsParameterIterance());
-						} catch (JsonParseException e) {
-							e.printStackTrace();
-							throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
-						} catch (JsonMappingException e) {
-							e.printStackTrace();
-							throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
-						} catch (IOException e) {
-							e.printStackTrace();
-							throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
-						}
+				// 契約番号ごとに1から始めるので、枝番用インデックスを初期化
+				branchNumberIndex[0] = 0;
+
+				// 契約番号に紐づく商品(契約用).拡張項目繰返は一種類しか存在しないので、一つ目を参照すれば良い
+				CancelOrderEntity orderData = orderDataMap.getValue().get(0);
+				List<SIMExtendsParameterIteranceDto> extendsParameterIteranceDtoList = new ArrayList<>();
+				// 拡張項目繰返を読み込み
+				if (orderData.getExtendsParameterIterance() != null) {
+					try {
+						// 数量減はSQLでデータ取得する段階で拡張項目繰返を読み込んで検索しているので、拡張項目繰返がJSONでない場合に発生するエラーは基本的に発生しない
+						extendsParameterIteranceDtoList = readJson(orderData.getExtendsParameterIterance());
+					} catch (JsonParseException e) {
+						e.printStackTrace();
+						throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
+					} catch (JsonMappingException e) {
+						e.printStackTrace();
+						throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
+					} catch (IOException e) {
+						e.printStackTrace();
+						throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
 					}
+				}
 
-					// 追加行有無判定のためCSVのリストサイズを保存
-					int csvListSize = 0;
-					if (csvDtoList != null) {
-						csvListSize = csvDtoList.size();
-					}
+				// 拡張項目繰返リストを契約番号の昇順にソート
+				Collections.sort(extendsParameterIteranceDtoList, new ExtendsParameterDtoComparator());
 
-					// 数量減の場合は種別が解約の行のみ出力対象
-					// filter:契約.リコー品種コード=拡張項目繰返.商品コード
-					// filter:拡張項目繰返.種別=解約
-					extendsParameterIteranceDtoList.stream().filter(epi -> "解約".equals(epi.getContractType())).filter(epi -> orderData.getRicohItemCode().equals(epi.getProductCode())).forEach(j -> {
-						CancelOrderCsvDto orderCsvEntity = new CancelOrderCsvDto();
-						orderCsvEntity.setContractIdTemp(orderData.getContractIdTemp());
-						orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%02d", orderData.getContractBranchNumber()) + String.format("%03d", branchNumberIndex[0] + 1));
-						orderCsvEntity.setRicohItemCode(orderData.getRicohItemCode());
-						orderCsvEntity.setItemContractName(orderData.getItemContractName());
-						orderCsvEntity.setOrderDate(orderDate);
-						orderCsvEntity.setCancelMonth(cancelMonth);
-						orderCsvEntity.setLineNumber(j.getLineNumber());
-						orderCsvEntity.setSerialNumber(j.getSerialNumber());
+				// 最後に追加した商品コード
+				String[] lastProductCode = { "" };
 
-						csvDtoList.add(orderCsvEntity);
-					});
-
-					// CSVリストに追加が発生した場合枝番用インデックスを加算する
-					if (csvDtoList != null && csvListSize != csvDtoList.size()) {
+				// 数量減の場合は種別が解約の行のみ出力対象
+				// filter:拡張項目繰返.種別=解約
+				extendsParameterIteranceDtoList.stream().filter(epi -> "解約".equals(epi.getContractType())).forEach(j -> {
+					// 最後に追加した商品コードでない場合は、契約番号枝番をインクリメント
+					if (!lastProductCode[0].equals(j.getProductCode())) {
 						branchNumberIndex[0] = branchNumberIndex[0] + 1;
+					}
+					CancelOrderCsvDto orderCsvEntity = new CancelOrderCsvDto();
+					orderCsvEntity.setContractIdTemp(orderData.getContractIdTemp());
+					orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%02d", orderData.getContractBranchNumber()) + String.format("%03d", branchNumberIndex[0]));
+					orderCsvEntity.setRicohItemCode(j.getProductCode());
+					orderCsvEntity.setItemContractName(j.getProductName());
+					orderCsvEntity.setOrderDate(orderDate);
+					orderCsvEntity.setCancelMonth(cancelMonth);
+					orderCsvEntity.setLineNumber(j.getLineNumber());
+					orderCsvEntity.setSerialNumber(j.getSerialNumber());
+
+					csvDtoList.add(orderCsvEntity);
+
+					// 最後に追加した商品コードを更新
+					if (j.getProductCode() != null) {
+						lastProductCode[0] = j.getProductCode();
+					} else {
+						lastProductCode[0] = "";
 					}
 				});
 			});
