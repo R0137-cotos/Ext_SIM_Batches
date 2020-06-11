@@ -37,7 +37,7 @@ cotos:
       momEmpId: COTOS_BATCH_USER
       operatorName: dummy_batch_operator
       operatorOrgName: dummy_batch_operator_org
-  authentication: https://dev-api.cotos.ricoh.co.jp/auth/api/auth
+  authentication: https://dev-api-6.cotos.ricoh.co.jp/auth/api/auth
   auth:
     jwt:
       secretKey: cotosSecretKey
