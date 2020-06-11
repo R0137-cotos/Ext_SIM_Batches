@@ -206,6 +206,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				// 拡張項目繰返を読み込み
 				if (orderData.getExtendsParameterIterance() != null) {
 					try {
+						// 数量減はSQLでデータ取得する段階で拡張項目繰返を読み込んで検索しているので、拡張項目繰返がJSONでない場合に発生するエラーは基本的に発生しない
 						extendsParameterIteranceDtoList = readJson(orderData.getExtendsParameterIterance());
 					} catch (JsonParseException e) {
 						e.printStackTrace();
