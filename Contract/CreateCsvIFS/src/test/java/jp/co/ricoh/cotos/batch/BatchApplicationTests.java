@@ -67,8 +67,8 @@ public class BatchApplicationTests extends TestBase {
 
 		List<Contract> contractList = new ArrayList<>();
 		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
-		Assert.assertEquals("7件の契約が作成済みになっていること", 7, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
-		Assert.assertEquals("7件の契約の作成日時が設定されていること", 7, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+		Assert.assertEquals("6件の契約が作成済みになっていること", 6, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
+		Assert.assertEquals("6件の契約の作成日時が設定されていること", 6, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 	}
@@ -87,8 +87,8 @@ public class BatchApplicationTests extends TestBase {
 
 		List<Contract> contractList = new ArrayList<>();
 		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
-		Assert.assertEquals("7件の契約が作成済みになっていること", 7, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
-		Assert.assertEquals("7件の契約の作成日時が設定されていること", 7, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+		Assert.assertEquals("6件の契約が作成済みになっていること", 6, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
+		Assert.assertEquals("6件の契約の作成日時が設定されていること", 6, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 	}
@@ -107,8 +107,8 @@ public class BatchApplicationTests extends TestBase {
 
 		List<Contract> contractList = new ArrayList<>();
 		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
-		Assert.assertEquals("7件の契約が作成済みになっていること", 7, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
-		Assert.assertEquals("7件の契約の作成日時が設定されていること", 7, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+		Assert.assertEquals("6件の契約が作成済みになっていること", 6, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
+		Assert.assertEquals("6件の契約の作成日時が設定されていること", 6, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 	}
@@ -127,8 +127,8 @@ public class BatchApplicationTests extends TestBase {
 
 		List<Contract> contractList = new ArrayList<>();
 		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
-		Assert.assertEquals("7件の契約が作成済みになっていること", 7, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
-		Assert.assertEquals("7件の契約の作成日時が設定されていること", 7, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+		Assert.assertEquals("6件の契約が作成済みになっていること", 6, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
+		Assert.assertEquals("6件の契約の作成日時が設定されていること", 6, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 	}

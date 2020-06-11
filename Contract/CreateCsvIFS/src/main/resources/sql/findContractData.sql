@@ -25,13 +25,13 @@ select
  and
  (
   (
-   co.contract_type = 1
+   co.contract_type = '1'
   and
    JSON_EXISTS(JSON_QUERY(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), '$?(@.contractType == "新規")' )
   )
   or
   (
-   co.contract_type = 4
+   co.contract_type = '2'
   and
    (
     JSON_EXISTS(JSON_QUERY(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), '$?(@.contractType == "容量変更")' )
