@@ -28,7 +28,7 @@ public interface IBatchStepComponent {
 	 *            処理データ取得用パラメーター
 	 * @return 処理データリスト
 	 */
-	public List<CreateOrderCsvDataDto> getDataList();
+	public List<CreateOrderCsvDataDto> getDataList(String contractType);
 
 	/**
 	 * データチェック処理

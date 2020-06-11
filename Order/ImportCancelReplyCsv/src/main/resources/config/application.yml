@@ -1,0 +1,56 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@dev-db.cotos.ricoh.co.jp:1521/pdb1
+    username: cotos_onsite_sim_re
+    password: cotos_onsite_sim_re
+    driverClassName: oracle.jdbc.OracleDriver
+    type: org.apache.tomcat.jdbc.pool.DataSource
+    tomcat:
+      max-active: 5
+      min-idle: 5
+  main:
+     web-environment: false
+  jpa:
+    show_sql: true
+    database-platform: org.hibernate.dialect.Oracle12cDialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        show_sql: true
+        use_sql_comments: true
+        format_sql: true
+        default_schema: cotos_onsite_sim_re
+  jackson:
+    time-zone: Asia/Tokyo
+  messages:
+    basename: Messages
+    defaultEncoding: UTF-8
+cotos:
+  mom:
+    system:
+      momEmpId: COTOS_BATCH_USER
+      operatorName: dummy_batch_operator
+      operatorOrgName: dummy_batch_operator_org
+    superUserId: SIM_AUTOARRANGEMENT_USER
+  authentication: https://dev-api-6.cotos.ricoh.co.jp/auth/api/auth
+  auth:
+    jwt:
+      secretKey: cotosSecretKey
+      claims:
+        momEmpId: momEmpId
+        singleUserId: singleUserId
+        origin: origin
+        applicationId: applicationId
+    headers:
+      authorization: X-Cotos-Authorization
+      requireDispAuthorize: X-Cotos-Require-Disp-Authorize
+      dispAuthorization: X-Cotos-Disp-Authorization
+      contentType: Content-type
+      filename: filename
+  # 契約APIURL
+  contract:
+    url: https://dev-api-6.cotos.ricoh.co.jp/contract/api
+  # 手配APIURL
+  arrangement:
+    url: https://dev-api-6.cotos.ricoh.co.jp/arrangement/api

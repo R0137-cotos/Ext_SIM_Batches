@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:oracle:thin:@dev-db.cotos.ricoh.co.jp:1521/pdb1
-    username: cotos_dev_sim
-    password: cotos_dev_sim
+    username: cotos_dev_6
+    password: cotos_dev_6
     driverClassName: oracle.jdbc.OracleDriver
   jpa:
     database-platform: org.hibernate.dialect.Oracle12cDialect
@@ -13,4 +13,4 @@ spring:
         show_sql: true
         use_sql_comments: true
         format_sql: true
-        default_schema: cotos_dev_sim
+        default_schema: cotos_dev_6
