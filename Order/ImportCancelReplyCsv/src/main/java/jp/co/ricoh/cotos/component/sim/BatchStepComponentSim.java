@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -196,6 +199,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				List<ProductContract> productContractList = contract.getProductContractList();
 				// ワークフロー状態を設定
 				contract.setWorkflowStatus(Contract.WorkflowStatus.売上可能);
+				// サービス開始日にサービス利用希望日の翌月1日を設定
+				contract.setServiceTermStart(getNextMonthFirstDay(contract.getConclusionPreferredDate()));
 
 				// 拡張項目繰り返しを設定
 				for (ProductContract p : productContractList) {
@@ -315,7 +320,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			if (work.getArrangementPicWorkerEmp() == null && work.getWorkflowStatus() == WorkflowStatus.受付待ち) {
 				arrangementWorkIdList.add(work.getId());
 			}
-			
+
 			try {
 				// 手配担当者登録APIを実行
 				batchUtil.callAssignWorker(arrangementWorkIdList);
@@ -359,6 +364,21 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			return null;
 		}
 		return str.replaceAll("\"", "");
+	}
+
+	/**
+	 * 翌月月初日を取得
+	 * @param date 対象日付
+	 * @return 対象日付の翌月月初日
+	 */
+	private Date getNextMonthFirstDay(Date date) {
+		if (date == null) {
+			return null;
+		}
+		Date safeDate = new Date(date.getTime());
+		LocalDate localDate = safeDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate nextMonthFirstDay = LocalDate.of(localDate.getYear(), localDate.getMonth().plus(1), 1);
+		return Date.from(nextMonthFirstDay.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
 
 }
