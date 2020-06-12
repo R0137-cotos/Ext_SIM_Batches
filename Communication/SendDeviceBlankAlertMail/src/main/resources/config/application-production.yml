@@ -20,3 +20,6 @@ spring:
     port: 25
 cotos:
   authentication: https://api.cotos.ricoh.co.jp/auth/api/auth
+  mail:
+    fromMailAddress: no-reply@cotos.ricoh.co.jp
+    envelopeFromMailAddress: bounce@cotos.ricoh.co.jp

@@ -1,9 +1,13 @@
 spring:
   datasource:
     url: jdbc:oracle:thin:@st-db.cotos.ricoh.co.jp:1521/pdb1
-    username: cotos_st
-    password: cotosstissharedprocess
+    username: cotos_st_1
+    password: cotosst1issharedprocess
     driverClassName: oracle.jdbc.OracleDriver
+    type: org.apache.tomcat.jdbc.pool.DataSource
+    tomcat:
+      max-active: 5
+      min-idle: 5
   jpa:
     database-platform: org.hibernate.dialect.Oracle12cDialect
     hibernate:
@@ -13,12 +17,4 @@ spring:
         show_sql: true
         use_sql_comments: true
         format_sql: true
-        default_schema: cotos_st
-cotos:
-  authentication: https://st-api.cotos.ricoh.co.jp/auth/api/auth
-  # 手配APIURL
-  arrangement:
-    url: https://st-api.cotos.ricoh.co.jp/arrangement/api
-  # 契約APIURL
-  contract:
-    url: https://st-api.cotos.ricoh.co.jp/contract/api
+        default_schema: cotos_st_1

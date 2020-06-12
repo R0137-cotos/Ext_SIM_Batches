@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:oracle:thin:@dev-db.cotos.ricoh.co.jp:1521/pdb1
-    username: cotos_dev
-    password: cotos_dev
+    username: cotos_dev_4
+    password: cotos_dev_4
     driverClassName: oracle.jdbc.OracleDriver
   jpa:
     database-platform: org.hibernate.dialect.Oracle12cDialect
@@ -13,12 +13,6 @@ spring:
         show_sql: true
         use_sql_comments: true
         format_sql: true
-        default_schema: cotos_dev
+        default_schema: cotos_dev_4
 cotos:
-  authentication: https://dev-api.cotos.ricoh.co.jp/auth/api/auth
-  # 手配APIURL
-  arrangement:
-    url: https://dev-api.cotos.ricoh.co.jp/arrangement/api
-  # 契約APIURL
-  contract:
-    url: https://dev-api.cotos.ricoh.co.jp/contract/api
+  authentication: https://dev-api-4.cotos.ricoh.co.jp/auth/api/auth
