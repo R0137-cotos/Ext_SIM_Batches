@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,27 +193,14 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			IntStream.range(0, contractMap.getValue().size()).forEach(i -> {
 				Contract contract = contractMap.getValue().get(i);
 
-				// ロールバック用に更新元の契約情報を退避
-				Contract originalContract = null;
-				try {
-					// 契約をディープコピー
-					originalContract = om.readValue(om.writeValueAsString(contract), Contract.class);
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (JsonProcessingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
 				// JSON読み込みエラーか
 				boolean hasJsonError = false;
 
 				List<ProductContract> productContractList = contract.getProductContractList();
 				// ワークフロー状態を設定
 				contract.setWorkflowStatus(Contract.WorkflowStatus.売上可能);
+				// サービス開始日にサービス利用希望日の翌月1日を設定
+				contract.setServiceTermStart(getNextMonthFirstDay(contract.getConclusionPreferredDate()));
 
 				// 拡張項目繰り返しを設定
 				for (ProductContract p : productContractList) {
@@ -269,23 +259,14 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					return;
 				}
 
-				// 手配情報業務完了エラーか
-				boolean hasNoArrangementError = true;
-
-				// 契約情報更新処理を実施
-				if (callUpdateContractApi(contract)) {
-					// 成功した場合 手配情報更新処理を実施
-					hasNoArrangementError = callCompleteArrangementApi(contract, false);
-				} else {
-					// 失敗した場合エラーログを出力しスキップする
-					log.fatal(String.format("契約ID=%dの契約更新に失敗しました。", contract.getId()));
-					return;
-				}
-				// 手配情報業務完了がエラーの場合、元の契約情報で更新した契約情報を再更新する
-				if (!hasNoArrangementError) {
-					if (!callUpdateContractApi(originalContract)) {
-						// 再更新に失敗した場合手動リカバリが必要となる
-						log.fatal(String.format("契約ID=%dの契約再更新に失敗しました。リカバリが必要となります。", originalContract.getId()));
+				// 手配情報更新処理を実施
+				// 数量減の場合はワークフロー状態を売上可能に更新するため、手配情報更新→契約情報更新の順に処理する必要がある
+				if (callCompleteArrangementApi(contract, false)) {
+					// 成功した場合 契約情報更新処理を実施 
+					if (!callUpdateContractApi(contract)) {
+						// 失敗した場合エラーログを出力しスキップする
+						log.fatal(String.format("契約ID=%dの契約更新に失敗しました。リカバリが必要となります。", contract.getId()));
+						return;
 					}
 				}
 			});
@@ -339,7 +320,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			if (work.getArrangementPicWorkerEmp() == null && work.getWorkflowStatus() == WorkflowStatus.受付待ち) {
 				arrangementWorkIdList.add(work.getId());
 			}
-			
+
 			try {
 				// 手配担当者登録APIを実行
 				batchUtil.callAssignWorker(arrangementWorkIdList);
@@ -383,6 +364,21 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			return null;
 		}
 		return str.replaceAll("\"", "");
+	}
+
+	/**
+	 * 翌月月初日を取得
+	 * @param date 対象日付
+	 * @return 対象日付の翌月月初日
+	 */
+	private Date getNextMonthFirstDay(Date date) {
+		if (date == null) {
+			return null;
+		}
+		Date safeDate = new Date(date.getTime());
+		LocalDate localDate = safeDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate nextMonthFirstDay = LocalDate.of(localDate.getYear(), localDate.getMonth().plus(1), 1);
+		return Date.from(nextMonthFirstDay.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
 
 }
