@@ -25,4 +25,10 @@ public class SearchMailTargetDto {
 	 */
 	@ApiModelProperty(value = "メールアドレス", required = true, position = 3)
 	private String mailAddress;
+
+	/**
+	 * 契約ID
+	 */
+	@ApiModelProperty(value = "契約ID", required = true, position = 4)
+	private Long contractId;
 }

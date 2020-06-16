@@ -16,3 +16,7 @@ spring:
         default_schema: cotos_st_4
 cotos:
   authentication: https://st-api-4.cotos.ricoh.co.jp/auth/api/auth
+  disp:
+    urls:
+      domain: https://st-4.cotos.ricoh.co.jp/
+      screenName: ContractScreen

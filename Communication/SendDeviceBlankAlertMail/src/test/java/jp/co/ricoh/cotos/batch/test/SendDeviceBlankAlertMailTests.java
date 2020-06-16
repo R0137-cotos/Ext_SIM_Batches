@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import jp.co.ricoh.cotos.BatchApplication;
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.batch.test.mock.WithMockCustomUser;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -35,11 +36,13 @@ public class SendDeviceBlankAlertMailTests extends TestBase {
 	}
 
 	@Test
+	@WithMockCustomUser
 	public void 正常系_ジョブテスト() {
 		BatchApplication.main(new String[] { "20200203" });
 	}
 
 	@Test
+	@WithMockCustomUser
 	public void 正常系_ジョブテスト_パラメータ無し() {
 		BatchApplication.main(new String[] {});
 	}

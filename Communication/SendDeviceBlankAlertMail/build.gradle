@@ -37,6 +37,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok:1.16.18'
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.springframework.security:spring-security-test')
 	testCompile('org.dbunit:dbunit:2.5.4')
 	testCompileOnly 'org.projectlombok:lombok:1.16.18'
 }

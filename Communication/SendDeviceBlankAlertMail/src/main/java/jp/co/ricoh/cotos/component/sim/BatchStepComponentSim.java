@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.entity.EnumType.ServiceCategory;
 import jp.co.ricoh.cotos.commonlib.logic.mail.CommonSendMail;
+import jp.co.ricoh.cotos.component.BatchUtil;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.SearchMailTargetDto;
 import lombok.extern.log4j.Log4j;
@@ -26,6 +27,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Autowired
 	CommonSendMail commonSendMail;
+
+	@Autowired
+	BatchUtil batchUtil;
 
 	/**
 	 * 処理データ取得
@@ -46,8 +50,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 		List<String> mailAddressList = new ArrayList<String>();
 		mailAddressList.add(serchMailTargetDto.getMailAddress());
+		List<String> mailTextRepalceValueList = new ArrayList<String>();
+		mailTextRepalceValueList.add(batchUtil.getTargetDocUrl(serchMailTargetDto.getContractId()));
 		try {
-			commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), null);
+			commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), mailTextRepalceValueList, null);
 		} catch (MessagingException e) {
 			log.fatal("メール送信処理に失敗しました。");
 			throw new Exception(e);

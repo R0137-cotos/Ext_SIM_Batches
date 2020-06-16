@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.batch.test.mock.WithMockCustomUser;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
@@ -81,6 +82,7 @@ public class BatchComponentTest extends TestBase {
 	}
 
 	@Test
+	@WithMockCustomUser
 	public void 正常系_メール送信できること() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("sql/SendDeviceBlankAlertMailTests.sql");
 		try {
@@ -91,6 +93,7 @@ public class BatchComponentTest extends TestBase {
 	}
 
 	@Test
+	@WithMockCustomUser
 	public void 正常系_メール送信できること_パラメータ無し() throws Exception {
 		context.getBean(DBConfig.class).initTargetTestData("sql/NoParamSendDeviceBlankAlertMailTests.sql");
 		Calendar cal = Calendar.getInstance();
