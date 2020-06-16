@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.batch.test.mock.WithMockCustomUser;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.logic.JobComponent;
 
@@ -45,12 +46,14 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
+	@WithMockCustomUser
 	public void 正常系_JOB_メール送信できること() {
 		context.getBean(DBConfig.class).initTargetTestData("sql/SendDeviceBlankAlertMailTests.sql");
 		jobComponent.run(new String[] { "20200203" });
 	}
 
 	@Test
+	@WithMockCustomUser
 	public void 正常系_JOB_メール送信できること_パラメータ無し() {
 		context.getBean(DBConfig.class).initTargetTestData("sql/NoParamSendDeviceBlankAlertMailTests.sql");
 		Calendar cal = Calendar.getInstance();
@@ -80,6 +83,7 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
+	@WithMockCustomUser
 	public void 正常系_JOB_日付空文字() {
 		context.getBean(DBConfig.class).initTargetTestData("sql/NoParamSendDeviceBlankAlertMailTests.sql");
 		Calendar cal = Calendar.getInstance();

@@ -52,6 +52,11 @@ cotos:
       dispAuthorization: X-Cotos-Disp-Authorization
       contentType: Content-type
       filename: filename
+  # 画面URL
+  disp:
+    urls:
+      domain: http://localhost.ricoh.co.jp:8000/
+      screenName: ContractScreen
   # Fromメールアドレス
   mail:
     fromMailAddress: test@example.com

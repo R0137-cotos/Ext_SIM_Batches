@@ -1,6 +1,7 @@
 SELECT ROWNUM as seq_no,
        co.product_grp_master_id as product_grp_master_id,
-       cpse.mail_address as mail_address
+       cpse.mail_address as mail_address,
+       co.id as contract_id
 FROM contract co
 LEFT OUTER JOIN product_contract pc
              ON co.id = pc.contract_id

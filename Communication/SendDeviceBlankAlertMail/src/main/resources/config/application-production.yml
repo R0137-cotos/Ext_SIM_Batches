@@ -20,6 +20,10 @@ spring:
     port: 25
 cotos:
   authentication: https://api.cotos.ricoh.co.jp/auth/api/auth
+  disp:
+    urls:
+      domain: https://cotos.ricoh.co.jp/
+      screenName: ContractScreen
   mail:
     fromMailAddress: no-reply@cotos.ricoh.co.jp
     envelopeFromMailAddress: bounce@cotos.ricoh.co.jp
