@@ -303,6 +303,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				row.setSerialNumber(replyOrder.getSerialNumber());
 				row.setDevice(replyOrder.getDevice());
 				row.setInvoiceNumber(replyOrder.getInvoiceNumber());
+				row.setDevice(replyOrder.getDevice());
 				extendsParameterDto = row;
 				break;
 			}
