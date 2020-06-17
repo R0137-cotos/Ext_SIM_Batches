@@ -69,7 +69,7 @@ public class ImportReplyCsvTests extends TestBase {
 	@AfterClass
 	public static void exit() throws Exception {
 		if (null != context) {
-			//context.getBean(DBConfig.class).clearData();
+			context.getBean(DBConfig.class).clearData();
 			context.stop();
 		}
 	}
