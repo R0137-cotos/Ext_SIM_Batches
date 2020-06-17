@@ -30,7 +30,7 @@ echo "Content-Type: text/plain; name=`date "+%Y%m%d"`_SIM_sinki.csv"
 echo "Content-Transfer-Encoding: base64"
 echo "Content-Disposition: attachment; filename=`date "+%Y%m%d"`_SIM_sinki.zip"
 echo ""
-cat /sharestorage/work/BTCOSI001/cooperation/`date "+%Y%m%d"`_SIM_新規.zip | base64
+cat /sharestorage/work/BTCOSI001/cooperation/`date "+%Y%m%d%H%M%S"`_SIM_新規.zip | base64
 echo ""
 echo "--1234--"
 echo "."
