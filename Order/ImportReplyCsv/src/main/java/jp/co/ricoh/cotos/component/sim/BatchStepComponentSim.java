@@ -161,23 +161,13 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					log.fatal(String.format("契約ID=%dの商品拡張項目読込に失敗しました。", contract.getId()));
 					return;
 				}
-				long index = 1;
 				List<ExtendsParameterDto> updatedExtendsParameterList = new ArrayList<>();
-				for (ReplyOrderDto replyOrder : replyOrderList) {
-					// デバイスが空欄の場合契約のデバイスを設定する
-					if (replyOrder.getDevice() == null || replyOrder.getDevice() == "") {
-						List<ExtendsParameterDto> TmpList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList());
-						for (ExtendsParameterDto Tmp : TmpList) {
-							if (Tmp.getId() == index) {
-								replyOrder.setDevice(Tmp.getDevice());
-							}
-						}
-					}
+				replyOrderList.stream().forEach(replyOrder -> {
 					ExtendsParameterDto extendsParameterDto = null;
 					// 新規:リプライCSVの商品コードが一致するかつ回線番号が存在しないデータを更新する
 					List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> "".equals(e.getLineNumber())).collect(Collectors.toList());
 					if (!targetList.isEmpty()) {
-						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
+						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, deviceEmptyCheck(replyOrder, targetList));
 						if (extendsParameterDto != null) {
 							updatedExtendsParameterList.add(extendsParameterDto);
 						}
@@ -186,7 +176,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					// 容量変更:リプライCSVの商品コード、回線番号が一致するかつ送り状番号が未設定のデータを更新する
 					targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).stream().filter(e -> "".equals(e.getInvoiceNumber())).collect(Collectors.toList());
 					if (!targetList.isEmpty()) {
-						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
+						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, deviceEmptyCheck(replyOrder, targetList));
 						if (extendsParameterDto != null) {
 							updatedExtendsParameterList.add(extendsParameterDto);
 						}
@@ -195,13 +185,12 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					// 有償交換:リプライCSVの商品コード、回線番号が一致するかつ送り状番号が設定のデータを更新する
 					targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).stream().filter(e -> !"".equals(e.getInvoiceNumber())).collect(Collectors.toList());
 					if (!targetList.isEmpty()) {
-						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
+						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, deviceEmptyCheck(replyOrder, targetList));
 						if (extendsParameterDto != null) {
 							updatedExtendsParameterList.add(extendsParameterDto);
 						}
 					}
-					index++;
-				}
+				});
 
 				// リプライCSVに存在しないデータを追加
 				extendsParameterList.stream().forEach(e -> {
@@ -251,6 +240,17 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	private String substringContractNumber(String number) {
 		return number.substring(0, 17);
+	}
+
+	private ReplyOrderDto deviceEmptyCheck(ReplyOrderDto replyOrder, List<ExtendsParameterDto> targetList) {
+		// デバイスが空欄の場合契約のデバイスを設定する
+		targetList.stream().forEach(target -> {
+			if (replyOrder.getDevice() == null || replyOrder.getDevice() == "") {
+				List<ExtendsParameterDto> TmpList = targetList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> e.getId() == target.getId()).collect(Collectors.toList());
+				replyOrder.setDevice(TmpList.get(0).getDevice());
+			}
+		});
+		return replyOrder;
 	}
 
 	/**
