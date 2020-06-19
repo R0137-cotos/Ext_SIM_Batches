@@ -170,7 +170,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						for (ExtendsParameterDto Tmp : TmpList) {
 							if (Tmp.getId() == index) {
 								replyOrder.setDevice(Tmp.getDevice());
-								System.out.println();
 							}
 						}
 					}
