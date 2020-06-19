@@ -161,18 +161,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					log.fatal(String.format("契約ID=%dの商品拡張項目読込に失敗しました。", contract.getId()));
 					return;
 				}
-				long index = 1;
+
 				List<ExtendsParameterDto> updatedExtendsParameterList = new ArrayList<>();
-				for (ReplyOrderDto replyOrder : replyOrderList) {
-					// デバイスが空欄の場合契約のデバイスを設定する
-					if (replyOrder.getDevice() == null || replyOrder.getDevice() == "") {
-						List<ExtendsParameterDto> TmpList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList());
-						for (ExtendsParameterDto Tmp : TmpList) {
-							if (Tmp.getId() == index) {
-								replyOrder.setDevice(Tmp.getDevice());
-							}
-						}
-					}
+				replyOrderList.stream().forEach(replyOrder -> {
 					ExtendsParameterDto extendsParameterDto = null;
 					// 新規:リプライCSVの商品コードが一致するかつ回線番号が存在しないデータを更新する
 					List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> "".equals(e.getLineNumber())).collect(Collectors.toList());
@@ -200,8 +191,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 							updatedExtendsParameterList.add(extendsParameterDto);
 						}
 					}
-					index++;
-				}
+				});
 
 				// リプライCSVに存在しないデータを追加
 				extendsParameterList.stream().forEach(e -> {
@@ -313,6 +303,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				row.setSerialNumber(replyOrder.getSerialNumber());
 				row.setDevice(replyOrder.getDevice());
 				row.setInvoiceNumber(replyOrder.getInvoiceNumber());
+				row.setDevice(replyOrder.getDevice());
 				extendsParameterDto = row;
 				break;
 			}
