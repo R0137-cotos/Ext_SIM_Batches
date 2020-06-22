@@ -3,7 +3,6 @@
 ### バッチID: BTCOSI010
 ### 機能名：  オーダー解約メール送信
 ################################################
-
 {
 echo "HELO jp.ricoh.com"
 echo "MAIL FROM: zjc_rmobile_sb_order@jp.ricoh.com"
@@ -26,11 +25,11 @@ echo "Content-Type: text/plain; charset=UTF-8"
 echo ""
 echo ""
 echo "--1234"
-echo "Content-Type: text/plain; name=`date "+%Y%m%d"`_SIM_sinki.csv"
+echo "Content-Type: text/plain; name=`date "+%Y%m%d"`_SIM_kaiyaku.zip"
 echo "Content-Transfer-Encoding: base64"
 echo "Content-Disposition: attachment; filename=`date "+%Y%m%d"`_SIM_kaiyaku.zip"
 echo ""
-cat /sharestorage/work/BTCOSI007/cooperation/`date "+%Y%m%d%H%M%S"`_SIM_解約.zip | base64
+cat $1 | base64
 echo ""
 echo "--1234--"
 echo "."
