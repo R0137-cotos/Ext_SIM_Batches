@@ -3,7 +3,7 @@
 ### バッチID: BTCOSI006
 ### 機能名：  オーダーメール送信
 ################################################
-type=$1
+type=$2
 {
 echo "HELO jp.ricoh.com"
 echo "MAIL FROM: zjc_rmobile_sb_order@jp.ricoh.com"
@@ -30,7 +30,7 @@ echo "Content-Type: text/plain; name=`date "+%Y%m%d"`_SIM_${type}.csv"
 echo "Content-Transfer-Encoding: base64"
 echo "Content-Disposition: attachment; filename=`date "+%Y%m%d"`_SIM_${type}.zip"
 echo ""
-cat $2 | base64
+cat $1 | base64
 echo ""
 echo "--1234--"
 echo "."
