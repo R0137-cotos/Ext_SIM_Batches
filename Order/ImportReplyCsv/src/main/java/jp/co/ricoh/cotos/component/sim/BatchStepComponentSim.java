@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -301,9 +302,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			if (updatedExtendsParameterList.stream().filter(f -> f.getId() == row.getId()).count() == 0) {
 				row.setLineNumber(replyOrder.getLineNumber());
 				row.setSerialNumber(replyOrder.getSerialNumber());
-				row.setDevice(replyOrder.getDevice());
+				if (StringUtils.isNotEmpty(replyOrder.getDevice())) {
+					row.setDevice(replyOrder.getDevice());
+				}
 				row.setInvoiceNumber(replyOrder.getInvoiceNumber());
-				row.setDevice(replyOrder.getDevice());
 				extendsParameterDto = row;
 				break;
 			}
