@@ -20,6 +20,7 @@ SELECT
   data.extends_parameter AS extends_parameter,
   data.contract_detail_id AS contract_detail_id,
   data.updated_at AS updated_at,
+  data.contract_type AS contract_type,
   data.extends_parameter_iterance AS extends_parameter_iterance
 FROM
  (
@@ -47,6 +48,7 @@ FROM
 	detail.extends_parameter,                          --契約明細.拡張項目
 	detail.id AS contract_detail_id,                   --契約明細.ID
 	cont.updated_at,                                   --契約.更新日時
+	cont.contract_type,                                --契約.契約種別
 	product.extends_parameter_iterance                 --商品(契約用).拡張項目繰返
   FROM contract cont                                                 --契約
   INNER JOIN contract_detail detail                                  --契約明細

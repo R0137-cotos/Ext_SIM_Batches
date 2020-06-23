@@ -5,6 +5,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.ContractType;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
@@ -95,7 +97,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
 			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
@@ -138,10 +140,50 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
 			batchComponent.execute(new String[] { "20191014", outputPath, "result_initial.csv", "1" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力しないこと_契約変更_容量変更() throws IOException {
+		テストデータ作成("createOrderTestSuccessDataCapacityChange.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力しないこと_契約変更_有償交換() throws IOException {
+		テストデータ作成("createOrderTestSuccessDataPaidExchange.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("有償交換"));
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}
@@ -204,7 +246,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
 			batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
@@ -247,10 +289,30 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
 			batchComponent.execute(new String[] { "20190927", outputPath, "result_initial.csv", "2" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力しないこと_容量変更_新規() throws IOException {
+		テストデータ作成("createOrderTestSuccessData.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}
@@ -267,7 +329,7 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("有償交換"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
 			batchComponent.execute(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
@@ -310,10 +372,30 @@ public class BatchComponentTest extends TestBase {
 		// モック
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("有償交換"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
 			batchComponent.execute(new String[] { "20191022", outputPath, "result_initial.csv", "3" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力しないこと_有償交換_新規() throws IOException {
+		テストデータ作成("createOrderTestSuccessData.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
+		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		try {
+			batchComponent.execute(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}
@@ -330,7 +412,7 @@ public class BatchComponentTest extends TestBase {
 		return contractDetailList;
 	}
 
-	private Contract dummyContract() {
+	private Contract dummyContract(String type) {
 		Contract contract = new Contract();
 		contract.setId(1L);
 		contract.setContractDetailList(getContractDetailList());
@@ -347,6 +429,11 @@ public class BatchComponentTest extends TestBase {
 		CustomerContract customerContract = new CustomerContract();
 		customerContract.setCompanyName("testCompanyName");
 		contract.setCustomerContract(customerContract);
+		if ("新規".equals(type)) {
+			contract.setContractType(ContractType.新規);
+		} else if ("容量変更".equals(type) || "有償交換".equals(type)) {
+			contract.setContractType(ContractType.契約変更);
+		}
 		return contract;
 	}
 }

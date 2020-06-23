@@ -30,6 +30,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.ContractType;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
@@ -127,6 +128,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
 		createOrderCsvDataDto.setContractDetailId(11L);
 		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
+		createOrderCsvDataDto.setContractType(ContractType.新規);
 		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
 		orderDataList.add(createOrderCsvDataDto);
 		try {
@@ -248,6 +250,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"容量変更\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"2\",\"serialNumber\":\"22\",\"device\":\"\",\"invoiceNumber\":\"\"}]}");
 		createOrderCsvDataDto.setContractDetailId(11L);
 		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2019-09-27 12:09:10"));
+		createOrderCsvDataDto.setContractType(ContractType.契約変更);
 		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
 		orderDataList.add(createOrderCsvDataDto);
 		try {
@@ -371,6 +374,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"有償交換\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"2\",\"serialNumber\":\"22\",\"device\":\"\",\"invoiceNumber\":\"\"}]}");
 		createOrderCsvDataDto.setContractDetailId(11L);
 		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
+		createOrderCsvDataDto.setContractType(ContractType.契約変更);
 		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
 		orderDataList.add(createOrderCsvDataDto);
 		try {

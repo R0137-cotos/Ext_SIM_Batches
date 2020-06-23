@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import lombok.Data;
 
 @Entity
@@ -113,6 +114,11 @@ public class CreateOrderCsvDataDto {
 	 * 更新日時
 	 */
 	private Date updatedAt;
+
+	/**
+	 * 契約種別
+	 */
+	private Contract.ContractType contractType;
 
 	/**
 	 * 商品(契約用).拡張項目繰返
