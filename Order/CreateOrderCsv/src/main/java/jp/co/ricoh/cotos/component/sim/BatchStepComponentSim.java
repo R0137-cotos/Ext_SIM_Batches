@@ -42,6 +42,7 @@ import jp.co.ricoh.cotos.commonlib.entity.arrangement.Arrangement;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork.WorkflowStatus;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.ContractType;
 import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementRepository;
@@ -111,8 +112,11 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		// 以下条件の場合オーダーCSV出力する
 		// １．オーダーCSV作成状態:0(未作成)である
 		// ２．契約種別：新規  かつ 処理日付が営業日である
+		// または 契約種別：容量変更 かつ 処理日当月最終営業日 - 2営業日
 		// または 契約種別：有償交換 かつ 処理日付が営業日である
-		// または 契約種別：容量交換 かつ 処理日当月最終営業日 - 2営業日
+		// ３．種別：新規 かつ 契約.契約種別が新規である
+		// または 種別：容量変更 かつ 契約種別が契約変更である
+		// または 種別：有償交換 かつ 契約種別が契約変更である
 		if ((("1".equals(dto.getType()) || "3".equals(dto.getType())) && nonBusinessDayCalendarMasterRepository.findOne(operationDate) == null) || ("2".equals(dto.getType()) && changeOperationDate.compareTo(operationDate) == 0)) {
 			orderDataList = orderDataList.stream().filter(o -> {
 				// オーダーCSV作成状態 0:未作成 1:作成済
@@ -145,6 +149,12 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					return shortBusinessDay.compareTo(o.getConclusionPreferredDate()) > -1;
 				}
 				return false;
+			}).filter(o -> {
+				if ("1".equals(dto.getType())) {
+					return ContractType.新規 == o.getContractType();
+				} else {
+					return ContractType.契約変更 == o.getContractType();
+				}
 			}).collect(Collectors.toList());
 
 			if (0 == orderDataList.size()) {
