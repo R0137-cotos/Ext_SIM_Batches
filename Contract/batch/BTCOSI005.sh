@@ -41,7 +41,7 @@ mkdir -p ${DIR_PATH}
 ################################################
 ### 処理実行
 ################################################
-SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -jar ${CONTRACT_JAR_PATH}/${BATCH_PG_BTCOSI005} "${FILE_NAME}" "${DIR_PATH}" "${PRODUCT_CLASS_DIV}" > ${PROCESS_LOG_FILE_PATH}
+SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${CONTRACT_JAR_PATH}/${BATCH_PG_BTCOSI005} "${FILE_NAME}" "${DIR_PATH}" "${PRODUCT_CLASS_DIV}"
 BATCH_RET=$?
 if [  ${BATCH_RET} != 0 ]; then
   Log.Error "BTCOSI005:[RUCCS]IFSその他機器情報CSV作成に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
