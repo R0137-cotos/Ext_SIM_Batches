@@ -36,7 +36,7 @@ Log.Info "ファイル名：${FILE_NAME}" >> ${LOG_FILE_PATH}
 ################################################
 ### 処理実行
 ################################################
-SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI007} "${OPERATION_DATE}" "${DIR_PATH}" "${FILE_NAME}" > ${PROCESS_LOG_FILE_PATH}
+SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI007} "${OPERATION_DATE}" "${DIR_PATH}" "${FILE_NAME}"
 BATCH_RET=$?
 if [  ${BATCH_RET} == 1 ]; then
   Log.Error "BTCOSI007:[SB]解約手配CSV作成に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
