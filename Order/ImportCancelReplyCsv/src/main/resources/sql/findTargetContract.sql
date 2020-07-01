@@ -1,0 +1,37 @@
+SELECT
+  *
+FROM
+  contract c 
+  INNER JOIN product_contract pc 
+    ON c.id = pc.contract_id 
+  INNER JOIN product_master pm 
+    ON pc.product_master_id = pm.id 
+WHERE
+  pm.product_class_div = 'SIM' 
+  AND exists ( 
+    select
+      1 
+    from
+      contract_detail cd 
+      INNER JOIN item_contract ic 
+        ON cd.id = ic.contract_detail_id 
+    where
+      c.id = cd.contract_id 
+      and ic.cost_type != '1'
+  ) 
+  AND ( 
+    ( 
+      c.lifecycle_status = '8' 
+      AND c.workflow_status = '3'
+    ) 
+    OR ( 
+      c.lifecycle_status = '2' 
+      AND c.workflow_status = '3' 
+      AND c.contract_type = '2'
+    )
+  ) 
+{{#contractNumberList}}
+	AND c.contract_number || LPAD(c.contract_branch_number, 2, '0') IN ({{&contractNumberList}})
+{{/contractNumberList}}
+ORDER BY
+  c.id

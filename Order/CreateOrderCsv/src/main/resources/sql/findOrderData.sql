@@ -1,7 +1,8 @@
 SELECT
   rownum AS id,
   data.contract_id AS contract_id_temp,
-  data.immutable_cont_ident_number AS contract_number,
+  data.contract_number AS contract_number,
+  data.contract_branch_number AS contract_branch_number,
   data.quantity AS quantity,
   data.ricoh_item_code AS ricoh_item_code,
   data.item_contract_name AS item_contract_name,
@@ -17,48 +18,59 @@ SELECT
   data.pic_fax_number AS pic_fax_number,
   data.pic_mail_address AS pic_mail_address,
   data.extends_parameter AS extends_parameter,
-  data.contract_detail_id AS contract_detail_id
+  data.contract_detail_id AS contract_detail_id,
+  data.updated_at AS updated_at,
+  data.contract_type AS contract_type,
+  data.extends_parameter_iterance AS extends_parameter_iterance
 FROM
  (
   SELECT
-	cont.id AS contract_id,                            --Œ_–ñ.Œ_–ñID
-	cont.immutable_cont_ident_number,                  --Œ_–ñ.P‹vŒ_–ñ¯•Ê”Ô†
-	detail.quantity,                                   --Œ_–ñ–¾×.”—Ê
-	item.ricoh_item_code,                              --•ií(Œ_–ñ—p).ƒŠƒR[•iíƒR[ƒh
-	item.item_contract_name,                           --•ií(Œ_–ñ—p).¤•i–¼
-	cont.conclusion_preferred_date,                    --Œ_–ñ.ƒT[ƒrƒXŠó–]“ú
-	im.shortest_delivery_date,                         --•iíƒ}ƒXƒ^.Å’Z”[“ü“ú”
-	location.pic_name,                                 --İ’uæ(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–Ò–¼
-	location.pic_name_kana,                            --İ’uæ(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–Ò–¼(ƒJƒi)
-	location.post_number,                              --İ’uæ(Œ_–ñ—p).—X•Ö”Ô†
-	location.address,                                  --İ’uæ(Œ_–ñ—p).ZŠ
-	location.company_name,                             --İ’uæ(Œ_–ñ—p).Šé‹Æ–¼
+	cont.id AS contract_id,                            --å¥‘ç´„.å¥‘ç´„ID
+	cont.contract_number,                              --å¥‘ç´„.å¥‘ç´„ç•ªå·
+	cont.contract_branch_number,                       --å¥‘ç´„.å¥‘ç´„ç•ªå·æç•ª
+	detail.quantity,                                   --å¥‘ç´„æ˜ç´°.æ•°é‡
+	item.ricoh_item_code,                              --å“ç¨®(å¥‘ç´„ç”¨).ãƒªã‚³ãƒ¼å“ç¨®ã‚³ãƒ¼ãƒ‰
+	item.item_contract_name,                           --å“ç¨®(å¥‘ç´„ç”¨).å•†å“å
+	cont.conclusion_preferred_date,                    --å¥‘ç´„.ã‚µãƒ¼ãƒ“ã‚¹å¸Œæœ›æ—¥
+	im.shortest_delivery_date,                         --å“ç¨®ãƒã‚¹ã‚¿.æœ€çŸ­ç´å…¥æ—¥æ•°
+	location.pic_name,                                 --è¨­ç½®å…ˆ(å¥‘ç´„ç”¨).MoMéé€£æº_æ‹…å½“è€…æ°å
+	location.pic_name_kana,                            --è¨­ç½®å…ˆ(å¥‘ç´„ç”¨).MoMéé€£æº_æ‹…å½“è€…æ°å(ã‚«ãƒŠ)
+	location.post_number,                              --è¨­ç½®å…ˆ(å¥‘ç´„ç”¨).éƒµä¾¿ç•ªå·
+	location.address,                                  --è¨­ç½®å…ˆ(å¥‘ç´„ç”¨).ä½æ‰€
+	location.company_name,                             --è¨­ç½®å…ˆ(å¥‘ç´„ç”¨).ä¼æ¥­å
 	CONCAT(
-		location.office_name,                          --İ’uæ(Œ_–ñ—p).–‹ÆŠ–¼
-		location.pic_dept_name                         --İ’uæ(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–Ò•”
+		location.office_name,                          --è¨­ç½®å…ˆ(å¥‘ç´„ç”¨).äº‹æ¥­æ‰€å
+		location.pic_dept_name                         --è¨­ç½®å…ˆ(å¥‘ç´„ç”¨).MoMéé€£æº_æ‹…å½“è€…éƒ¨ç½²
 	) AS office_name,
-	location.pic_phone_number,                         --İ’uæ(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–Ò“d˜b”Ô†
-	location.pic_fax_number,                           --İ’uæ(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–ÒFAX”Ô†
-	customer.pic_mail_address,                         --ŒÚ‹q(Œ_–ñ—p).MoM”ñ˜AŒg_’S“–Òƒ[ƒ‹ƒAƒhƒŒƒX
-	detail.extends_parameter,                          --Œ_–ñ–¾×.Šg’£€–Ú
-	detail.id AS contract_detail_id                             --Œ_–ñ–¾×.ID
-  FROM contract cont                                                 --Œ_–ñ
-  INNER JOIN contract_detail detail                                  --Œ_–ñ–¾×
+	location.pic_phone_number,                         --è¨­ç½®å…ˆ(å¥‘ç´„ç”¨).MoMéé€£æº_æ‹…å½“è€…é›»è©±ç•ªå·
+	location.pic_fax_number,                           --è¨­ç½®å…ˆ(å¥‘ç´„ç”¨).MoMéé€£æº_æ‹…å½“è€…FAXç•ªå·
+	customer.pic_mail_address,                         --é¡§å®¢(å¥‘ç´„ç”¨).MoMéé€£æº_æ‹…å½“è€…ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹
+	detail.extends_parameter,                          --å¥‘ç´„æ˜ç´°.æ‹¡å¼µé …ç›®
+	detail.id AS contract_detail_id,                   --å¥‘ç´„æ˜ç´°.ID
+	cont.updated_at,                                   --å¥‘ç´„.æ›´æ–°æ—¥æ™‚
+	cont.contract_type,                                --å¥‘ç´„.å¥‘ç´„ç¨®åˆ¥
+	product.extends_parameter_iterance                 --å•†å“(å¥‘ç´„ç”¨).æ‹¡å¼µé …ç›®ç¹°è¿”
+  FROM contract cont                                                 --å¥‘ç´„
+  INNER JOIN contract_detail detail                                  --å¥‘ç´„æ˜ç´°
           ON detail.contract_id = cont.id
-  INNER JOIN item_contract item                                      --•ií(Œ_–ñ—p)
+  INNER JOIN item_contract item                                      --å“ç¨®(å¥‘ç´„ç”¨)
           ON item.contract_detail_id = detail.id
-  INNER JOIN item_master im                                          --•iíƒ}ƒXƒ^
+  INNER JOIN item_master im                                          --å“ç¨®ãƒã‚¹ã‚¿
           ON im.id = item.item_master_id
-  INNER JOIN contract_installation_location location                 --İ’uæ(Œ_–ñ—p)
+  INNER JOIN contract_installation_location location                 --è¨­ç½®å…ˆ(å¥‘ç´„ç”¨)
           ON location.contract_id = cont.id
-  INNER JOIN customer_contract customer                              --ŒÚ‹q(Œ_–ñ—p)
+  INNER JOIN customer_contract customer                              --é¡§å®¢(å¥‘ç´„ç”¨)
           ON customer.contract_id = cont.id
-  INNER JOIN product_contract product                                --¤•i(Œ_–ñ—p)
+  INNER JOIN product_contract product                                --å•†å“(å¥‘ç´„ç”¨)
           ON product.contract_id = cont.id
-  INNER JOIN product_master pm                                       --¤•iƒ}ƒXƒ^
+  INNER JOIN product_master pm                                       --å•†å“ãƒã‚¹ã‚¿
           ON pm.id = product.product_master_id
   WHERE pm.product_class_div = 'SIM'
     AND cont.workflow_status = '3'
+    AND cont.lifecycle_status = '2'
     AND item.cost_type != '1'
+    {{#contractType}}
+    AND JSON_EXISTS(JSON_QUERY(product.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), {{&contractType}} )
+    {{/contractType}}
  ) data
 ORDER BY id

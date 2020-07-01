@@ -17,8 +17,8 @@ Log.Info "BTCOSI001:[SB]オーダーCSV作成を開始します。" >> ${LOG_FIL
 ################################################
 ### パラメーター設定
 ################################################
-if [ $# -ne 3 ]; then
-  Log.Error "実行するには3個の引数が必要です。処理を終了します。" >> ${LOG_FILE_PATH}
+if [ $# -ne 4 ]; then
+  Log.Error "実行するには4個の引数が必要です。処理を終了します。" >> ${LOG_FILE_PATH}
   exit 1
 fi
 
@@ -28,17 +28,20 @@ OPERATION_DATE=$1
 DIR_PATH=$2
 ### ファイル名
 FILE_NAME=$3
+### 種別
+TYPE=$4
 
 Log.Info "処理日：${OPERATION_DATE}" >> ${LOG_FILE_PATH}
 Log.Info "ディレクトリパス：${DIR_PATH}" >> ${LOG_FILE_PATH}
 Log.Info "ファイル名：${FILE_NAME}" >> ${LOG_FILE_PATH}
+Log.Info "種別：${TYPE}" >> ${LOG_FILE_PATH}
 
 ################################################
 ### 処理実行
 ################################################
-SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI001} "${OPERATION_DATE}" "${DIR_PATH}" "${FILE_NAME}" > ${PROCESS_LOG_FILE_PATH}
-
-if [  $? != 0 ]; then
+SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI001} "${OPERATION_DATE}" "${DIR_PATH}" "${FILE_NAME}" "${TYPE}"
+BATCH_RET=$?
+if [  ${BATCH_RET} != 0 ]; then
   Log.Error "BTCOSI001:[SB]オーダーCSV作成に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
   exit 1
 fi

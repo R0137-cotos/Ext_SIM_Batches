@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import lombok.Data;
 
 @Entity
@@ -20,9 +21,14 @@ public class CreateOrderCsvDataDto {
 	private long contractIdTemp;
 
 	/**
-	 * 契約No
+	 * 契約番号
 	 */
 	private String contractNumber;
+
+	/**
+	 * 契約番号枝番
+	 */
+	private int contractBranchNumber;
 
 	/**
 	 * 数量
@@ -95,7 +101,7 @@ public class CreateOrderCsvDataDto {
 	private String picMailAddress;
 
 	/**
-	 * 拡張項目
+	 * 契約明細.拡張項目
 	 */
 	private String extendsParameter;
 
@@ -103,4 +109,19 @@ public class CreateOrderCsvDataDto {
 	 * 契約明細ID
 	 */
 	private Long contractDetailId;
+
+	/**
+	 * 更新日時
+	 */
+	private Date updatedAt;
+
+	/**
+	 * 契約種別
+	 */
+	private Contract.ContractType contractType;
+
+	/**
+	 * 商品(契約用).拡張項目繰返
+	 */
+	private String extendsParameterIterance;
 }

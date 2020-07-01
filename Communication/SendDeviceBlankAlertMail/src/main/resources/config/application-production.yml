@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@db.cotos.ricoh.co.jp:1521/pdb1
+    username: cotos_product
+    password: cotosissharedprocess
+    driverClassName: oracle.jdbc.OracleDriver
+  jpa:
+    database-platform: org.hibernate.dialect.Oracle12cDialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        show_sql: true
+        use_sql_comments: true
+        format_sql: true
+        default_schema: cotos_product
+  # メール設定
+  mail:
+    host: 225.smtp1.ty1.rwan.unics.ricoh.com
+    port: 25
+cotos:
+  authentication: https://api.cotos.ricoh.co.jp/auth/api/auth
+  disp:
+    urls:
+      domain: https://cotos.ricoh.co.jp/
+      screenName: ContractScreen
+  mail:
+    fromMailAddress: no-reply@cotos.ricoh.co.jp
+    envelopeFromMailAddress: bounce@cotos.ricoh.co.jp

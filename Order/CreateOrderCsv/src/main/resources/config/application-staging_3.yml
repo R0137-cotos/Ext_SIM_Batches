@@ -19,3 +19,6 @@ cotos:
   # 手配APIURL
   arrangement:
     url: https://st-api-3.cotos.ricoh.co.jp/arrangement/api
+  # 契約APIURL
+  contract:
+    url: https://st-api-3.cotos.ricoh.co.jp/contract/api

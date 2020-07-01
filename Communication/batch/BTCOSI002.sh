@@ -39,9 +39,9 @@ Log.Info "宛先メールアドレスリスト：${MAIL_ADDRESS_LIST}" >> ${LOG_
 ################################################
 ### 処理実行
 ################################################
-SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -jar ${COMMUNICATION_JAR_PATH}/${BATCH_PG_BTCOSI002} "${DIR_PATH}" "${FILE_NAME}" "${PRODUCT_GRP_MASTER_ID}" "${MAIL_ADDRESS_LIST}" > ${PROCESS_LOG_FILE_PATH}
-
-if [  $? != 0 ]; then
+SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${COMMUNICATION_JAR_PATH}/${BATCH_PG_BTCOSI002} "${DIR_PATH}" "${FILE_NAME}" "${PRODUCT_GRP_MASTER_ID}" "${MAIL_ADDRESS_LIST}"
+BATCH_RET=$?
+if [  ${BATCH_RET} != 0 ]; then
   Log.Error "BTCOSI002:[SB]オーダーメール送信に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
   exit 1
 fi
