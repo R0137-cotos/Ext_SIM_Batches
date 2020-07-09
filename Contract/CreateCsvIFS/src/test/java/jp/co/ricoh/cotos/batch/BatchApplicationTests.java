@@ -74,6 +74,26 @@ public class BatchApplicationTests extends TestBase {
 	}
 
 	@Test
+	public void 正常系_CSVファイルを出力できること_新規_合計数量16を超える() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("all/Create17OrdersSinki.sql");
+		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
+
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/all/17Orders.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+
+		List<Contract> contractList = new ArrayList<>();
+		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
+		Assert.assertEquals("1件の契約が作成済みになっていること", 1, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
+		Assert.assertEquals("1件の契約の作成日時が設定されていること", 1, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+	}
+
+	@Test
 	public void 正常系_CSVファイルを出力できること_容量変更() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractDataCapacityChange.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
@@ -94,6 +114,26 @@ public class BatchApplicationTests extends TestBase {
 	}
 
 	@Test
+	public void 正常系_CSVファイルを出力できること_容量変更_合計数量16を超える() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("all/Create17OrdersYouryou.sql");
+		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
+
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/all/17Orders.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+
+		List<Contract> contractList = new ArrayList<>();
+		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
+		Assert.assertEquals("1件の契約が作成済みになっていること", 1, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
+		Assert.assertEquals("1件の契約の作成日時が設定されていること", 1, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+	}
+
+	@Test
 	public void 正常系_CSVファイルを出力できること_有償交換() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractDataPaidExchange.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
@@ -109,6 +149,26 @@ public class BatchApplicationTests extends TestBase {
 		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
 		Assert.assertEquals("6件の契約が作成済みになっていること", 6, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
 		Assert.assertEquals("6件の契約の作成日時が設定されていること", 6, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力できること_有償交換_合計数量16を超える() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("all/Create17OrdersYuusyoukoukan.sql");
+		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
+
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/all/17Orders.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+
+		List<Contract> contractList = new ArrayList<>();
+		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
+		Assert.assertEquals("1件の契約が作成済みになっていること", 1, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
+		Assert.assertEquals("1件の契約の作成日時が設定されていること", 1, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 	}
