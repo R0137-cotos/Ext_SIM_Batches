@@ -144,7 +144,7 @@ public class BatchStepComponentTest extends TestBase {
 	public void 正常系_データ取得テスト_新規() throws IOException {
 		fileDeleate(outputPath + "result_initial.csv");
 		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
-		String contractType = "'$?(@.contractType == \"新規\")'";
+		String contractType = "'$.extendsParameterList?(@.contractType == \"新規\")'";
 		try {
 			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
 			Assert.assertEquals(9, csvOrderList.size());
@@ -156,13 +156,43 @@ public class BatchStepComponentTest extends TestBase {
 	}
 
 	@Test
+	public void 正常系_データ取得テスト_新規_合計数量16を超える() throws IOException {
+		fileDeleate(outputPath + "result_initial.csv");
+		context.getBean(DBConfig.class).initTargetTestData("create17Orders.sql");
+		String contractType = "'$.extendsParameterList?(@.contractType == \"新規\")'";
+		try {
+			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
+			Assert.assertEquals(2, csvOrderList.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了");
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
 	public void 正常系_データ取得テスト_容量変更() throws IOException {
 		fileDeleate(outputPath + "result_initial.csv");
 		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataCapacityChange.sql");
-		String contractType = "'$?(@.contractType == \"容量変更\")'";
+		String contractType = "'$.extendsParameterList?(@.contractType == \"容量変更\")'";
 		try {
 			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
 			Assert.assertEquals(8, csvOrderList.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了");
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 正常系_データ取得テスト_容量変更_合計数量16を超える() throws IOException {
+		fileDeleate(outputPath + "result_initial.csv");
+		context.getBean(DBConfig.class).initTargetTestData("create17Orders.sql");
+		String contractType = "'$.extendsParameterList?(@.contractType == \"容量変更\")'";
+		try {
+			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
+			Assert.assertEquals(2, csvOrderList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail("異常終了");
@@ -174,7 +204,7 @@ public class BatchStepComponentTest extends TestBase {
 	public void 正常系_データ取得テスト_有償交換() throws IOException {
 		fileDeleate(outputPath + "result_initial.csv");
 		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessDataPaidExchange.sql");
-		String contractType = "'$?(@.contractType == \"有償交換\")'";
+		String contractType = "'$.extendsParameterList?(@.contractType == \"有償交換\")'";
 		try {
 			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
 			Assert.assertEquals(8, csvOrderList.size());
@@ -186,9 +216,24 @@ public class BatchStepComponentTest extends TestBase {
 	}
 
 	@Test
+	public void 正常系_データ取得テスト_有償交換_合計数量16を超える() throws IOException {
+		fileDeleate(outputPath + "result_initial.csv");
+		context.getBean(DBConfig.class).initTargetTestData("create17Orders.sql");
+		String contractType = "'$.extendsParameterList?(@.contractType == \"有償交換\")'";
+		try {
+			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
+			Assert.assertEquals(2, csvOrderList.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了");
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
 	public void 正常系_データ取得_取得無し() throws IOException {
 		fileDeleate(outputPath + "result_initial.csv");
-		String contractType = "'$?(@.contractType == \"新規\")'";
+		String contractType = "'$.extendsParameterList?(@.contractType == \"新規\")'";
 		try {
 			List<CreateOrderCsvDataDto> csvOrderList = batchStepComponent.getDataList(contractType);
 			Assert.assertEquals(0, csvOrderList.size());
