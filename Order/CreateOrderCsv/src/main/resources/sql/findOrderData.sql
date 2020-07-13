@@ -70,7 +70,7 @@ FROM
     AND cont.lifecycle_status = '2'
     AND item.cost_type != '1'
     {{#contractType}}
-    AND JSON_EXISTS(JSON_QUERY(product.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), {{&contractType}} )
+    AND JSON_EXISTS(product.EXTENDS_PARAMETER_ITERANCE, {{&contractType}} )
     {{/contractType}}
  ) data
 ORDER BY id

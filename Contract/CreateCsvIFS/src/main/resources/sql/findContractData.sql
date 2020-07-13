@@ -27,16 +27,16 @@ select
   (
    co.contract_type = '1'
   and
-   JSON_EXISTS(JSON_QUERY(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), '$?(@.contractType == "新規")' )
+   JSON_EXISTS(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.contractType == "新規")')
   )
   or
   (
    co.contract_type = '2'
   and
    (
-    JSON_EXISTS(JSON_QUERY(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), '$?(@.contractType == "容量変更")' )
+    JSON_EXISTS(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.contractType == "容量変更")')
    or
-    JSON_EXISTS(JSON_QUERY(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList'), '$?(@.contractType == "有償交換")' )
+    JSON_EXISTS(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.contractType == "有償交換")')
    )
   )
  )
