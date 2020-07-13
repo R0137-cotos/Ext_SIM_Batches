@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.2.2 (13/07/2020)
+- [**closed**] #7531 IFSその他機器情報CSV作成 対象データ取得SQL 拡張項目繰返の文字列長が長い場合も判定可能にする修正 [#127](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/127)
+- [**closed**] #7517 オーダーCSV作成 対象データ取得SQL 拡張項目繰返の文字列長が長い場合も判定可能にする修正 [#126](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/126)
+- [**closed**] #7538 [本番障害]オーダーCSVメール送信時にzip圧縮しない [#125](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/125)
+- [**closed**] #7487 オーダーメール送信 BCCに開発メンバアドレスを追加 [#124](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/124)
+- [**closed**] #7481 解約手配CSV作成シェル 処理実行対象日以外の場合、戻り値として異常終了を返すよう修正 [#123](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/123)
+
+---
+
 ## v3.2.0 (02/07/2020)
 - [**closed**] #7091 logback追加 [#121](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/121)
 - [**closed**] #7091 バッチのログが上書きされずにローテーションするように修正 [#120](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/120)
