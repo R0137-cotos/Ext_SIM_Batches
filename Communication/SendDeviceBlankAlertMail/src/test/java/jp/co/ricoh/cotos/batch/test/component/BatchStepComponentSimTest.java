@@ -113,6 +113,18 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
+	public void 正常系_データ取得テスト_合計数量16を超える() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("sql/SendDeviceBlankAlertMailTestsOver16.sql");
+		String serviceTermStart = "20200203";
+		try {
+			List<SearchMailTargetDto> serchMailTargetDtoList = batchStepComponent.getDataList(serviceTermStart);
+			Assert.assertEquals(1, serchMailTargetDtoList.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
 	@WithMockCustomUser
 	public void 正常系_メール送信テスト() throws IOException {
 		SearchMailTargetDto serchMailTargetDto = new SearchMailTargetDto();
