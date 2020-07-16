@@ -69,20 +69,22 @@ public class BatchStepComponent implements IBatchStepComponent {
 		DateTimeFormatter yyyyMMformatter = DateTimeFormatter.ofPattern("yyyyMM");
 
 		try {
-			// 処理日：月末営業日-2営業日か 
 			operationDate = LocalDate.parse(operationDateStr, formatter);
-			// 処理日付から"yyyyMM"を文字列で取得
-			String yyyyMM = operationDate.format(yyyyMMformatter);
-			// 処理日当月の最終営業日
-			Date lastBusinessDayTmp = businessDayUtil.getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(yyyyMM);
-			if (lastBusinessDayTmp == null) {
-				throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "APIGetFailsError", new String[] { "営業日", "月末最終営業日取得" }));
-			}
-			LocalDate lastBusinessDay = lastBusinessDayTmp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			int difference = businessDayUtil.calculateDifferenceBetweenBusinessDates(operationDate, lastBusinessDay);
-			// 2営業日前でなければ処理を終了する
-			if (difference != 2) {
-				throw new OperationDateException();
+			// 容量変更の場合、処理日：月末営業日-2営業日か確認する 
+			if ("2".equals(args[3])) {
+				// 処理日付から"yyyyMM"を文字列で取得
+				String yyyyMM = operationDate.format(yyyyMMformatter);
+				// 処理日当月の最終営業日
+				Date lastBusinessDayTmp = businessDayUtil.getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(yyyyMM);
+				if (lastBusinessDayTmp == null) {
+					throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "APIGetFailsError", new String[] { "営業日", "月末最終営業日取得" }));
+				}
+				LocalDate lastBusinessDay = lastBusinessDayTmp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				int difference = businessDayUtil.calculateDifferenceBetweenBusinessDates(operationDate, lastBusinessDay);
+				// 2営業日前でなければ処理を終了する
+				if (difference != 2) {
+					throw new OperationDateException();
+				}
 			}
 			operationDateStr = operationDate.format(formatter);
 		} catch (DateTimeParseException e) {
