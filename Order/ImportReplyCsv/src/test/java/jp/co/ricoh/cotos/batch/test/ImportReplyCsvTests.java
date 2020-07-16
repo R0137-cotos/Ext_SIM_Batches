@@ -119,7 +119,7 @@ public class ImportReplyCsvTests extends TestBase {
 	}
 
 	@Test
-	public void 異常系_新規_リプライCSVに納入予定日無し() throws IOException {
+	public void 正常系_新規_リプライCSVに納入予定日無し() throws IOException {
 		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
@@ -128,9 +128,8 @@ public class ImportReplyCsvTests extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			BatchApplication.main(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
-			Assert.fail("納入予定日無しのリプライCSVでエラーが発生しなかった。");
 		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+			Assert.fail("エラーが発生した。");
 		}
 	}
 
@@ -144,14 +143,13 @@ public class ImportReplyCsvTests extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			BatchApplication.main(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
-			Assert.fail("納入予定日無しのリプライCSVでエラーが発生しなかった。");
 		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+			Assert.fail("エラーが発生した。");
 		}
 	}
 
 	@Test
-	public void 異常系_有償交換_リプライCSVに納入予定日無し() throws IOException {
+	public void 正常系_有償交換_リプライCSVに納入予定日無し() throws IOException {
 		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("有償交換"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("有償交換"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
@@ -160,9 +158,8 @@ public class ImportReplyCsvTests extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			BatchApplication.main(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
-			Assert.fail("納入予定日無しのリプライCSVでエラーが発生しなかった。");
 		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+			Assert.fail("エラーが発生した。");
 		}
 	}
 

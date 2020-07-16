@@ -140,9 +140,8 @@ public class JobComponentTest extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			jobComponent.run(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
-			Assert.fail("納入予定日無しのリプライCSVでエラーが発生しなかった。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
 		}
 	}
 
@@ -156,9 +155,8 @@ public class JobComponentTest extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			jobComponent.run(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
-			Assert.fail("納入予定日無しのリプライCSVでエラーが発生しなかった。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
 		}
 	}
 
@@ -172,9 +170,8 @@ public class JobComponentTest extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			jobComponent.run(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
-			Assert.fail("納入予定日無しのリプライCSVでエラーが発生しなかった。");
-		} catch (ExitException e) {
-			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
 		}
 	}
 

@@ -133,13 +133,8 @@ public class BatchComponentTest extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			batchComponent.execute(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
-			Assert.fail("納入予定日無しのリプライCSVでエラーが発生しなかった。");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("ROT00025", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("リプライCSVに納入予定日が設定されていないため、リプライCSV取込は行えません。", messageInfo.get(0).getErrorMessage());
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
 		}
 	}
 
@@ -153,13 +148,8 @@ public class BatchComponentTest extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			batchComponent.execute(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
-			Assert.fail("納入予定日無しのリプライCSVでエラーが発生しなかった。");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("ROT00025", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("リプライCSVに納入予定日が設定されていないため、リプライCSV取込は行えません。", messageInfo.get(0).getErrorMessage());
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
 		}
 	}
 
@@ -173,13 +163,8 @@ public class BatchComponentTest extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			batchComponent.execute(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
-			Assert.fail("納入予定日無しのリプライCSVでエラーが発生しなかった。");
-		} catch (ErrorCheckException e) {
-			// エラーメッセージ取得
-			List<ErrorInfo> messageInfo = e.getErrorInfoList();
-			Assert.assertEquals(1, messageInfo.size());
-			Assert.assertEquals("ROT00025", messageInfo.get(0).getErrorId());
-			Assert.assertEquals("リプライCSVに納入予定日が設定されていないため、リプライCSV取込は行えません。", messageInfo.get(0).getErrorMessage());
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
 		}
 	}
 
