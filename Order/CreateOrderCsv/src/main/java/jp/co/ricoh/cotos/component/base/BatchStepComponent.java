@@ -5,8 +5,13 @@ import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +25,12 @@ import jp.co.ricoh.cotos.BatchConstants;
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
+import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
+import jp.co.ricoh.cotos.util.OperationDateException;
 import lombok.extern.log4j.Log4j;
 
 @Component("BASE")
@@ -35,6 +42,9 @@ public class BatchStepComponent implements IBatchStepComponent {
 
 	@Autowired
 	DBUtil dbUtil;
+
+	@Autowired
+	BusinessDayUtil businessDayUtil;
 
 	/**
 	 * パラメーターチェック処理
@@ -51,12 +61,35 @@ public class BatchStepComponent implements IBatchStepComponent {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ParameterEmptyError", new String[] { BatchConstants.BATCH_PARAMETER_LIST_NAME }));
 		}
 
-		String operationDate = args[0];
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		// 引数から処理日取得
+		String operationDateStr = args[0];
+		// 処理日
+		LocalDate operationDate = null;
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		DateTimeFormatter yyyyMMformatter = DateTimeFormatter.ofPattern("yyyyMM");
+
 		try {
-			sdf.setLenient(false);
-			sdf.parse(operationDate);
-		} catch (ParseException pe) {
+			// 処理日：月末営業日-2営業日か 
+			operationDate = LocalDate.parse(operationDateStr, formatter);
+			// 処理日付から"yyyyMM"を文字列で取得
+			String yyyyMM = operationDate.format(yyyyMMformatter);
+			// 処理日当月の最終営業日
+			Date lastBusinessDayTmp = businessDayUtil.getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(yyyyMM);
+			if (lastBusinessDayTmp == null) {
+				throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "APIGetFailsError", new String[] { "営業日", "月末最終営業日取得" }));
+			}
+			LocalDate lastBusinessDay = lastBusinessDayTmp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			int difference = businessDayUtil.calculateDifferenceBetweenBusinessDates(operationDate, lastBusinessDay);
+			// 2営業日前でなければ処理を終了する
+			if (difference != 2) {
+				throw new OperationDateException();
+			}
+			operationDateStr = operationDate.format(formatter);
+		} catch (DateTimeParseException e) {
+			// 引数：処理日の変換に失敗
+			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "BatchParameterFormatError", new String[] { "yyyyMMdd" }));
+		} catch (DateTimeException e) {
+			// 引数：処理日の変換に失敗
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "BatchParameterFormatError", new String[] { "yyyyMMdd" }));
 		}
 
@@ -85,7 +118,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 
 		dto.setCsvFile(csvFile);
 		dto.setTmpFile(tmpFile);
-		dto.setOperationDate(operationDate);
+		dto.setOperationDate(operationDateStr);
 		dto.setType(type);
 		return dto;
 	}
