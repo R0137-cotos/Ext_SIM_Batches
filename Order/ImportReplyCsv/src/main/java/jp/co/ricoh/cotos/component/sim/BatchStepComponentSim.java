@@ -244,7 +244,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				}
 			} else {
 				// 納入予定日が存在しない場合、エラーログに出力する
-				log.fatal(String.format("契約ID=%dの契約更新に失敗しました。納入予定日がありません。", contract.getId()));
+				log.fatal(String.format("契約ID=%dの契約更新に失敗しました。リプライCSVに納入予定日がありません。", contract.getId()));
 			}
 		});
 		//エンティティ(contract)に対して値を更新すると、エンティティマネージャーが更新対象とみなしてしまい、排他制御に引っかかる
