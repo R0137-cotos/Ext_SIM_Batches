@@ -36,6 +36,9 @@ import jp.co.ricoh.cotos.commonlib.entity.arrangement.Arrangement;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
+import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
+import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
+import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.commonlib.logic.mail.CommonSendMail;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractRepository;
@@ -55,6 +58,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Autowired
 	BatchUtil batchUtil;
+
+	@Autowired
+	CheckUtil checkUtil;
 
 	@Autowired
 	RestApiClient restApiClient;
@@ -96,6 +102,12 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		CsvSchema quoteSchema = mapper.schemaFor(ReplyOrderDto.class).withoutQuoteChar();
 		MappingIterator<ReplyOrderDto> it = mapper.readerFor(ReplyOrderDto.class).with(schema).with(quoteSchema).readValues(new InputStreamReader(new FileInputStream(csvFile), Charset.forName("Shift_JIS")));
 		List<ReplyOrderDto> csvlist = it.readAll();
+
+		// 納入予定日が空の行が存在する場合、リプライCSV取込処理を以上終了する
+		if (csvlist.stream().anyMatch(e -> StringUtils.isEmpty(e.getDeliveryExpectedDate()))) {
+			// ROT00025:リプライCSVに納入予定日が設定されていないため、リプライCSV取込は行えません。
+			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "NotExistsToProcessError", new String[] { "リプライCSV", "納入予定日", "リプライCSV取込" }));
+		}
 
 		return csvlist;
 	}
