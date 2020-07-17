@@ -295,23 +295,53 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_CSVファイルを出力しないこと_処理日が処理年月日末営業日2営業日前でない_容量変更() throws IOException {
-		テストデータ作成("createOrderTestSuccessDataCapacityChange.sql");
-		fileDeleate(outputPath + "result_initial.csv");
+	public void 異常系_CSVファイルを出力しないこと_容量変更_月末営業日マイナス2営業日以外() {
+		// 2019年6月の非営業日は以下を想定
+		// 2019/06/01 
+		// 2019/06/02
+		// 2019/06/08
+		// 2019/06/09
+		// 2019/06/15
+		// 2019/06/16
+		// 2019/06/22
+		// 2019/06/23
+		// 2019/06/29
+		// 2019/06/30
 
-		// モック
-		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
-		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		// 2019/06/28 月末営業日
+		// 2019/06/26 月末営業日-2日　要処理日付
+
+		// 処理不要日付　営業日 月末営業日-2日以降 2019/06/27
 		try {
-			jobComponent.run(new String[] { "20190927", outputPath, "result_initial.csv", "2" });
-		} catch (Exception e) {
-			Assert.fail("テスト失敗");
+			jobComponent.run(new String[] { "20190627", outputPath, "result_initial.csv", "2" });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
 		}
 
-		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
-		fileDeleate(outputPath + "result_initial.csv");
+		// 処理不要日付　営業日 月末営業日-2日以前 2019/06/25
+		try {
+			jobComponent.run(new String[] { "20190625", outputPath, "result_initial.csv", "2" });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
+		}
+
+		// 処理不要日付　非営業日 月末営業日-2日以降 2019/06/29
+		try {
+			jobComponent.run(new String[] { "20190629", outputPath, "result_initial.csv", "2" });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
+		}
+
+		// 処理不要日付　非営業日 月末営業日-2日以前 2019/06/23
+		try {
+			jobComponent.run(new String[] { "20190623", outputPath, "result_initial.csv", "2" });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
+		}
 	}
 
 	@Test
