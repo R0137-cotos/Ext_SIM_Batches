@@ -1,5 +1,6 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -124,6 +125,51 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+	}
+
+	@Test
+	public void 異常系_新規_リプライCSVに納入予定日無し() throws IOException {
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+
+		テストデータ作成("sql/insertTestData.sql");
+		try {
+			jobComponent.run(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+	}
+
+	@Test
+	public void 異常系_容量変更_リプライCSVに納入予定日無し() throws IOException {
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("容量変更"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("容量変更"));
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+
+		テストデータ作成("sql/insertTestData.sql");
+		try {
+			jobComponent.run(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+	}
+
+	@Test
+	public void 異常系_有償交換_リプライCSVに納入予定日無し() throws IOException {
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("有償交換"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("有償交換"));
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+
+		テストデータ作成("sql/insertTestData.sql");
+		try {
+			jobComponent.run(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}

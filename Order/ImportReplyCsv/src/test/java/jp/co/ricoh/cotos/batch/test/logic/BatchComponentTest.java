@@ -124,6 +124,51 @@ public class BatchComponentTest extends TestBase {
 	}
 
 	@Test
+	public void 異常系_新規_リプライCSVに納入予定日無し() throws Exception {
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+
+		テストデータ作成("sql/insertTestData.sql");
+		try {
+			batchComponent.execute(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void 異常系_容量変更_リプライCSVに納入予定日無し() throws Exception {
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("容量変更"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("容量変更"));
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+
+		テストデータ作成("sql/insertTestData.sql");
+		try {
+			batchComponent.execute(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void 異常系_有償交換_リプライCSVに納入予定日無し() throws Exception {
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("有償交換"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("有償交換"));
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+
+		テストデータ作成("sql/insertTestData.sql");
+		try {
+			batchComponent.execute(new String[] { filePath, "NoDeliveryExpectedDate.csv" });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
 	public void 異常系_JOB_パラメーター数不一致() throws Exception {
 		try {
 			// パラメータ無し

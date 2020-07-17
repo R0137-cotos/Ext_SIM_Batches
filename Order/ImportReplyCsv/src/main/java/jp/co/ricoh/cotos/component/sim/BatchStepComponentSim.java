@@ -36,6 +36,7 @@ import jp.co.ricoh.cotos.commonlib.entity.arrangement.Arrangement;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
+import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.commonlib.logic.mail.CommonSendMail;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractRepository;
@@ -55,6 +56,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Autowired
 	BatchUtil batchUtil;
+
+	@Autowired
+	CheckUtil checkUtil;
 
 	@Autowired
 	RestApiClient restApiClient;
@@ -150,90 +154,97 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			List<ProductContract> productContractList = contractMap.getValue().getProductContractList();
 			List<ReplyOrderDto> replyOrderList = contractNumberGroupingMap.get(contractMap.getValue().getContractNumber() + String.format("%02d", contractMap.getValue().getContractBranchNumber()));
 
-			//サービス開始希望日を設定
-			contract.setServiceTermStart(batchUtil.changeDate(replyOrderList.get(0).getDeliveryExpectedDate()));
+			// 納入予定日が存在しない場合、リプライCSV取込処理を実行しない
+			if (!StringUtils.isEmpty(replyOrderList.get(0).getDeliveryExpectedDate())) {
 
-			//拡張項目繰り返しを設定
-			for (ProductContract p : productContractList) {
-				String extendsParameterIterance = p.getExtendsParameterIterance();
-				Function<String, List<ExtendsParameterDto>> readJsonFunc = batchUtil.Try(x -> batchUtil.readJson(x), (error, x) -> null);
-				List<ExtendsParameterDto> extendsParameterList = readJsonFunc.apply(extendsParameterIterance);
-				if (CollectionUtils.isEmpty(extendsParameterList)) {
-					log.fatal(String.format("契約ID=%dの商品拡張項目読込に失敗しました。", contract.getId()));
+				//サービス開始希望日を設定
+				contract.setServiceTermStart(batchUtil.changeDate(replyOrderList.get(0).getDeliveryExpectedDate()));
+
+				//拡張項目繰り返しを設定
+				for (ProductContract p : productContractList) {
+					String extendsParameterIterance = p.getExtendsParameterIterance();
+					Function<String, List<ExtendsParameterDto>> readJsonFunc = batchUtil.Try(x -> batchUtil.readJson(x), (error, x) -> null);
+					List<ExtendsParameterDto> extendsParameterList = readJsonFunc.apply(extendsParameterIterance);
+					if (CollectionUtils.isEmpty(extendsParameterList)) {
+						log.fatal(String.format("契約ID=%dの商品拡張項目読込に失敗しました。", contract.getId()));
+						return;
+					}
+
+					List<ExtendsParameterDto> updatedExtendsParameterList = new ArrayList<>();
+					replyOrderList.stream().forEach(replyOrder -> {
+						ExtendsParameterDto extendsParameterDto = null;
+						// 新規:リプライCSVの商品コードが一致するかつ回線番号が存在しないデータを更新する
+						List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> "".equals(e.getLineNumber())).collect(Collectors.toList());
+						if (!targetList.isEmpty()) {
+							extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
+							if (extendsParameterDto != null) {
+								updatedExtendsParameterList.add(extendsParameterDto);
+							}
+						}
+
+						// 容量変更:リプライCSVの商品コード、回線番号が一致するかつ送り状番号が未設定のデータを更新する
+						targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).stream().filter(e -> "".equals(e.getInvoiceNumber())).collect(Collectors.toList());
+						if (!targetList.isEmpty()) {
+							extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
+							if (extendsParameterDto != null) {
+								updatedExtendsParameterList.add(extendsParameterDto);
+							}
+						}
+
+						// 有償交換:リプライCSVの商品コード、回線番号が一致するかつ送り状番号が設定のデータを更新する
+						targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).stream().filter(e -> !"".equals(e.getInvoiceNumber())).collect(Collectors.toList());
+						if (!targetList.isEmpty()) {
+							extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
+							if (extendsParameterDto != null) {
+								updatedExtendsParameterList.add(extendsParameterDto);
+							}
+						}
+					});
+
+					// リプライCSVに存在しないデータを追加
+					extendsParameterList.stream().forEach(e -> {
+						if (updatedExtendsParameterList.stream().filter(f -> f.getId() == e.getId()).count() == 0) {
+							updatedExtendsParameterList.add(e);
+						}
+					});
+
+					// 拡張項目繰返への設定値をIDの昇順でソート
+					if (updatedExtendsParameterList != null) {
+						updatedExtendsParameterList.sort((a, b) -> (int) a.getId() - (int) b.getId());
+					}
+					Map<String, List<ExtendsParameterDto>> extendsParameterMap = new HashMap<>();
+					extendsParameterMap.put("extendsParameterList", updatedExtendsParameterList);
+					try {
+						p.setExtendsParameterIterance(om.writeValueAsString(extendsParameterMap));
+					} catch (JsonProcessingException e) {
+						e.printStackTrace();
+						log.fatal(String.format("契約ID=%dの商品拡張項目登録に失敗しました。", contract.getId()));
+						return;
+					}
+				}
+				contract.setProductContractList(productContractList);
+
+				boolean hasNoArrangementError = true;
+				//契約更新
+				if (callUpdateContractApi(contract)) {
+					// 成功した場合 手配情報業務完了処理を実施
+					hasNoArrangementError = callCompleteArrangementApi(contract);
+				} else {
+					// 失敗した場合エラーログを出力しスキップする
+					log.fatal(String.format("契約ID=%dの契約更新に失敗しました。", contract.getId()));
 					return;
 				}
-
-				List<ExtendsParameterDto> updatedExtendsParameterList = new ArrayList<>();
-				replyOrderList.stream().forEach(replyOrder -> {
-					ExtendsParameterDto extendsParameterDto = null;
-					// 新規:リプライCSVの商品コードが一致するかつ回線番号が存在しないデータを更新する
-					List<ExtendsParameterDto> targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> "".equals(e.getLineNumber())).collect(Collectors.toList());
-					if (!targetList.isEmpty()) {
-						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
-						if (extendsParameterDto != null) {
-							updatedExtendsParameterList.add(extendsParameterDto);
-						}
+				// 手配情報業務完了処理がエラーの場合、元の契約情報で更新した契約情報を再更新する
+				if (!hasNoArrangementError) {
+					//手配完了
+					if (!callUpdateContractApi(originalContract)) {
+						// 再更新に失敗した場合手動リカバリが必要となる
+						log.fatal(String.format("契約ID=%dの契約再更新に失敗しました。リカバリが必要となります。", originalContract.getId()));
 					}
-
-					// 容量変更:リプライCSVの商品コード、回線番号が一致するかつ送り状番号が未設定のデータを更新する
-					targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).stream().filter(e -> "".equals(e.getInvoiceNumber())).collect(Collectors.toList());
-					if (!targetList.isEmpty()) {
-						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
-						if (extendsParameterDto != null) {
-							updatedExtendsParameterList.add(extendsParameterDto);
-						}
-					}
-
-					// 有償交換:リプライCSVの商品コード、回線番号が一致するかつ送り状番号が設定のデータを更新する
-					targetList = extendsParameterList.stream().filter(e -> e.getProductCode().equals(replyOrder.getRicohItemCode())).collect(Collectors.toList()).stream().filter(e -> e.getLineNumber().equals(replyOrder.getLineNumber())).collect(Collectors.toList()).stream().filter(e -> !"".equals(e.getInvoiceNumber())).collect(Collectors.toList());
-					if (!targetList.isEmpty()) {
-						extendsParameterDto = addExtendsParameterDto(targetList, updatedExtendsParameterList, replyOrder);
-						if (extendsParameterDto != null) {
-							updatedExtendsParameterList.add(extendsParameterDto);
-						}
-					}
-				});
-
-				// リプライCSVに存在しないデータを追加
-				extendsParameterList.stream().forEach(e -> {
-					if (updatedExtendsParameterList.stream().filter(f -> f.getId() == e.getId()).count() == 0) {
-						updatedExtendsParameterList.add(e);
-					}
-				});
-
-				// 拡張項目繰返への設定値をIDの昇順でソート
-				if (updatedExtendsParameterList != null) {
-					updatedExtendsParameterList.sort((a, b) -> (int) a.getId() - (int) b.getId());
 				}
-				Map<String, List<ExtendsParameterDto>> extendsParameterMap = new HashMap<>();
-				extendsParameterMap.put("extendsParameterList", updatedExtendsParameterList);
-				try {
-					p.setExtendsParameterIterance(om.writeValueAsString(extendsParameterMap));
-				} catch (JsonProcessingException e) {
-					e.printStackTrace();
-					log.fatal(String.format("契約ID=%dの商品拡張項目登録に失敗しました。", contract.getId()));
-					return;
-				}
-			}
-			contract.setProductContractList(productContractList);
-
-			boolean hasNoArrangementError = true;
-			//契約更新
-			if (callUpdateContractApi(contract)) {
-				// 成功した場合 手配情報業務完了処理を実施
-				hasNoArrangementError = callCompleteArrangementApi(contract);
 			} else {
-				// 失敗した場合エラーログを出力しスキップする
-				log.fatal(String.format("契約ID=%dの契約更新に失敗しました。", contract.getId()));
-				return;
-			}
-			// 手配情報業務完了処理がエラーの場合、元の契約情報で更新した契約情報を再更新する
-			if (!hasNoArrangementError) {
-				//手配完了
-				if (!callUpdateContractApi(originalContract)) {
-					// 再更新に失敗した場合手動リカバリが必要となる
-					log.fatal(String.format("契約ID=%dの契約再更新に失敗しました。リカバリが必要となります。", originalContract.getId()));
-				}
+				// 納入予定日が存在しない場合、エラーログに出力する
+				log.fatal(String.format("契約ID=%dの契約更新に失敗しました。リプライCSVに納入予定日がありません。", contract.getId()));
 			}
 		});
 		//エンティティ(contract)に対して値を更新すると、エンティティマネージャーが更新対象とみなしてしまい、排他制御に引っかかる
