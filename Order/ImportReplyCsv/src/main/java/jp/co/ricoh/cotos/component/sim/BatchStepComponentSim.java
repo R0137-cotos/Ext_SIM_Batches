@@ -44,6 +44,7 @@ import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.ExtendsParameterDto;
 import jp.co.ricoh.cotos.dto.ReplyOrderDto;
+import jp.co.ricoh.cotos.util.DeliveryExpectedDateException;
 import lombok.extern.log4j.Log4j;
 
 @Component("SIM")
@@ -104,6 +105,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Transactional
 	public void process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
 		log.info("SIM独自処理");
+
+		// 納入予定日無しの行が存在するか
+		boolean isNoDeliveryExpectedDate[] = { false };
 
 		//枝番削除した契約番号をキーとしたMap
 		Map<String, List<ReplyOrderDto>> contractNumberGroupingMap = csvlist.stream().collect(Collectors.groupingBy(dto -> substringContractNumber(dto.getContractId()), Collectors.mapping(dto -> dto, Collectors.toList())));
@@ -241,10 +245,15 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			} else {
 				// リプライCSV一行目の納入予定日が空の契約については、リプライCSV取込処理を行わずにログ出力のみ行う
 				log.fatal(String.format("契約ID=%dの契約更新に失敗しました。リプライCSVに納入予定日がありません。", contract.getId()));
+				isNoDeliveryExpectedDate[0] = true;
 			}
 		});
 		//エンティティ(contract)に対して値を更新すると、エンティティマネージャーが更新対象とみなしてしまい、排他制御に引っかかる
 		em.clear();
+
+		if (isNoDeliveryExpectedDate[0]) {
+			throw new DeliveryExpectedDateException();
+		}
 	}
 
 	private String substringContractNumber(String number) {
