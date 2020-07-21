@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.3.0 (21/07/2020)
+- [**closed**] #7583 リプライCSV取込 CSVに納入予定日(サービス開始日)が入っていない状態でリプライCSV取込を実施した際にエラーログを出力する [#137](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/137)
+- [**closed**] #7519 [本番障害]デバイス空欄メールが送信されない [#136](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/136)
+- [**closed**] #7583 リプライCSV取込 各契約一番上の行に納入予定日が無い場合、該当契約を取込対象外にする [#135](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/135)
+- [**closed**] #7639 オーダーCSV作成 容量変更オーダーCSV作成を月末営業日-2営業日のみ実行にする [#131](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/131)
+- [**closed**]  #7519 解約手配CSV作成/デバイス空欄警告メール 合計数量16を超える契約も対象データとして検知可能にする修正 [#130](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/130)
+- [**closed**] #7539 [本番障害]解約オーダーCSVメール送信時にzip圧縮しない [#129](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/129)
+
+---
+
 ## v3.2.2 (13/07/2020)
 - [**closed**] #7531 IFSその他機器情報CSV作成 対象データ取得SQL 拡張項目繰返の文字列長が長い場合も判定可能にする修正 [#127](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/127)
 - [**closed**] #7517 オーダーCSV作成 対象データ取得SQL 拡張項目繰返の文字列長が長い場合も判定可能にする修正 [#126](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/126)
