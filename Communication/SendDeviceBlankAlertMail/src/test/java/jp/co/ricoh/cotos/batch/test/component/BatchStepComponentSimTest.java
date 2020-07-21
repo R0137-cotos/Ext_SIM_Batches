@@ -98,6 +98,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			Assert.assertEquals(1, serchMailTargetDtoList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("エラー");
 		}
 	}
 
@@ -121,6 +122,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			Assert.assertEquals(1, serchMailTargetDtoList.size());
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("エラー");
 		}
 	}
 
@@ -136,6 +138,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			batchStepComponent.process(serchMailTargetDto);
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("エラー");
 		}
 	}
 }

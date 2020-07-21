@@ -38,13 +38,21 @@ public class SendDeviceBlankAlertMailTests extends TestBase {
 	@Test
 	@WithMockCustomUser
 	public void 正常系_ジョブテスト() {
-		BatchApplication.main(new String[] { "20200203" });
+		try {
+			BatchApplication.main(new String[] { "20200203" });
+		} catch (Exception e) {
+			Assert.fail("エラー");
+		}
 	}
 
 	@Test
 	@WithMockCustomUser
 	public void 正常系_ジョブテスト_パラメータ無し() {
-		BatchApplication.main(new String[] {});
+		try {
+			BatchApplication.main(new String[] {});
+		} catch (Exception e) {
+			Assert.fail("エラー");
+		}
 	}
 
 	@Test

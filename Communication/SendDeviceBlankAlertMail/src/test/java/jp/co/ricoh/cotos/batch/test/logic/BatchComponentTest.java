@@ -89,6 +89,7 @@ public class BatchComponentTest extends TestBase {
 			batchComponent.execute(new String[] { "20200203" });
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("エラー");
 		}
 	}
 
@@ -103,6 +104,7 @@ public class BatchComponentTest extends TestBase {
 			batchComponent.execute(new String[] {});
 		} catch (Exception e) {
 			e.printStackTrace();
+			Assert.fail("エラー");
 		}
 	}
 }
