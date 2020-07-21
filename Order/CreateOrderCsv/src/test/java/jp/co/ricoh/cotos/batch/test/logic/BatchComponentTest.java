@@ -36,6 +36,7 @@ import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementPicWorkerEm
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
 import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.logic.BatchComponent;
+import jp.co.ricoh.cotos.util.OperationDateException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -293,8 +294,10 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
 			batchComponent.execute(new String[] { "20190927", outputPath, "result_initial.csv", "2" });
-		} catch (Exception e) {
-			Assert.fail("テスト失敗");
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (OperationDateException e) {
+			// OperationDateExceptionが発生していること
+			Assert.assertNotEquals(null, e);
 		}
 
 		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));

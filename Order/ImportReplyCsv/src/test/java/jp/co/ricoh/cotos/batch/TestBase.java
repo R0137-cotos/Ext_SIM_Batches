@@ -44,7 +44,7 @@ public class TestBase {
 		System.setSecurityManager(new SecurityManager() {
 			@Override
 			public void checkExit(int status) {
-				if (1 == status) {
+				if (1 == status || 2 == status) {
 					throw new ExitException(status);
 				}
 			}

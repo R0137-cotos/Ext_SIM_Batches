@@ -31,6 +31,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Autowired
 	BatchUtil batchUtil;
 
+	public final static String AUDIT_TRAIL_MAIL_ADDRESS = "customer_send_history@cotos.ricoh.co.jp";
+
 	/**
 	 * 処理データ取得
 	 * @param searchParam 処理データ取得用パラメーター
@@ -50,10 +52,12 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 		List<String> mailAddressList = new ArrayList<String>();
 		mailAddressList.add(serchMailTargetDto.getMailAddress());
+		List<String> mailAddressBccList = new ArrayList<String>();
+		mailAddressBccList.add(AUDIT_TRAIL_MAIL_ADDRESS);
 		List<String> mailTextRepalceValueList = new ArrayList<String>();
 		mailTextRepalceValueList.add(batchUtil.getTargetDocUrl(serchMailTargetDto.getContractId()));
 		try {
-			commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), mailTextRepalceValueList, null);
+			commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), mailAddressBccList, new ArrayList<String>(), mailTextRepalceValueList, null);
 		} catch (MessagingException e) {
 			log.fatal("メール送信処理に失敗しました。");
 			throw new Exception(e);

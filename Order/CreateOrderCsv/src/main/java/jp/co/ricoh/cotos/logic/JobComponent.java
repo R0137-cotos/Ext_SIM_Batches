@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import jp.co.ricoh.cotos.BatchConstants;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
+import jp.co.ricoh.cotos.util.OperationDateException;
 import lombok.extern.log4j.Log4j;
 
 @Component
@@ -28,6 +29,11 @@ public class JobComponent {
 			log.info(messageUtil.createMessageInfo("BatchProcessStartInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
 			batchComponent.execute(args);
 			log.info(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
+
+		} catch (OperationDateException e) {
+			// 処理日が規定の実行日でない場合、戻り値「2」で処理を終了する
+			log.info(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
+			System.exit(2);
 
 		} catch (ErrorCheckException e) {
 			e.getErrorInfoList().stream().forEach(errorInfo -> log.error(errorInfo.getErrorId() + ":" + errorInfo.getErrorMessage()));

@@ -59,7 +59,11 @@ public class JobComponentTest extends TestBase {
 		Calendar cal = Calendar.getInstance();
 		cal.set(2020, 2, 16, 11, 59, 59);
 		Mockito.doReturn(cal.getTime()).when(batchStepComponent).getSysdate();
-		jobComponent.run(new String[] {});
+		try {
+			jobComponent.run(new String[] {});
+		} catch (ExitException e) {
+			Assert.fail("エラー");
+		}
 	}
 
 	@Test
@@ -89,6 +93,10 @@ public class JobComponentTest extends TestBase {
 		Calendar cal = Calendar.getInstance();
 		cal.set(2020, 2, 16, 11, 59, 59);
 		Mockito.doReturn(cal.getTime()).when(batchStepComponent).getSysdate();
-		jobComponent.run(new String[] { "" });
+		try {
+			jobComponent.run(new String[] { "" });
+		} catch (ExitException e) {
+			Assert.fail("エラー");
+		}
 	}
 }

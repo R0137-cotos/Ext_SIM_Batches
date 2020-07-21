@@ -190,6 +190,20 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
+	public void 解約オーダー取得テスト_正常系_合計数量16を超える() throws IOException {
+		// テストデータ投入
+		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderOver16Data.sql");
+		try {
+			List<CancelOrderEntity> cancelOrderEntityList = batchStepComponent.getDataList();
+			// 8件取得できていること(契約ID=140の2GB,5GB,10GB,20GB 契約ID=150の2GB,5GB,10GB,20GB)
+			Assert.assertNotEquals(0, cancelOrderEntityList.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
 	public void 解約オーダー取得テスト_正常系_取得データ0件() throws IOException {
 		// テストデータを投入しない
 		try {
