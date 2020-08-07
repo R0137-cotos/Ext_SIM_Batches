@@ -40,6 +40,7 @@ import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.dto.result.CommonMasterDetailResult;
 import jp.co.ricoh.cotos.commonlib.dto.result.CommonMasterResult;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.IfsLinkageCsvCreateStatus;
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.LifecycleStatus;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
@@ -93,7 +94,8 @@ public class ExportCSV {
 			return createdFlg;
 		}
 
-		List<Long> contractIdList = ifsDto.stream().map(ifs -> Long.valueOf(ifs.getContractId())).collect(Collectors.toList());
+		List<Long> contractIdList = ifsDto.stream().filter(ifs -> !LifecycleStatus.解約予定日待ち.toString().equals(ifs.getLifecycleStatus())).map(ifs -> Long.valueOf(ifs.getContractId())).collect(Collectors.toList());
+		List<Long> cancelContractIdList = ifsDto.stream().filter(ifs -> LifecycleStatus.解約予定日待ち.toString().equals(ifs.getLifecycleStatus())).map(ifs -> Long.valueOf(ifs.getContractId())).collect(Collectors.toList());
 
 		Map<Long, List<IFSDto>> contractIdGroupingMap = ifsDto.stream().collect(Collectors.groupingBy(ifs -> (Long.valueOf(ifs.getContractId())), Collectors.mapping(ifs -> ifs, Collectors.toList())));
 		contractIdGroupingMap = contractIdGroupingMap.entrySet().stream().sorted(Entry.comparingByKey()).collect(Collectors.toMap(Entry::getKey, Entry::getValue, (v1, v2) -> v1, TreeMap::new));
@@ -159,8 +161,10 @@ public class ExportCSV {
 			}
 			Files.deleteIfExists(tmpFile.toPath());
 			updateContractIfsLinkage(contractIdList, IfsLinkageCsvCreateStatus.作成済み);
+			updateCancelContractIfsLinkage(cancelContractIdList, IfsLinkageCsvCreateStatus.作成済み);
 		} catch (Exception e) {
 			updateContractIfsLinkage(contractIdList, IfsLinkageCsvCreateStatus.作成エラー);
+			updateCancelContractIfsLinkage(cancelContractIdList, IfsLinkageCsvCreateStatus.作成エラー);
 			throw e;
 		}
 		return true;
@@ -177,6 +181,22 @@ public class ExportCSV {
 			contract.setIfsLinkageCsvCreateStatus(status);
 			if (IfsLinkageCsvCreateStatus.作成済み.equals(contract.getIfsLinkageCsvCreateStatus())) {
 				contract.setIfsLinkageCsvCreateDate(new Date());
+			}
+			contractRepository.save(contract);
+		});
+	}
+
+	/**
+	 * IFS連携用解約CSV作成フラグおよび作成日の更新
+	 *
+	 * @param contractId
+	 */
+	@Transactional
+	private void updateCancelContractIfsLinkage(List<Long> contractId, IfsLinkageCsvCreateStatus status) {
+		contractRepository.findAll(contractId).iterator().forEachRemaining(contract -> {
+			contract.setIfsLinkageCancelCsvStatus(status);
+			if (IfsLinkageCsvCreateStatus.作成済み.equals(contract.getIfsLinkageCancelCsvStatus())) {
+				contract.setIfsLinkageCancelCsvDate(new Date());
 			}
 			contractRepository.save(contract);
 		});
