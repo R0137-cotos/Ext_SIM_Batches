@@ -30,7 +30,7 @@ select
   and
   co.ifs_linkage_csv_create_status = 0
   and
-  (
+  ((
    co.contract_type = '1'
   and
    JSON_EXISTS(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.contractType == "新規")')
@@ -43,6 +43,7 @@ select
     JSON_EXISTS(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.contractType == "容量変更")')
    or
     JSON_EXISTS(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.contractType == "有償交換")')
+   )
    )
   )
  )
