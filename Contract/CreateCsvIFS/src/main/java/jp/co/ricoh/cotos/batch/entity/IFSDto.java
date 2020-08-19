@@ -19,6 +19,9 @@ public class IFSDto {
 	/** 契約明細No. */
 	private String contractDetailId;
 
+	/** ライフサイクル状態 */
+	private String lifecycleStatus;
+
 	/** 強制更新フラグ */
 	private String nforceUpdFlg;
 

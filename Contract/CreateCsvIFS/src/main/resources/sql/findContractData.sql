@@ -1,9 +1,13 @@
 with key_view as
 (
 select
-  'N' as nforce_upd_flg,
+ CASE co.lifecycle_status
+    WHEN '8' THEN 'Y'
+    ELSE 'N'
+ END as nforce_upd_flg,
   co.id as contract_id,
   detail.id as contract_detail_id,
+  co.lifecycle_status as lifecycle_status,
   detail.quantity as quantity,
   detail.extends_parameter as extends_parameter,
   pc.extends_parameter_iterance as extends_parameter_iterance
@@ -13,8 +17,6 @@ select
   product_contract pc,
   product_master pm
  where
-  co.lifecycle_status = '6'
- and
   co.id = detail.contract_id
  and
   co.id = pc.contract_id
@@ -22,9 +24,13 @@ select
   pc.product_master_id = pm.id
  and
   pm.product_class_div IN :productClassDiv
- and
+ and (
  (
-  (
+  co.lifecycle_status = '6'
+  and
+  co.ifs_linkage_csv_create_status = 0
+  and
+  ((
    co.contract_type = '1'
   and
    JSON_EXISTS(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.contractType == "新規")')
@@ -38,7 +44,11 @@ select
    or
     JSON_EXISTS(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.contractType == "有償交換")')
    )
+   )
   )
+ )
+ or
+ (co.lifecycle_status = '8' and (co.ifs_linkage_cancel_csv_status is null or co.ifs_linkage_cancel_csv_status = 0))
  )
 )
 select
@@ -51,6 +61,7 @@ from
 select
  kv.contract_id as contract_id,
  kv.contract_detail_id as contract_detail_id,
+ kv.lifecycle_status as lifecycle_status,
  kv.nforce_upd_flg as nforce_upd_flg,
  'N' as nprocess_mode_flg,
  customer.company_name as ncontract_sheet_no,
@@ -103,7 +114,10 @@ select
  null as ncontract_form,
  null as np_service_code,/*汎用マスタから取得*/
  to_char(co.service_term_start, 'yyyymmdd') as nservice_from_date1,
- to_char(co.service_term_end, 'yyyymmdd') as nservice_to_date1,
+ CASE co.lifecycle_status
+    WHEN '8' THEN to_char(co.cancel_decision_date, 'yyyymmdd')
+    ELSE to_char(co.service_term_end, 'yyyymmdd')
+ END as nservice_to_date1,
  null as nservice_menu_no,
  '3' as nown_accept_flg,
  null as nservice_plan,
@@ -131,7 +145,10 @@ select
  ifs.n_remote_allowed_flg as nremote_allowed_flg,
  ifs.n_monthry_report_flg as nmonthly_report_flg,
  to_char(co.service_term_start, 'yyyymmdd') as nservice_from_date2,
- to_char(co.service_term_end, 'yyyymmdd') as nservice_to_date2,
+ CASE co.lifecycle_status
+    WHEN '8' THEN to_char(co.cancel_decision_date, 'yyyymmdd')
+    ELSE to_char(co.service_term_end, 'yyyymmdd')
+ END as nservice_to_date2,
  null as ngvas_order_no,
  null as nnotes_pump_note,
  null as nconn_for_business,
@@ -208,8 +225,6 @@ and
  item.item_master_id = im.id
 and
  im.ifs_linkage_flg = 1
-and
- co.ifs_linkage_csv_create_status = 0
 and
  co.id = ce.contract_id(+)
 order by contract_id, contract_detail_id
