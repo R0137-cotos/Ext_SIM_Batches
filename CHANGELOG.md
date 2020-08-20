@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.4.0 (20/08/2020)
+- [**closed**] #7946 締結中のみ取得するようにSQLを修正 [#145](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/145)
+- [**closed**] #7676 リプライCSV未配置通知メール送信シェル作成 [#143](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/143)
+- [**closed**] #7780 IFSその他機器情報CSV作成 全解約分もCSV作成 SQLの不備を修正 [#141](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/141)
+- [**closed**] #7780 IFSその他機器情報CSV作成 全解約分もCSV作成 [#139](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/139)
+
+---
+
 ## v3.3.0 (21/07/2020)
 - [**closed**] #7583 リプライCSV取込 CSVに納入予定日(サービス開始日)が入っていない状態でリプライCSV取込を実施した際にエラーログを出力する [#137](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/137)
 - [**closed**] #7519 [本番障害]デバイス空欄メールが送信されない [#136](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/136)
