@@ -18,6 +18,7 @@ import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.batch.test.mock.WithMockCustomUser;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
+import jp.co.ricoh.cotos.commonlib.repository.common.MailSendHistoryRepository;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.SearchMailTargetDto;
 import jp.co.ricoh.cotos.logic.BatchComponent;
@@ -31,6 +32,9 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Autowired
 	JobComponent jobComponent;
+
+	@Autowired
+	MailSendHistoryRepository mailSendHistoryRepository;
 
 	@SpyBean(name = "SIM")
 	BatchStepComponent batchStepComponent;

@@ -2,6 +2,7 @@ package jp.co.ricoh.cotos.batch.test.component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -16,8 +17,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.batch.test.mock.WithMockCustomUser;
+import jp.co.ricoh.cotos.commonlib.entity.common.MailSendHistory;
+import jp.co.ricoh.cotos.commonlib.entity.common.MailSendHistory.MailSendType;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
+import jp.co.ricoh.cotos.commonlib.repository.common.MailSendHistoryRepository;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.SearchMailTargetDto;
 import jp.co.ricoh.cotos.logic.BatchComponent;
@@ -31,6 +35,9 @@ public class BatchStepComponentTest extends TestBase {
 
 	@Autowired
 	JobComponent jobComponent;
+
+	@Autowired
+	MailSendHistoryRepository mailSendHistoryRepository;
 
 	@SpyBean(name = "BASE")
 	BatchStepComponent batchStepComponent;
@@ -122,6 +129,11 @@ public class BatchStepComponentTest extends TestBase {
 		serchMailTargetDto.setContractId(10L);
 		try {
 			batchStepComponent.process(serchMailTargetDto);
+			mailSendHistoryRepository.count();
+			List<MailSendHistory> mailHistorytList = (List<MailSendHistory>) mailSendHistoryRepository.findAll();
+			List<MailSendHistory> mailHistorytTargetList = mailHistorytList.stream().filter(m -> 3004 == (m.getMailControlMaster().getId())).collect(Collectors.toList());
+			Assert.assertEquals("履歴が登録されていること：全数", 1, mailHistorytTargetList.size());
+			Assert.assertEquals("履歴が登録されていること：エラーのみ", 0, mailHistorytTargetList.stream().filter(m -> MailSendType.エラー == m.getMailSendType()).count());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
