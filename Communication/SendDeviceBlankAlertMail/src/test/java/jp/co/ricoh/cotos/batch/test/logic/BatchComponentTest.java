@@ -92,13 +92,13 @@ public class BatchComponentTest extends TestBase {
 	@WithMockCustomUser
 	public void 正常系_メール送信できること() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("sql/SendDeviceBlankAlertMailTests.sql");
-		List<MailSendHistory> mailHistorytList = (List<MailSendHistory>) mailSendHistoryRepository.findAll();
-		List<MailSendHistory> mailHistorytTargetList = mailHistorytList.stream().filter(m -> 9999 == (m.getMailControlMaster().getId())).collect(Collectors.toList());
-		Assert.assertEquals("履歴が登録されていること：全数", 1, mailHistorytTargetList.size());
-		Assert.assertEquals("履歴が登録されていること：エラーのみ", 0, mailHistorytTargetList.stream().filter(m -> MailSendType.エラー == m.getMailSendType()).count());
-
 		try {
 			batchComponent.execute(new String[] { "20200203" });
+			mailSendHistoryRepository.count();
+			List<MailSendHistory> mailHistorytList = (List<MailSendHistory>) mailSendHistoryRepository.findAll();
+			List<MailSendHistory> mailHistorytTargetList = mailHistorytList.stream().filter(m -> 3100 == (m.getMailControlMaster().getId())).collect(Collectors.toList());
+			Assert.assertEquals("履歴が登録されていること：全数", 1, mailHistorytTargetList.size());
+			Assert.assertEquals("履歴が登録されていること：エラーのみ", 0, mailHistorytTargetList.stream().filter(m -> MailSendType.エラー == m.getMailSendType()).count());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail("エラー");
@@ -114,6 +114,11 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doReturn(cal.getTime()).when(batchStepComponent).getSysdate();
 		try {
 			batchComponent.execute(new String[] {});
+			mailSendHistoryRepository.count();
+			List<MailSendHistory> mailHistorytList = (List<MailSendHistory>) mailSendHistoryRepository.findAll();
+			List<MailSendHistory> mailHistorytTargetList = mailHistorytList.stream().filter(m -> 3100 == (m.getMailControlMaster().getId())).collect(Collectors.toList());
+			Assert.assertEquals("履歴が登録されていること：全数", 1, mailHistorytTargetList.size());
+			Assert.assertEquals("履歴が登録されていること：エラーのみ", 0, mailHistorytTargetList.stream().filter(m -> MailSendType.エラー == m.getMailSendType()).count());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail("エラー");

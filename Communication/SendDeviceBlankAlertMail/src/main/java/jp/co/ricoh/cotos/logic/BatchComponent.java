@@ -33,15 +33,15 @@ public class BatchComponent {
 
 		IBatchStepComponent component = this.getComponentInstance("SIM");
 
+		long controlId = 3100;
+
 		List<SearchMailTargetDto> serchMailTargetDtoList = component.getDataList(serviceTermStart);
 
-		serchMailTargetDtoList.forEach(serchMailTargetDto -> {
-			try {
-				component.process(serchMailTargetDto);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+		try {
+			component.process(serchMailTargetDtoList, controlId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

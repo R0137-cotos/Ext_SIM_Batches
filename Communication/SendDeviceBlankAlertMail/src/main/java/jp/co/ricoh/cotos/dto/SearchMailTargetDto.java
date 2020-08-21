@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import io.swagger.annotations.ApiModelProperty;
+import jp.co.ricoh.cotos.commonlib.entity.master.MailControlMaster;
 import lombok.Data;
 
 @Entity
@@ -31,4 +32,6 @@ public class SearchMailTargetDto {
 	 */
 	@ApiModelProperty(value = "契約ID", required = true, position = 4)
 	private Long contractId;
+
+	private MailControlMaster mailControlMaster;
 }

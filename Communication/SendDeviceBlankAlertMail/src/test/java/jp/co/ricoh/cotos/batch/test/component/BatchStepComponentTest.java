@@ -1,6 +1,7 @@
 package jp.co.ricoh.cotos.batch.test.component;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -122,16 +123,19 @@ public class BatchStepComponentTest extends TestBase {
 	@Test
 	@WithMockCustomUser
 	public void 正常系_メール送信テスト() throws IOException {
+		List<SearchMailTargetDto> serchMailTargetDtoList = new ArrayList<SearchMailTargetDto>();
 		SearchMailTargetDto serchMailTargetDto = new SearchMailTargetDto();
 		serchMailTargetDto.setSeqNo(1L);
 		serchMailTargetDto.setProductGrpMasterId(300L);
 		serchMailTargetDto.setMailAddress("test@example.com");
 		serchMailTargetDto.setContractId(10L);
+		serchMailTargetDtoList.add(serchMailTargetDto);
+		long controlId = 3100;
 		try {
-			batchStepComponent.process(serchMailTargetDto);
+			batchStepComponent.process(serchMailTargetDtoList, controlId);
 			mailSendHistoryRepository.count();
 			List<MailSendHistory> mailHistorytList = (List<MailSendHistory>) mailSendHistoryRepository.findAll();
-			List<MailSendHistory> mailHistorytTargetList = mailHistorytList.stream().filter(m -> 3004 == (m.getMailControlMaster().getId())).collect(Collectors.toList());
+			List<MailSendHistory> mailHistorytTargetList = mailHistorytList.stream().filter(m -> controlId == (m.getMailControlMaster().getId())).collect(Collectors.toList());
 			Assert.assertEquals("履歴が登録されていること：全数", 1, mailHistorytTargetList.size());
 			Assert.assertEquals("履歴が登録されていること：エラーのみ", 0, mailHistorytTargetList.stream().filter(m -> MailSendType.エラー == m.getMailSendType()).count());
 		} catch (Exception e) {
