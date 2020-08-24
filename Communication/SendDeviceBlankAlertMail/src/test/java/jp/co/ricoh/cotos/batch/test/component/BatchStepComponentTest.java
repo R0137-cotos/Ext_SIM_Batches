@@ -15,9 +15,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
-import jp.co.ricoh.cotos.batch.test.mock.WithMockCustomUser;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
+import jp.co.ricoh.cotos.commonlib.repository.common.MailSendHistoryRepository;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.SearchMailTargetDto;
 import jp.co.ricoh.cotos.logic.BatchComponent;
@@ -31,6 +31,9 @@ public class BatchStepComponentTest extends TestBase {
 
 	@Autowired
 	JobComponent jobComponent;
+
+	@Autowired
+	MailSendHistoryRepository mailSendHistoryRepository;
 
 	@SpyBean(name = "BASE")
 	BatchStepComponent batchStepComponent;
@@ -107,21 +110,6 @@ public class BatchStepComponentTest extends TestBase {
 		try {
 			List<SearchMailTargetDto> serchMailTargetDtoList = batchStepComponent.getDataList(serviceTermStart);
 			Assert.assertEquals(0, serchMailTargetDtoList.size());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	@WithMockCustomUser
-	public void 正常系_メール送信テスト() throws IOException {
-		SearchMailTargetDto serchMailTargetDto = new SearchMailTargetDto();
-		serchMailTargetDto.setSeqNo(1L);
-		serchMailTargetDto.setProductGrpMasterId(300L);
-		serchMailTargetDto.setMailAddress("test@example.com");
-		serchMailTargetDto.setContractId(10L);
-		try {
-			batchStepComponent.process(serchMailTargetDto);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
