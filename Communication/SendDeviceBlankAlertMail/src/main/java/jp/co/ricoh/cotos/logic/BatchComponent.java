@@ -22,6 +22,8 @@ public class BatchComponent {
 	@Qualifier("BASE")
 	BatchStepComponent baseComponent;
 
+	private final long CONTROL_ID = 3100;
+
 	/**
 	 * バッチ処理
 	 * @return
@@ -33,12 +35,10 @@ public class BatchComponent {
 
 		IBatchStepComponent component = this.getComponentInstance("SIM");
 
-		final long controlId = 3100;
-
 		List<SearchMailTargetDto> serchMailTargetDtoList = component.getDataList(serviceTermStart);
 
 		try {
-			component.process(serchMailTargetDtoList, controlId);
+			component.process(serchMailTargetDtoList, CONTROL_ID);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
