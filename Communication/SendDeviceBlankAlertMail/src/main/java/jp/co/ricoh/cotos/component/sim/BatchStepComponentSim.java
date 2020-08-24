@@ -65,13 +65,15 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		MailControlMaster mailControlMaster = mailControlMasterRepository.findOne(mailControlMasterId);
 
 		// メール送信対象のデータを送信履歴テーブルへ登録する
-		List<Long> transactionIdList = serchMailTargetDtoList.stream().map(e -> e.getContractId().longValue()).collect(Collectors.toList()); // 何故かBigDecimal型で返るので型変換
+		List<Long> transactionIdList = serchMailTargetDtoList.stream().map(e -> e.getContractId().longValue()).collect(Collectors.toList());
 		batchUtil.saveMailSendHistory(transactionIdList, mailControlMaster, MailSendType.未送信);
 
 		serchMailTargetDtoList.forEach(serchMailTargetDto -> {
 			try {
 				sendMailAndSaveHistory(serchMailTargetDto, mailControlMaster);
 			} catch (Exception e) {
+				// 対象データの中でメール送信が失敗したデータを「送信区分：エラー」で更新
+				batchUtil.saveMailSendHistory(transactionIdList, mailControlMaster, MailSendType.エラー);
 				log.fatal("メール送信処理に失敗しました。");
 			}
 		});
