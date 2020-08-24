@@ -55,7 +55,7 @@ public class BatchComponentTest extends TestBase {
 	@AfterClass
 	public static void exit() throws Exception {
 		if (null != context) {
-			//context.getBean(DBConfig.class).clearData();
+			context.getBean(DBConfig.class).clearData();
 			context.stop();
 		}
 	}
@@ -98,6 +98,7 @@ public class BatchComponentTest extends TestBase {
 			List<MailSendHistory> mailHistorytList = (List<MailSendHistory>) mailSendHistoryRepository.findAll();
 			List<MailSendHistory> mailHistorytTargetList = mailHistorytList.stream().filter(m -> 3100 == (m.getMailControlMaster().getId())).collect(Collectors.toList());
 			Assert.assertEquals("履歴が登録されていること：全数", 1, mailHistorytTargetList.size());
+			Assert.assertEquals("履歴が登録されていること：完了", 1, mailHistorytTargetList.stream().filter(m -> MailSendType.完了 == m.getMailSendType()).count());
 			Assert.assertEquals("履歴が登録されていること：エラーのみ", 0, mailHistorytTargetList.stream().filter(m -> MailSendType.エラー == m.getMailSendType()).count());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -118,6 +119,7 @@ public class BatchComponentTest extends TestBase {
 			List<MailSendHistory> mailHistorytList = (List<MailSendHistory>) mailSendHistoryRepository.findAll();
 			List<MailSendHistory> mailHistorytTargetList = mailHistorytList.stream().filter(m -> 3100 == (m.getMailControlMaster().getId())).collect(Collectors.toList());
 			Assert.assertEquals("履歴が登録されていること：全数", 1, mailHistorytTargetList.size());
+			Assert.assertEquals("履歴が登録されていること：完了", 1, mailHistorytTargetList.stream().filter(m -> MailSendType.完了 == m.getMailSendType()).count());
 			Assert.assertEquals("履歴が登録されていること：エラーのみ", 0, mailHistorytTargetList.stream().filter(m -> MailSendType.エラー == m.getMailSendType()).count());
 		} catch (Exception e) {
 			e.printStackTrace();

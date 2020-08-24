@@ -151,6 +151,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			List<MailSendHistory> mailHistorytList = (List<MailSendHistory>) mailSendHistoryRepository.findAll();
 			List<MailSendHistory> mailHistorytTargetList = mailHistorytList.stream().filter(m -> controlId == (m.getMailControlMaster().getId())).collect(Collectors.toList());
 			Assert.assertEquals("履歴が登録されていること：全数", 1, mailHistorytTargetList.size());
+			Assert.assertEquals("履歴が登録されていること：完了", 1, mailHistorytTargetList.stream().filter(m -> MailSendType.完了 == m.getMailSendType()).count());
 			Assert.assertEquals("履歴が登録されていること：エラーのみ", 0, mailHistorytTargetList.stream().filter(m -> MailSendType.エラー == m.getMailSendType()).count());
 		} catch (Exception e) {
 			e.printStackTrace();

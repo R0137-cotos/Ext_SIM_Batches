@@ -33,7 +33,7 @@ public class BatchComponent {
 
 		IBatchStepComponent component = this.getComponentInstance("SIM");
 
-		long controlId = 3100;
+		final long controlId = 3100;
 
 		List<SearchMailTargetDto> serchMailTargetDtoList = component.getDataList(serviceTermStart);
 
