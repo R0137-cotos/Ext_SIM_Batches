@@ -20,7 +20,7 @@ spring:
         show_sql: true
         use_sql_comments: true
         format_sql: true
-        default_schema: cotos_release_0903
+        default_schema: cotos_local_release_0903
   jackson:
     time-zone: Asia/Tokyo
   messages:
