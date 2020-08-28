@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:oracle:thin:@dev-db.cotos.ricoh.co.jp:1521/pdb1
-    username: cotos_local_backlog16
-    password: cotos_local_backlog16
+    username: cotos_local_batch_release_0903
+    password: cotos_local_batch_release_0903
     driverClassName: oracle.jdbc.OracleDriver
     type: org.apache.tomcat.jdbc.pool.DataSource
     tomcat:
@@ -20,7 +20,7 @@ spring:
         show_sql: true
         use_sql_comments: true
         format_sql: true
-        default_schema: cotos_local_backlog16
+        default_schema: cotos_batch_release_0903
   jackson:
     time-zone: Asia/Tokyo
   messages:
