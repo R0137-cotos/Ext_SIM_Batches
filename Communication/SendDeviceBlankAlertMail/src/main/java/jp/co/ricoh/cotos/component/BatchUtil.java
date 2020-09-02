@@ -1,15 +1,23 @@
 package jp.co.ricoh.cotos.component;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import jp.co.ricoh.cotos.commonlib.entity.common.MailSendHistory;
+import jp.co.ricoh.cotos.commonlib.entity.common.MailSendHistory.MailSendType;
 import jp.co.ricoh.cotos.commonlib.entity.master.AppMaster;
+import jp.co.ricoh.cotos.commonlib.entity.master.MailControlMaster;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
+import jp.co.ricoh.cotos.commonlib.repository.common.MailSendHistoryRepository;
 import jp.co.ricoh.cotos.commonlib.repository.master.AppMasterRepository;
 
 @Component
@@ -17,6 +25,9 @@ public class BatchUtil {
 
 	@Autowired
 	AppMasterRepository appMasterRepository;
+
+	@Autowired
+	MailSendHistoryRepository mailSendHistoryRepository;
 
 	@Autowired
 	CheckUtil checkUtil;
@@ -59,5 +70,48 @@ public class BatchUtil {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "EntityCheckNotNullError", new String[] { "アプリマスタ" }));
 		}
 		return appMaster.getSystemMaster().getSystemId();
+	}
+
+	/**
+	 * メール履歴テーブルを複数作成or更新します。
+	 * この処理単位で1トランザクションです。
+	 * @param transactionIdList 作成又は更新対象のトランザクションID
+	 * @param mailControlMaster 履歴に紐づけるメール制御マスタオブジェクト
+	 * @param mailSendType 未送信又はエラーを設定。（未送信 ⇒ 新規履歴作成、エラー ⇒ 未送信データをエラーに更新）
+	 */
+	@Transactional
+	public void saveMailSendHistory(List<Long> transactionIdList, MailControlMaster mailControlMaster, MailSendType mailSendType) {
+
+		if (MailSendType.未送信 == mailSendType) {
+			transactionIdList.stream().forEach(tranId -> {
+				MailSendHistory mailSendHistory = new MailSendHistory();
+				mailSendHistory.setTargetDataId(tranId);
+				mailSendHistory.setMailControlMaster(mailControlMaster);
+				mailSendHistory.setMailSendType(MailSendType.未送信);
+				mailSendHistoryRepository.save(mailSendHistory);
+			});
+			return;
+		}
+		if (MailSendType.エラー == mailSendType) {
+			List<MailSendHistory> mailSendHistory = mailSendHistoryRepository.findByMailControlMasterAndMailSendType(mailControlMaster, MailSendType.未送信);
+			mailSendHistory.stream().forEach(m -> {
+				m.setMailSendType(MailSendType.エラー);
+				mailSendHistoryRepository.save(m);
+			});
+		}
+	}
+
+	/**
+	 * メール履歴テーブルを1件更新します。（1件毎の更新はSSとメール送信成功時のみ実施される想定です）
+	 * この処理単位で1トランザクションです。
+	 */
+	@Transactional
+	public void updateMailSendHistory(MailSendHistory mailSendHistory, MailSendType mailSendType, List<String> emailToList, List<String> emailCcList, List<String> emailBccList) {
+		mailSendHistory.setMailSendType(mailSendType);
+		mailSendHistory.setContactMailTo(emailToList.toString().replace("[", "").replace("]", ""));
+		mailSendHistory.setContactMailCc(emailCcList.toString().replace("[", "").replace("]", ""));
+		mailSendHistory.setContactMailBcc(emailBccList.toString().replace("[", "").replace("]", ""));
+		mailSendHistory.setSendedAt(new Date());
+		mailSendHistoryRepository.save(mailSendHistory);
 	}
 }
