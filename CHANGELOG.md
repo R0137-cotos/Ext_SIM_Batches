@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.5.0 (03/09/2020)
+- [**closed**] #7933 デバイス空欄メール送信履歴登録処理追加 [#148](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/148)
+
+---
+
 ## v3.4.0 (20/08/2020)
 - [**closed**] #7946 締結中のみ取得するようにSQLを修正 [#145](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/145)
 - [**closed**] #7676 リプライCSV未配置通知メール送信シェル作成 [#143](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/143)
