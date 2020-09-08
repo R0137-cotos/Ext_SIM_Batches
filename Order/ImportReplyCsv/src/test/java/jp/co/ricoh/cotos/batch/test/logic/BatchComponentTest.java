@@ -1,5 +1,7 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
+import static org.mockito.Mockito.doThrow;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
@@ -18,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestClientException;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
@@ -159,6 +162,66 @@ public class BatchComponentTest extends TestBase {
 			Assert.assertEquals(1, messageInfo.size());
 			Assert.assertEquals("ROT00001", messageInfo.get(0).getErrorId());
 			Assert.assertEquals("パラメータ「ファイルディレクトリ/ファイル名」が設定されていません。", messageInfo.get(0).getErrorMessage());
+		}
+	}
+
+	@Test
+	public void 異常系_新規_API失敗_callFindTargetContractList() throws IOException {
+
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindTargetContractList(Mockito.anyObject());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindContract(Mockito.anyLong());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callUpdateContract(Mockito.anyObject());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertTestData.sql");
+		try {
+			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void 異常系_新規_API失敗_callFindContract() throws IOException {
+
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindContract(Mockito.anyLong());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callUpdateContract(Mockito.anyObject());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertTestData.sql");
+		try {
+			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void 異常系_新規_API失敗_callUpdateContract() throws IOException {
+
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callUpdateContract(Mockito.anyObject());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertTestData.sql");
+		try {
+			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void 異常系_新規_API失敗_callCompleteArrangement() throws IOException {
+
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any(Contract.class));
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertTestData.sql");
+		try {
+			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
 		}
 	}
 
