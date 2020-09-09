@@ -289,7 +289,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			batchUtil.callUpdateContract(contract);
 			return true;
 		} catch (Exception updateError) {
-			updateError.printStackTrace();
+			log.fatal(String.format("契約ID=%dの契約情報更新に失敗しました。", contract.getId()), updateError);
 			return false;
 		}
 	}
@@ -329,8 +329,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				// 手配情報業務完了APIを実行
 				batchUtil.callCompleteArrangement(work.getId());
 			} catch (Exception arrangementError) {
-				log.fatal(String.format("契約ID=%dの手配情報業務完了に失敗したため、処理をスキップします。", contract.getId()));
-				arrangementError.printStackTrace();
+				log.fatal(String.format("契約ID=%dの手配情報業務完了に失敗したため、処理をスキップします。", contract.getId()), arrangementError);
 				hasNoError[0] = false;
 			}
 		});
