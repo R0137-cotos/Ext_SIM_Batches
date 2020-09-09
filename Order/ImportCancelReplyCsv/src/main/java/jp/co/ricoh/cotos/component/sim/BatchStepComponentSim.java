@@ -289,7 +289,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			batchUtil.callUpdateContract(contract);
 			return true;
 		} catch (Exception updateError) {
-			log.fatal(String.format("契約ID=%dの契約情報更新に失敗したため、処理をスキップします。", contract.getId()), updateError);
+			log.fatal(String.format("契約ID=%dの契約情報更新に失敗しました。", contract.getId()), updateError);
 			return false;
 		}
 	}

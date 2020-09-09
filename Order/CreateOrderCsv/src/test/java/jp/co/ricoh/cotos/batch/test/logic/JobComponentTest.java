@@ -449,13 +449,51 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
-	public void 異常系_CSVファイルを出力できること_APIエラー() throws IOException {
+	public void 異常系_CSVファイルを出力できること_APIエラー_callAssignWorker() throws IOException {
 		テストデータ作成("createOrderTestSuccessData.sql");
 		fileDeleate(outputPath + "result_initial.csv");
 
 		// モック
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callAssignWorker(anyList());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callAcceptWorkApi(anyList());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindOneContractApi(anyLong());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
+
+		try {
+			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 異常系_CSVファイルを出力できること_APIエラー_callFindOneContractApi() throws IOException {
+		テストデータ作成("createOrderTestSuccessData.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
+
+		try {
+			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 異常系_CSVファイルを出力できること_APIエラー_callContractApi() throws IOException {
+		テストデータ作成("createOrderTestSuccessData.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindOneContractApi(anyLong());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
 
