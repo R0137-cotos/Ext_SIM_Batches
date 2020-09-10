@@ -23,6 +23,7 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -135,7 +136,12 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				if ("1".equals(dto.getType())) {
 					// 処理年月日 + 最短納期日を取得
 					List<String> vendorNameList = new ArrayList<>();
-					vendorNameList.add(o.getVendorShortName());
+					if (!StringUtils.isEmpty(o.getVendorShortName())) {
+						for (String vendorShortName : o.getVendorShortName().split(",", 0)) {
+							vendorNameList.add(vendorShortName);
+						}
+					}
+
 					shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), o.getShortestDeliveryDate(), false, vendorNameList);
 					return shortBusinessDay.compareTo(o.getConclusionPreferredDate()) > -1;
 				} else if ("2".equals(dto.getType())) {
