@@ -109,6 +109,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			// 処理日当月の最終営業日-2営業日を設定する
 			changeOperationDate = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(changeOperationDate, Calendar.DAY_OF_MONTH), 2, true);
 		}
+
 		// 以下条件の場合オーダーCSV出力する
 		// １．オーダーCSV作成状態:0(未作成)である
 		// ２．契約種別：新規  かつ 処理日付が営業日である
@@ -117,7 +118,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		// ３．種別：新規 かつ 契約.契約種別が新規である
 		// または 種別：容量変更 かつ 契約種別が契約変更である
 		// または 種別：有償交換 かつ 契約種別が契約変更である
-		if ((("1".equals(dto.getType()) || "3".equals(dto.getType())) && nonBusinessDayCalendarMasterRepository.findOne(operationDate) == null) || ("2".equals(dto.getType()) && changeOperationDate.compareTo(operationDate) == 0)) {
+		if ((("1".equals(dto.getType()) || "3".equals(dto.getType())) && nonBusinessDayCalendarMasterRepository.findOneByNonBusinessDayAndVendorShortNameIsNull(operationDate) == null) || ("2".equals(dto.getType()) && changeOperationDate.compareTo(operationDate) == 0)) {
 			orderDataList = orderDataList.stream().filter(o -> {
 				// オーダーCSV作成状態 0:未作成 1:作成済
 				int orderCsvCreationStatus = 1;
@@ -133,7 +134,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				Date shortBusinessDay = null;
 				if ("1".equals(dto.getType())) {
 					// 処理年月日 + 最短納期日を取得
-					shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), o.getShortestDeliveryDate(), false);
+					List<String> vendorNameList = new ArrayList<>();
+					vendorNameList.add(o.getVendorShortName());
+					shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), o.getShortestDeliveryDate(), false, vendorNameList);
 					return shortBusinessDay.compareTo(o.getConclusionPreferredDate()) > -1;
 				} else if ("2".equals(dto.getType())) {
 					// 処理年月日の次月1日
