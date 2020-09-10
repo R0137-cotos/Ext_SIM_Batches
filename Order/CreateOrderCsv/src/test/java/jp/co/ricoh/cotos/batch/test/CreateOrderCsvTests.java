@@ -2,7 +2,6 @@ package jp.co.ricoh.cotos.batch.test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -18,12 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import jp.co.ricoh.cotos.BatchApplication;
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
-import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
-import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
-import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
-import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
-import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
 import jp.co.ricoh.cotos.component.RestApiClient;
 
@@ -133,25 +127,5 @@ public class CreateOrderCsvTests extends TestBase {
 		contractDetail.setId(1L);
 		contractDetailList.add(contractDetail);
 		return contractDetailList;
-	}
-
-	private Contract dummyContract() {
-		Contract contract = new Contract();
-		contract.setId(1L);
-		contract.setContractDetailList(getContractDetailList());
-		contract.setEstimationNumber("testEstimationNumber");
-		ContractPicSaEmp contractPicSaEmp = new ContractPicSaEmp();
-		contractPicSaEmp.setMailAddress("testSaEmp@example.com");
-		contract.setContractPicSaEmp(contractPicSaEmp);
-		ContractAddedEditorEmp contractAddedEditorEmp = new ContractAddedEditorEmp();
-		contractAddedEditorEmp.setMailAddress("testAddedEditor@example.com");
-		contract.setContractAddedEditorEmpList(Arrays.asList(contractAddedEditorEmp));
-		ProductContract productContract = new ProductContract();
-		productContract.setProductContractName("testProductContractName");
-		contract.setProductContractList(Arrays.asList(productContract));
-		CustomerContract customerContract = new CustomerContract();
-		customerContract.setCompanyName("testCompanyName");
-		contract.setCustomerContract(customerContract);
-		return contract;
 	}
 }
