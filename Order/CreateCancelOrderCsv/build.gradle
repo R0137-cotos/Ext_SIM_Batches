@@ -20,7 +20,7 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
-	maven { url 'https://mygithub.ritscm.xyz/raw/cotos/LibsRepo/master/repository/CommonLibs' }
+	maven { url 'https://mygithub.ritscm.xyz/raw/cotos/LibsRepo/topic/backlog18/repository/CommonLibs' }
 }
 
 
