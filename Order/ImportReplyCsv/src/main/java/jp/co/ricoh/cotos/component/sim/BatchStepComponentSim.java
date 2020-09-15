@@ -126,8 +126,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					contractList.add(restApiClient.callFindContract(contractTmp.getId()));
 				});
 			} catch (Exception updateError) {
-				log.fatal(String.format("恒久契約識別番号=" + conNumLst + "の契約取得に失敗しました。", conNumLst));
-				updateError.printStackTrace();
+				log.fatal(String.format("恒久契約識別番号=" + conNumLst + "の契約取得に失敗したため、処理をスキップします。", conNumLst), updateError);
 				return;
 			}
 		});
@@ -217,7 +216,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					try {
 						p.setExtendsParameterIterance(om.writeValueAsString(extendsParameterMap));
 					} catch (JsonProcessingException e) {
-						e.printStackTrace();
 						log.fatal(String.format("契約ID=%dの商品拡張項目登録に失敗しました。", contract.getId()));
 						return;
 					}
@@ -230,8 +228,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					// 成功した場合 手配情報業務完了処理を実施
 					hasNoArrangementError = callCompleteArrangementApi(contract);
 				} else {
-					// 失敗した場合エラーログを出力しスキップする
-					log.fatal(String.format("契約ID=%dの契約更新に失敗しました。", contract.getId()));
+					// 失敗した場合スキップする
 					return;
 				}
 				// 手配情報業務完了処理がエラーの場合、元の契約情報で更新した契約情報を再更新する
@@ -271,10 +268,12 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		}
 
 		try {
+			// 契約情報更新API
 			restApiClient.callUpdateContract(contract);
 			return true;
 		} catch (Exception updateError) {
-			updateError.printStackTrace();
+			// 失敗した場合エラーログを出力
+			log.fatal(String.format("契約ID=%dの契約情報更新に失敗したため、処理をスキップします。", contract.getId()), updateError);
 			return false;
 		}
 	}
@@ -303,8 +302,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			try {
 				restApiClient.callCompleteArrangement(work.getId());
 			} catch (Exception arrangementError) {
-				log.fatal(String.format("契約ID=%dの手配情報業務完了に失敗したため、処理をスキップします。", contract.getId()));
-				arrangementError.printStackTrace();
+				log.fatal(String.format("契約ID=%dの手配情報業務完了に失敗したため、処理をスキップします。", contract.getId()), arrangementError);
 				hasNoError[0] = false;
 			}
 		});
