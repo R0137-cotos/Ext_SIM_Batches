@@ -1,5 +1,7 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
+import static org.mockito.Mockito.doThrow;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestClientException;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
@@ -153,6 +156,78 @@ public class BatchComponentTest extends TestBase {
 			Assert.assertEquals(1, messageInfo.size());
 			Assert.assertEquals("ROT00100", messageInfo.get(0).getErrorId());
 			Assert.assertEquals("指定されたファイルが存在しません。", messageInfo.get(0).getErrorMessage());
+		}
+	}
+
+	@Test
+	public void 異常系_API失敗_callUpdateContract() throws IOException {
+		// 契約情報更新APIを失敗にする
+		doThrow(new RestClientException("何らかの失敗")).when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを失敗にする
+		doThrow(new RestClientException("何らかの失敗")).when(batchUtil).callAssignWorker(Mockito.anyList());
+		// 手配業務受付APIを失敗にする
+		doThrow(new RestClientException("何らかの失敗")).when(batchUtil).callAcceptWorkApi(Mockito.anyList());
+		// 手配情報完了APIを失敗にする
+		doThrow(new RestClientException("何らかの失敗")).when(batchUtil).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
+		try {
+			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void 異常系_API失敗_callAssignWorker() throws IOException {
+		// 契約情報更新APIを無効にする
+		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを失敗にする
+		doThrow(new RestClientException("何らかの失敗")).when(batchUtil).callAssignWorker(Mockito.anyList());
+		// 手配業務受付APIを失敗にする
+		doThrow(new RestClientException("何らかの失敗")).when(batchUtil).callAcceptWorkApi(Mockito.anyList());
+		// 手配情報完了APIを失敗にする
+		doThrow(new RestClientException("何らかの失敗")).when(batchUtil).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
+		try {
+			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void 異常系_API失敗_callAcceptWorkApi() throws IOException {
+		// 契約情報更新APIを無効にする
+		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
+		// 手配業務受付APIを失敗にする
+		doThrow(new RestClientException("何らかの失敗")).when(batchUtil).callAcceptWorkApi(Mockito.anyList());
+		// 手配情報完了APIを失敗にする
+		doThrow(new RestClientException("何らかの失敗")).when(batchUtil).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
+		try {
+			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
+		}
+	}
+
+	@Test
+	public void 異常系_API失敗_callCompleteArrangement() throws IOException {
+		// 契約情報更新APIを無効にする
+		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
+		// 手配業務受付APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
+		// 手配情報完了APIを失敗にする
+		doThrow(new RestClientException("何らかの失敗")).when(batchUtil).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
+		try {
+			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (Exception e) {
+			Assert.fail("エラーが発生した。");
 		}
 	}
 

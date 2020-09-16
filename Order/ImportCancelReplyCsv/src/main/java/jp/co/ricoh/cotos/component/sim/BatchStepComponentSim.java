@@ -174,8 +174,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					// 成功した場合 手配情報業務完了処理を実施
 					hasNoArrangementError = callCompleteArrangementApi(contract, true);
 				} else {
-					// 失敗した場合エラーログを出力しスキップする
-					log.fatal(String.format("契約ID=%dの契約更新に失敗しました。", contract.getId()));
+					// 失敗した場合スキップする
 					return;
 				}
 				// 手配情報業務完了処理がエラーの場合、元の契約情報で更新した契約情報を再更新する
@@ -289,7 +288,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			batchUtil.callUpdateContract(contract);
 			return true;
 		} catch (Exception updateError) {
-			updateError.printStackTrace();
+			// 失敗した場合エラーログを出力
+			log.fatal(String.format("契約ID=%dの契約情報更新に失敗しました。", contract.getId()), updateError);
 			return false;
 		}
 	}
@@ -329,8 +329,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				// 手配情報業務完了APIを実行
 				batchUtil.callCompleteArrangement(work.getId());
 			} catch (Exception arrangementError) {
-				log.fatal(String.format("契約ID=%dの手配情報業務完了に失敗したため、処理をスキップします。", contract.getId()));
-				arrangementError.printStackTrace();
+				log.fatal(String.format("契約ID=%dの手配情報業務完了に失敗したため、処理をスキップします。", contract.getId()), arrangementError);
 				hasNoError[0] = false;
 			}
 		});

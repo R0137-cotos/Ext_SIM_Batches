@@ -3,6 +3,7 @@ package jp.co.ricoh.cotos.batch.test.logic;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doThrow;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestClientException;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
@@ -443,6 +445,63 @@ public class JobComponentTest extends TestBase {
 		}
 
 		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 異常系_CSVファイルを出力できること_APIエラー_callAssignWorker() throws IOException {
+		テストデータ作成("createOrderTestSuccessData.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callAssignWorker(anyList());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callAcceptWorkApi(anyList());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindOneContractApi(anyLong());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
+
+		try {
+			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 異常系_CSVファイルを出力できること_APIエラー_callFindOneContractApi() throws IOException {
+		テストデータ作成("createOrderTestSuccessData.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
+
+		try {
+			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+
+	@Test
+	public void 異常系_CSVファイルを出力できること_APIエラー_callContractApi() throws IOException {
+		テストデータ作成("createOrderTestSuccessData.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindOneContractApi(anyLong());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
+
+		try {
+			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
 		fileDeleate(outputPath + "result_initial.csv");
 	}
 

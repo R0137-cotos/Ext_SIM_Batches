@@ -254,11 +254,20 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					List<Long> contractIdList = orderDataList.stream().filter(o -> successIdList.contains(o.getContractIdTemp())).map(o -> o.getContractIdTemp()).collect(Collectors.toList());
 
 					contractIdList.forEach(contractId -> {
-						Contract contract = restApiClient.callFindOneContractApi(contractId);
-						contract.getContractDetailList().forEach(ContractDetail -> {
-							ContractDetail.setExtendsParameter(successExtendsParameter);
-						});
-						restApiClient.callContractApi(contract);
+						try {
+							// 契約情報明細取得API
+							Contract contract = restApiClient.callFindOneContractApi(contractId);
+							contract.getContractDetailList().forEach(ContractDetail -> {
+								ContractDetail.setExtendsParameter(successExtendsParameter);
+							});
+							try {
+								restApiClient.callContractApi(contract);
+							} catch (Exception e) {
+								log.fatal(String.format("契約ID=%dが契約情報更新APIに失敗しました。", contractId), e);
+							}
+						} catch (Exception e) {
+							log.fatal(String.format("契約ID=%dが契約情報明細取得APIに失敗しました。", contractId), e);
+						}
 					});
 
 					// エラー発生個所	
@@ -282,15 +291,13 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						try {
 							restApiClient.callAssignWorker(arrangementWorkIdListAssign);
 						} catch (Exception arrangementError) {
-							log.fatal(String.format("担当者登録に失敗しました。"));
-							arrangementError.printStackTrace();
+							log.fatal(String.format("担当者登録に失敗しました。"), arrangementError);
 						}
 						// 手配業務受付APIを実行
 						try {
 							restApiClient.callAcceptWorkApi(arrangementWorkIdListAccept);
 						} catch (Exception arrangementError) {
-							log.fatal(String.format("ステータスの変更に失敗しました。"));
-							arrangementError.printStackTrace();
+							log.fatal(String.format("ステータスの変更に失敗しました。"), arrangementError);
 						}
 					});
 				}
