@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.6.0 (17/09/2020)
+- [**closed**] #8137 同一のログが出力される箇所修正 [#152](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/152)
+- [**closed**] #8137 APIをコールするバッチのログ表示内容改修 [#151](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/151)
+
+---
+
 ## v3.5.0 (03/09/2020)
 - [**closed**] #7933 デバイス空欄メール送信履歴登録処理追加 [#148](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/148)
 
