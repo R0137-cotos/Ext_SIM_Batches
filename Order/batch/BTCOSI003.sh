@@ -33,7 +33,7 @@ Log.Info "ファイル名：${FILE_NAME}" >> ${LOG_FILE_PATH}
 ################################################
 ### 処理実行
 ################################################
-SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI003} "${DIR_PATH}" "${FILE_NAME}"
+SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI003} "${DIR_PATH}" "${FILE_NAME}" > /dev/null 2>&1
 BATCH_RET=$?
 if [  ${BATCH_RET} == 2 ]; then
   Log.Error "BTCOSI003:[SB]リプライCSV取込が一部失敗しました。リプライCSVに納入予定日無しの行が存在します。" >> ${LOG_FILE_PATH};
