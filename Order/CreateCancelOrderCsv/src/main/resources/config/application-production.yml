@@ -16,3 +16,12 @@ spring:
         default_schema: cotos_product
 cotos:
   authentication: https://api.cotos.ricoh.co.jp/auth/api/auth
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: off
+        type:
+          descriptor:
+            sql:
+              BasicBinder: off

@@ -61,3 +61,12 @@ cotos:
   # Fromメールアドレス
   mail:
     fromMailAddress: test@example.com
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace

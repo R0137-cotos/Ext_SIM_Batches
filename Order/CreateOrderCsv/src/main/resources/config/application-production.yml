@@ -22,3 +22,12 @@ cotos:
   # 契約APIURL
   contract:
     url: https://api.cotos.ricoh.co.jp/contract/api
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: off
+        type:
+          descriptor:
+            sql:
+              BasicBinder: off
