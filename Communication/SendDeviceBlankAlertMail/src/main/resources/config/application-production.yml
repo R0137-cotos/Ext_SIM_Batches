@@ -27,3 +27,12 @@ cotos:
   mail:
     fromMailAddress: no-reply@cotos.ricoh.co.jp
     envelopeFromMailAddress: bounce@cotos.ricoh.co.jp
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: off
+        type:
+          descriptor:
+            sql:
+              BasicBinder: off

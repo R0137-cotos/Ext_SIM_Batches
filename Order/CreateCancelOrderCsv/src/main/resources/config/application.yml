@@ -48,3 +48,12 @@ cotos:
       dispAuthorization: X-Cotos-Disp-Authorization
       contentType: Content-type
       filename: filename
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace

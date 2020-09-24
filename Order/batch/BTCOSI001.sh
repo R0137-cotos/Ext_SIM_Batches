@@ -39,7 +39,7 @@ Log.Info "種別：${TYPE}" >> ${LOG_FILE_PATH}
 ################################################
 ### 処理実行
 ################################################
-SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI001} "${OPERATION_DATE}" "${DIR_PATH}" "${FILE_NAME}" "${TYPE}"
+SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI001} "${OPERATION_DATE}" "${DIR_PATH}" "${FILE_NAME}" "${TYPE}" > /dev/null 2>&1
 BATCH_RET=$?
 if [  ${BATCH_RET} == 1 ]; then
   Log.Error "BTCOSI001:[SB]オーダーCSV作成に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
