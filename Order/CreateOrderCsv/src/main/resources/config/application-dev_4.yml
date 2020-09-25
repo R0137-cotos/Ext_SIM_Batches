@@ -22,12 +22,3 @@ cotos:
   # 契約APIURL
   contract:
     url: https://dev-api-4.cotos.ricoh.co.jp/contract/api
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: off
-        type:
-          descriptor:
-            sql:
-              BasicBinder: off
