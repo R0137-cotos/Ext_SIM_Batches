@@ -301,7 +301,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						if (arrangement != null) {
 							List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
 							arrangementWorkList.stream().forEach(arrangementWork -> {
-								if (arrangementWork.getId() != TOUKIBO_COPY_ARRANGEMENT_ID) {
+								// 手配業務タイプ=業務区登記簿コピー添付の手配業務タイプマスタIDでない手配についてのみ、担当者登録APIと手配業務受付APIを実施する
+								if (arrangementWork.getArrangementWorkTypeMasterId() != TOUKIBO_COPY_ARRANGEMENT_ID) {
 									if (arrangementWork.getArrangementPicWorkerEmp() == null) {
 										arrangementWorkIdListAssign.add(arrangementWork.getId());
 									}
