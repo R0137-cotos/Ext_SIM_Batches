@@ -175,7 +175,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			}).filter(o -> {
 				// 契約に紐づく手配「業務区登記簿コピー添付」が存在する場合、手配業務.ワークフロー状態=5（作業完了)であること
 				if ("1".equals(dto.getType())) {
-					Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(o.getId(), NOT_DISENGAGEMENT);
+					Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(o.getContractIdTemp(), NOT_DISENGAGEMENT);
 					if (arrangement != null && !CollectionUtils.isEmpty(arrangement.getArrangementWorkList())) {
 						for (ArrangementWork arrangementWork : arrangement.getArrangementWorkList()) {
 							if (TOUKIBO_COPY_ARRANGEMENT_ID == arrangementWork.getArrangementWorkTypeMasterId()) {
