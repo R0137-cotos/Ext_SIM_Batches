@@ -33,3 +33,12 @@ cotos:
       momEmpId: COTOS_BATCH_USER
       operatorName: dummy_batch_operator
       operatorOrgName: dummy_batch_operator_org
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
