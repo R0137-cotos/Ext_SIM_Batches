@@ -75,6 +75,11 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Autowired
 	EntityManager em;
 
+	/**
+	 * 手配業務タイプ名=業務区登記簿コピー添付の手配業務タイプマスタID
+	 */
+	private static final long TOUKIBO_COPY_ARRANGEMENT_ID = 3002;
+
 	@Override
 	public List<ReplyOrderDto> beforeProcess(String[] args) throws IOException {
 		log.info("SIM独自処理");
@@ -301,7 +306,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
 		arrangementWorkList.stream().forEach(work -> {
 			try {
-				restApiClient.callCompleteArrangement(work.getId());
+				// 手配業務タイプ=業務区登記簿コピー添付の手配業務タイプマスタIDでない手配についてのみ、手配情報業務完了APIを呼び出す
+				if (work.getArrangementWorkTypeMasterId() != TOUKIBO_COPY_ARRANGEMENT_ID) {
+					restApiClient.callCompleteArrangement(work.getId());
+				}
 			} catch (Exception arrangementError) {
 				log.fatal(String.format("契約ID=%dの手配情報業務完了に失敗したため、処理をスキップします。", contract.getId()));
 				arrangementError.printStackTrace();

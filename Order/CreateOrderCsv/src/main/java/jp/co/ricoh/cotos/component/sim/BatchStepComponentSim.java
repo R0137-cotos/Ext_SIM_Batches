@@ -97,6 +97,13 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	private static final String headerFilePath = "file/header.csv";
 
+	/**
+	 * 手配業務タイプ名=業務区登記簿コピー添付の手配業務タイプマスタID
+	 */
+	private static final long TOUKIBO_COPY_ARRANGEMENT_ID = 3002;
+
+	private static final int NOT_DISENGAGEMENT = 0;
+
 	@Override
 	@Transactional
 	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
@@ -119,6 +126,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		// ３．種別：新規 かつ 契約.契約種別が新規である
 		// または 種別：容量変更 かつ 契約種別が契約変更である
 		// または 種別：有償交換 かつ 契約種別が契約変更である
+		// ４．種別：新規 かつ 契約に紐づく手配「業務区登記簿コピー添付」が存在する場合、手配業務.ワークフロー状態=5（作業完了)であること
 		if ((("1".equals(dto.getType()) || "3".equals(dto.getType())) && nonBusinessDayCalendarMasterRepository.findOneByNonBusinessDayAndVendorShortNameIsNull(operationDate) == null) || ("2".equals(dto.getType()) && changeOperationDate.compareTo(operationDate) == 0)) {
 			orderDataList = orderDataList.stream().filter(o -> {
 				// オーダーCSV作成状態 0:未作成 1:作成済
@@ -164,6 +172,20 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				} else {
 					return ContractType.契約変更 == o.getContractType();
 				}
+			}).filter(o -> {
+				// 契約に紐づく手配「業務区登記簿コピー添付」が存在する場合、手配業務.ワークフロー状態=5（作業完了)であること
+				if ("1".equals(dto.getType())) {
+					Arrangement arrangement = arrangementRepository.findByContractIdAndDisengagementFlg(o.getContractIdTemp(), NOT_DISENGAGEMENT);
+					if (arrangement != null && !CollectionUtils.isEmpty(arrangement.getArrangementWorkList())) {
+						for (ArrangementWork arrangementWork : arrangement.getArrangementWorkList()) {
+							if (TOUKIBO_COPY_ARRANGEMENT_ID == arrangementWork.getArrangementWorkTypeMasterId()) {
+								return WorkflowStatus.作業完了 == arrangementWork.getWorkflowStatus();
+							}
+						}
+					}
+				}
+
+				return true;
 			}).collect(Collectors.toList());
 
 			if (0 == orderDataList.size()) {
@@ -279,11 +301,14 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						if (arrangement != null) {
 							List<ArrangementWork> arrangementWorkList = arrangement.getArrangementWorkList();
 							arrangementWorkList.stream().forEach(arrangementWork -> {
-								if (arrangementWork.getArrangementPicWorkerEmp() == null) {
-									arrangementWorkIdListAssign.add(arrangementWork.getId());
-								}
-								if (arrangementWork.getWorkflowStatus() == WorkflowStatus.受付待ち) {
-									arrangementWorkIdListAccept.add(arrangementWork.getId());
+								// 手配業務タイプ=業務区登記簿コピー添付の手配業務タイプマスタIDでない手配についてのみ、担当者登録APIと手配業務受付APIを実施する
+								if (arrangementWork.getArrangementWorkTypeMasterId() != TOUKIBO_COPY_ARRANGEMENT_ID) {
+									if (arrangementWork.getArrangementPicWorkerEmp() == null) {
+										arrangementWorkIdListAssign.add(arrangementWork.getId());
+									}
+									if (arrangementWork.getWorkflowStatus() == WorkflowStatus.受付待ち) {
+										arrangementWorkIdListAccept.add(arrangementWork.getId());
+									}
 								}
 							});
 						}
