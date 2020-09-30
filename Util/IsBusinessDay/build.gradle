@@ -1,0 +1,47 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.9.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+group = 'jp.co.ricoh.cotos'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven { url 'https://mygithub.ritscm.xyz/raw/cotos/LibsRepo/topic/backlog19/repository/CommonLibs' }
+}
+
+
+dependencies {
+	compile('jp.co.ricoh.cotos:common-libraries:0.0.367')
+	compile 'org.yaml:snakeyaml:1.16'
+
+	runtime files('libs/ojdbc7.jar')
+	compile fileTree(dir: 'libs', include: '*.jar')
+
+	compileOnly 'org.projectlombok:lombok:1.16.18'
+
+	testCompile('org.dbunit:dbunit:2.5.4')
+	testCompileOnly 'org.projectlombok:lombok:1.16.18'
+	testCompile group: 'org.jmockit', name: 'jmockit', version: '1.41'
+}
+
+def defaultEncoding = "UTF-8"
+compileJava {
+    options.encoding = defaultEncoding
+}
+compileTestJava {
+    options.encoding = defaultEncoding
+}
