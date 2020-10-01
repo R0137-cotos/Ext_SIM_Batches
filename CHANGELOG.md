@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.7.0 (01/10/2020)
+- [**closed**] #8266 標準出力を行わないよう修正,SQLログを本番以外でのみ出すよう修正 [#158](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/158)
+- [**closed**] #7955 新規オーダーCSV作成 ベンダーの非営業日マスタを使った制御を行う対応 [#153](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/153)
+
+---
+
 ## v3.6.0 (17/09/2020)
 - [**closed**] #8137 同一のログが出力される箇所修正 [#152](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/152)
 - [**closed**] #8137 APIをコールするバッチのログ表示内容改修 [#151](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/151)
