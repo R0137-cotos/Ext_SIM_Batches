@@ -20,12 +20,12 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
-	maven { url 'https://mygithub.ritscm.xyz/raw/cotos/LibsRepo/topic/backlog19/repository/CommonLibs' }
+	maven { url 'https://mygithub.ritscm.xyz/raw/cotos/LibsRepo/release/20201015/repository/CommonLibs' }
 }
 
 
 dependencies {
-	compile('jp.co.ricoh.cotos:common-libraries:0.0.368')
+	compile('jp.co.ricoh.cotos:common-libraries:0.0.370')
 	compile 'org.yaml:snakeyaml:1.16'
 
 	runtime files('libs/ojdbc7.jar')
