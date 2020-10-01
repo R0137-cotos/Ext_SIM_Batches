@@ -12,7 +12,7 @@ import lombok.extern.log4j.Log4j;
 public class JobComponent {
 
 	/**
-	 * バッチを順次実行するジョブの実行
+	 * 営業日判定ジョブの実行
 	 * @param args バッチパラメーターリスト
 	 */
 	public void run(String[] args) {

@@ -62,7 +62,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 	}
 
 	/**
-	 * 営業日
+	 * 営業日判定処理
 	 * @param processDate 処理実行日
 	 * @return true:営業日である, false:営業日でない
 	 */

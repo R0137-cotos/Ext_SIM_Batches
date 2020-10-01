@@ -13,8 +13,8 @@ import jp.co.ricoh.cotos.security.CreateJwt;
 public class BatchApplication {
 
 	/**
-	 * メイン処理
-	 * @param args
+	 * 営業日判定メイン処理
+	 * @param args バッチパラメーターリスト
 	 */
 	public static void main(String[] args) {
 
