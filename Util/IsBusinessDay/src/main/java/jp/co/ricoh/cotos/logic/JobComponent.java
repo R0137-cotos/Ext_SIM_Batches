@@ -4,9 +4,9 @@ import java.util.Arrays;
 
 import jp.co.ricoh.cotos.BatchConstants;
 import jp.co.ricoh.cotos.UtilProvider;
-import jp.co.ricoh.cotos.batch.TestBase.ExitException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
+import jp.co.ricoh.cotos.util.NotBusinessDayException;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -26,7 +26,7 @@ public class JobComponent {
 			boolean isBusinessDay = batchComponent.execute(args);
 			log.info(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
 			if (!isBusinessDay) {
-				System.exit(2);
+				throw new NotBusinessDayException();
 			}
 
 		} catch (ErrorCheckException e) {
@@ -36,8 +36,8 @@ public class JobComponent {
 			log.error(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
 			System.exit(1);
 
-		} catch (ExitException e) {
-			System.exit(e.getStatus());
+		} catch (NotBusinessDayException e) {
+			System.exit(2);
 
 		} catch (Throwable e) {
 			log.error(e.toString());
