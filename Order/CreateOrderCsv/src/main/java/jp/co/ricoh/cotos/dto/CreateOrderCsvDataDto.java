@@ -124,4 +124,9 @@ public class CreateOrderCsvDataDto {
 	 * 商品(契約用).拡張項目繰返
 	 */
 	private String extendsParameterIterance;
+
+	/**
+	 * ベンダー略称
+	 */
+	private String vendorShortName;
 }

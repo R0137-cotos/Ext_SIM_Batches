@@ -22,3 +22,12 @@ cotos:
   # 手配APIURL
   arrangement:
     url: https://api.cotos.ricoh.co.jp/arrangement/api
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: off
+        type:
+          descriptor:
+            sql:
+              BasicBinder: off
