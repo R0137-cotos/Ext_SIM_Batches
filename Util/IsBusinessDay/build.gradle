@@ -25,7 +25,7 @@ repositories {
 
 
 dependencies {
-	compile('jp.co.ricoh.cotos:common-libraries:0.0.367')
+	compile('jp.co.ricoh.cotos:common-libraries:0.0.368')
 	compile 'org.yaml:snakeyaml:1.16'
 
 	runtime files('libs/ojdbc7.jar')

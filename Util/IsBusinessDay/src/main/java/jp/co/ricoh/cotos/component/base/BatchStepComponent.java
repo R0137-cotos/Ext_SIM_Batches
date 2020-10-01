@@ -33,6 +33,8 @@ public class BatchStepComponent implements IBatchStepComponent {
 		SimpleDateFormat sdFormat = new SimpleDateFormat(PROCESS_DATE_FORMAT);
 
 		try {
+			// スラッシュ区切りの場合削除する
+			args[0] = args[0].replace("/", "");
 			sdFormat.parse(args[0]);
 		} catch (ParseException e) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "IllegalFormatError", new String[] { BatchConstants.BATCH_PARAMETER_LIST_NAME, PROCESS_DATE_FORMAT }));
@@ -66,7 +68,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 	 */
 	@Override
 	public boolean process(String processDate) {
-		BusinessDayUtil businessDayUtil = new BusinessDayUtil();
+		BusinessDayUtil businessDayUtil = UtilProvider.getBusinessDayUtil();
 		CheckUtil checkUtil = UtilProvider.getCheckUtil();
 
 		SimpleDateFormat sdFormat = new SimpleDateFormat(PROCESS_DATE_FORMAT);
@@ -74,6 +76,8 @@ public class BatchStepComponent implements IBatchStepComponent {
 		Date targetDate = null;
 
 		try {
+			// スラッシュ区切りの場合削除する
+			processDate = processDate.replace("/", "");
 			targetDate = sdFormat.parse(processDate);
 		} catch (ParseException e) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "IllegalFormatError", new String[] { BatchConstants.BATCH_PARAMETER_LIST_NAME, PROCESS_DATE_FORMAT }));

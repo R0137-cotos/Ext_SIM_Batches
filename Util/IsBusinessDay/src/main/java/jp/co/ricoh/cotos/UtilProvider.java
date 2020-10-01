@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
+import jp.co.ricoh.cotos.commonlib.repository.master.BusinessCalendarRepository;
 import jp.co.ricoh.cotos.commonlib.repository.master.NonBusinessDayCalendarMasterRepository;
 import jp.co.ricoh.cotos.config.LoadConfigulation;
 
@@ -81,11 +82,18 @@ public class UtilProvider {
 		return checkUtil;
 	}
 
+	/**
+	 * BusinessDayUtilを生成
+	 * @return BusinessDayUtil
+	 */
 	private static BusinessDayUtil createBusinessDayUtil() {
 		BusinessDayUtil businessDayUtil = new BusinessDayUtil();
 		ApplicationContext context = ApplicationContextProvider.getApplicationContext();
 		// Repository取得
-		NonBusinessDayCalendarMasterRepository nonRepo = context.getBean(NonBusinessDayCalendarMasterRepository.class);
+		NonBusinessDayCalendarMasterRepository nonBusinessDayCalendarMasterRepository = context.getBean(NonBusinessDayCalendarMasterRepository.class);
+		businessDayUtil.setNonBusinessDayCalendarMasterRepository(nonBusinessDayCalendarMasterRepository);
+		BusinessCalendarRepository businessCalendarRepository = context.getBean(BusinessCalendarRepository.class);
+		businessDayUtil.setBusinessCalendarRepository(businessCalendarRepository);
 
 		return businessDayUtil;
 	}
