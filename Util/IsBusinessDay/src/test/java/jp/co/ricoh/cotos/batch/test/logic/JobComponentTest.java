@@ -40,7 +40,7 @@ public class JobComponentTest extends TestBase {
 			jobComponent.run(new String[] { "20191027" });
 			Assert.fail("営業日として判定された。");
 		} catch (ExitException e) {
-			Assert.assertEquals("ステータス", 1, e.getStatus());
+			Assert.assertEquals("ステータス", 2, e.getStatus());
 		}
 	}
 
