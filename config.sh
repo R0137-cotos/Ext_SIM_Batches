@@ -21,6 +21,7 @@ export COMMUNICATION_JAR_PATH=${BATCH_BASE_PATH}/Communication
 export ORDER_JAR_PATH=${BATCH_BASE_PATH}/Order
 export ACCOUNTING_JAR_PATH=${BATCH_BASE_PATH}/Accounting
 export CONTRACT_JAR_PATH=${BATCH_BASE_PATH}/Contract
+export UTIL_JAR_PATH=${BATCH_BASE_PATH}/Util
 
 ################################################
 ### バッチJava実行モジュール名
@@ -48,3 +49,6 @@ export BATCH_PG_BTCOSI008=ImportCancelReplyCsv-0.0.1-SNAPSHOT.jar
 
 # BTCOSI009 デバイス空欄警告メール送信
 export BATCH_PG_BTCOSI009=SendDeviceBlankAlertMail-0.0.1-SNAPSHOT.jar
+
+# BTCOSI012 [SB]営業日判定
+export BATCH_PG_BTCOSI012=IsBusinessDay-0.0.1-SNAPSHOT.jar

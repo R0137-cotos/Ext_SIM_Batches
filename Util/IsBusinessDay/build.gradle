@@ -25,23 +25,17 @@ repositories {
 
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.9.1')
 	compile('jp.co.ricoh.cotos:common-libraries:0.0.372')
-	compile group: 'commons-io', name: 'commons-io', version: '2.5'
-	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
+	compile 'org.yaml:snakeyaml:1.16'
 
-	runtime('org.springframework.boot:spring-boot-devtools')
-	runtime('com.h2database:h2')
 	runtime files('libs/ojdbc7.jar')
 	compile fileTree(dir: 'libs', include: '*.jar')
 
 	compileOnly 'org.projectlombok:lombok:1.16.18'
 
-	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.dbunit:dbunit:2.5.4')
 	testCompileOnly 'org.projectlombok:lombok:1.16.18'
+	testCompile group: 'org.jmockit', name: 'jmockit', version: '1.41'
 }
 
 def defaultEncoding = "UTF-8"
