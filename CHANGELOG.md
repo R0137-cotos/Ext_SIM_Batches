@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.8.0 (15/10/2020)
+- [**closed**] #8469 営業日判定バッチ シェル名称変更 [#172](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/172)
+- [**closed**] #8469 営業日判定バッチ シェル名称変更 [#171](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/171)
+- [**closed**] #8469 営業日判定バッチ実装 [#170](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/170)
+- [**closed**] #6065 オーダーCSV作成 業務区登記簿コピー手配の取得方法を修正 [#163](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/163)
+- [**closed**] #6065 オーダーCSV作成 業務区登記簿コピー添付の手配以外にのみ担当者登録APIと手配業務受付APIを実施するよう修正 [#161](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/161)
+- [**closed**] #6065 リプライCSV取込 手配情報更新が既存の「リコー モバイル 通信サービス」手配のみ更新するように修正 [#160](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/160)
+- [**closed**] #6065 オーダーCSV作成 新規契約の場合、業務区登記簿コピー添付が作業完了になっているもののみを対象とする [#159](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/159)
+
+---
+
 ## v3.7.0 (01/10/2020)
 - [**closed**] #8266 標準出力を行わないよう修正,SQLログを本番以外でのみ出すよう修正 [#158](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/158)
 - [**closed**] #7955 新規オーダーCSV作成 ベンダーの非営業日マスタを使った制御を行う対応 [#153](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/153)
