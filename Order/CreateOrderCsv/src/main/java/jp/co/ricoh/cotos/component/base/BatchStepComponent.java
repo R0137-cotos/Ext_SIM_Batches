@@ -9,7 +9,6 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,10 +30,8 @@ import jp.co.ricoh.cotos.component.IBatchStepComponent;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
 import jp.co.ricoh.cotos.util.OperationDateException;
-import lombok.extern.log4j.Log4j;
 
 @Component("BASE")
-@Log4j
 public class BatchStepComponent implements IBatchStepComponent {
 
 	@Autowired
@@ -87,9 +84,6 @@ public class BatchStepComponent implements IBatchStepComponent {
 				}
 			}
 			operationDateStr = operationDate.format(formatter);
-		} catch (DateTimeParseException e) {
-			// 引数：処理日の変換に失敗
-			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "BatchParameterFormatError", new String[] { "yyyyMMdd" }));
 		} catch (DateTimeException e) {
 			// 引数：処理日の変換に失敗
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "BatchParameterFormatError", new String[] { "yyyyMMdd" }));
@@ -153,8 +147,9 @@ public class BatchStepComponent implements IBatchStepComponent {
 	}
 
 	@Override
-	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
+	public boolean process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
 		// データ加工等の処理を実施
+		return true;
 	}
 
 	@Override

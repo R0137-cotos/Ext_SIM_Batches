@@ -52,7 +52,7 @@ public interface IBatchStepComponent {
 	 * @throws FileAlreadyExistsException
 	 * @throws Exception
 	 */
-	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException;
+	public boolean process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException;
 
 	/**
 	 * 事後処理

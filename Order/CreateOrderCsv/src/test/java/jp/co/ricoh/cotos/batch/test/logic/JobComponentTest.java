@@ -6,12 +6,16 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doThrow;
 
 import java.io.File;
+import java.io.IOError;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.management.RuntimeErrorException;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -19,8 +23,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +38,7 @@ import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.ContractType;
+import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
@@ -40,6 +47,7 @@ import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
 import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
 import jp.co.ricoh.cotos.component.RestApiClient;
+import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.logic.JobComponent;
 import jp.co.ricoh.cotos.security.CreateJwt;
 
@@ -62,6 +70,9 @@ public class JobComponentTest extends TestBase {
 
 	@Autowired
 	CreateJwt createJwt;
+
+	@SpyBean
+	BusinessDayUtil businessDayUtil;
 
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
@@ -461,6 +472,8 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (ExitException e) {
+			Assert.assertEquals("意図した通りExceptionが発生した", e.getStatus(), 3);
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}
@@ -480,6 +493,8 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (ExitException e) {
+			Assert.assertEquals("意図した通りExceptionが発生した", e.getStatus(), 3);
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}
@@ -499,6 +514,34 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (ExitException e) {
+			Assert.assertEquals("意図した通りExceptionが発生した", e.getStatus(), 3);
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+	
+	@Test
+	public void 異常系_意図しないエラー発生_Exception() throws FileAlreadyExistsException {
+		Mockito.doThrow(new RuntimeException()).when(businessDayUtil).getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(Mockito.any());
+		try {
+			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "2" });
+		} catch (ExitException e) {
+			Assert.assertEquals("意図した通りExceptionが発生した", e.getStatus(), 1);
+		} catch (Exception e) {
+			Assert.fail("テスト失敗");
+		}
+		fileDeleate(outputPath + "result_initial.csv");
+	}
+	
+	@Test
+	public void 異常系_意図しないエラー発生_Throwable() {
+		Mockito.doThrow(new ThreadDeath()).when(businessDayUtil).getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(Mockito.any());
+		try {
+			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "2" });
+		} catch (ExitException e) {
+			Assert.assertEquals("意図した通りThrowableが発生した", e.getStatus(), 1);
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}

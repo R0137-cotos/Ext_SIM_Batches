@@ -7,6 +7,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,9 +19,11 @@ import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
+import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
+import jp.co.ricoh.cotos.util.OperationDateException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -35,6 +38,9 @@ public class BatchStepComponentTest extends TestBase {
 
 	@SpyBean(name = "BASE")
 	BatchStepComponent batchStepComponent;
+	
+	@SpyBean
+	BusinessDayUtil businessDayUtil;
 
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
@@ -112,6 +118,34 @@ public class BatchStepComponentTest extends TestBase {
 			batchStepComponent.paramCheck(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
 			Assert.fail("エラー");
+		}
+	}
+	
+	@Test
+	public void 異常系_マスタに存在しない営業日が設定された() {
+		Mockito.doReturn(null).when(businessDayUtil).getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(Mockito.any());
+		try {
+			batchStepComponent.paramCheck(new String[] { "20990627", outputPath, "result_initial.csv", "2" });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (ErrorCheckException e) {
+			List<ErrorInfo> messageInfo = e.getErrorInfoList();
+			Assert.assertEquals(1, messageInfo.size());
+			Assert.assertEquals("RBA00009", messageInfo.get(0).getErrorId());
+			Assert.assertEquals("営業日APIによる月末最終営業日取得の取得に失敗しました。", messageInfo.get(0).getErrorMessage());
+		} catch (Exception e) {
+			Assert.fail("意図しないエラーが発生した。");
+		}
+	}
+	
+	@Test
+	public void 異常系_実施日例外発生() {
+		try {
+			batchStepComponent.paramCheck(new String[] { "20190627", outputPath, "result_initial.csv", "2" });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (OperationDateException e) {
+			Assert.assertTrue("意図した通りエラーが発生した。", true);
+		} catch (Exception e) {
+			Assert.fail("意図しないエラーが発生した。");
 		}
 	}
 
