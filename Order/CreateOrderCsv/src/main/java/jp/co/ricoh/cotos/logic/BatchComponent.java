@@ -11,7 +11,7 @@ import jp.co.ricoh.cotos.component.IBatchStepComponent;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
-import jp.co.ricoh.cotos.util.AfterProcessErrorException;
+import jp.co.ricoh.cotos.util.ProcessErrorException;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -45,7 +45,7 @@ public class BatchComponent {
 		}
 		List<CreateOrderCsvDataDto> orderDataList = component.getDataList(contractType);
 		if (!component.process(dto, orderDataList)) {
-			throw new AfterProcessErrorException();
+			throw new ProcessErrorException();
 		}
 	}
 

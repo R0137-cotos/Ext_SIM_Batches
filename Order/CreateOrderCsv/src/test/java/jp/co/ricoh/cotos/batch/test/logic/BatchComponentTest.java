@@ -36,7 +36,7 @@ import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementPicWorkerEm
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
 import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.logic.BatchComponent;
-import jp.co.ricoh.cotos.util.AfterProcessErrorException;
+import jp.co.ricoh.cotos.util.ProcessErrorException;
 import jp.co.ricoh.cotos.util.OperationDateException;
 
 @RunWith(SpringRunner.class)
@@ -420,7 +420,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callContractApi(Mockito.any());
 		try {
 			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
-		} catch (AfterProcessErrorException e) {
+		} catch (ProcessErrorException e) {
 			Assert.assertTrue("意図した通りエラーが発生した。", true);
 		} catch (Exception e) {
 			Assert.fail("意図しないエラーが発生した。");
