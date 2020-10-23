@@ -1,10 +1,12 @@
 package jp.co.ricoh.cotos.batch.test.component;
 
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -38,7 +40,7 @@ public class BatchStepComponentTest extends TestBase {
 
 	@SpyBean(name = "BASE")
 	BatchStepComponent batchStepComponent;
-	
+
 	@SpyBean
 	BusinessDayUtil businessDayUtil;
 
@@ -120,7 +122,7 @@ public class BatchStepComponentTest extends TestBase {
 			Assert.fail("エラー");
 		}
 	}
-	
+
 	@Test
 	public void 異常系_マスタに存在しない営業日が設定された() {
 		Mockito.doReturn(null).when(businessDayUtil).getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(Mockito.any());
@@ -136,13 +138,39 @@ public class BatchStepComponentTest extends TestBase {
 			Assert.fail("意図しないエラーが発生した。");
 		}
 	}
-	
+
 	@Test
 	public void 異常系_実施日例外発生() {
 		try {
 			batchStepComponent.paramCheck(new String[] { "20190627", outputPath, "result_initial.csv", "2" });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (OperationDateException e) {
+			Assert.assertTrue("意図した通りエラーが発生した。", true);
+		} catch (Exception e) {
+			Assert.fail("意図しないエラーが発生した。");
+		}
+	}
+
+	@Ignore
+	@Test
+	// 一時的にoutputディレクトリにresult_initial.csvを用意して実行
+	public void 異常系_ファイルが既に存在するエラー_result_initial() {
+		try {
+			batchStepComponent.paramCheck(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (FileAlreadyExistsException e) {
+			Assert.assertTrue("意図した通りエラーが発生した。", true);
+		} catch (Exception e) {
+			Assert.fail("意図しないエラーが発生した。");
+		}
+	}
+
+	@Ignore
+	@Test
+	// 一時的にoutputディレクトリにtemp.csvを用意して実行
+	public void 異常系_ファイルが既に存在するエラー_temp() {
+		try {
+			batchStepComponent.paramCheck(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (FileAlreadyExistsException e) {
 			Assert.assertTrue("意図した通りエラーが発生した。", true);
 		} catch (Exception e) {
 			Assert.fail("意図しないエラーが発生した。");

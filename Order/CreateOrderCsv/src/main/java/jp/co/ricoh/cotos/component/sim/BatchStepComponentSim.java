@@ -123,7 +123,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 		// 以下条件の場合オーダーCSV出力する
 		// １．オーダーCSV作成状態:0(未作成)である
-		// ２．契約種別：新規  かつ 処理日付が営業日である
+		// ２．契約種別：新規 かつ 処理日付が営業日である
 		// または 契約種別：容量変更 かつ 処理日当月最終営業日 - 2営業日
 		// または 契約種別：有償交換 かつ 処理日付が営業日である
 		// ３．種別：新規 かつ 契約.契約種別が新規である
@@ -307,7 +307,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						}
 					});
 
-					// エラー発生個所	
+					// エラー発生個所
 					// 事後処理（手配）
 					successIdList.stream().forEach(ContractId -> {
 						List<Long> arrangementWorkIdListAssign = new ArrayList<>();
@@ -356,7 +356,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					failedMap.put("extendsParam", failedExtendsParameter);
 					failedMap.put("idList", contractDetailIdList);
 					try {
-					    dbUtil.execute("sql/updateExtendsParameter.sql", failedMap);
+						dbUtil.execute("sql/updateExtendsParameter.sql", failedMap);
 					} catch (RuntimeException e) {
 						failedIdList.stream().forEach(contractId -> {
 							log.fatal(String.format("契約ID=%dの更新SQLの実行に失敗しました。", contractId), e);
@@ -370,9 +370,13 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	/**
 	 * オーダーCSV行作成(契約種別：新規)
-	 * @param orderData　オーダーデータ
-	 * @param operationDate 処理日
-	 * @param serialCount 契約番号末尾に付与する連番
+	 * 
+	 * @param orderData
+	 *            オーダーデータ
+	 * @param operationDate
+	 *            処理日
+	 * @param serialCount
+	 *            契約番号末尾に付与する連番
 	 * @return オーダーCSV行
 	 */
 	public FindCreateOrderCsvDataDto createOrderCsvRowDataForNew(CreateOrderCsvDataDto orderData, Date operationDate, int serialCount) {
@@ -409,12 +413,19 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	/**
 	 * オーダーCSV行作成(契約種別：容量変更,有償交換)
-	 * @param orderData オーダーデータ
-	 * @param operationDate 処理日
-	 * @param dto バッチ起動引数のDTO
-	 * @param serialCount 契約番号末尾に付与する連番
-	 * @param index 拡張項目繰返のインデックス
-	 * @param targetRicohItemCode オーダーCSVに載せる対象のリコー品種コード
+	 * 
+	 * @param orderData
+	 *            オーダーデータ
+	 * @param operationDate
+	 *            処理日
+	 * @param dto
+	 *            バッチ起動引数のDTO
+	 * @param serialCount
+	 *            契約番号末尾に付与する連番
+	 * @param index
+	 *            拡張項目繰返のインデックス
+	 * @param targetRicohItemCode
+	 *            オーダーCSVに載せる対象のリコー品種コード
 	 * @return オーダーCSV行
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
@@ -489,7 +500,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	/**
 	 * 拡張項目文字列をオブジェクトに変換する
-	 * @param extendsParameterIterance 拡張項目繰返(文字列)
+	 * 
+	 * @param extendsParameterIterance
+	 *            拡張項目繰返(文字列)
 	 * @return 拡張項目繰返オブジェクト
 	 * @throws JsonParseException
 	 * @throws JsonMappingException

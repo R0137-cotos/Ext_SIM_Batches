@@ -61,13 +61,13 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@SpyBean(name = "SIM")
 	BatchStepComponent batchStepComponent;
-	
+
 	@SpyBean
 	BatchUtil batchUtil;
-	
+
 	@SpyBean
 	DBUtil dbUtil;
-	
+
 	@Autowired
 	ContractDetailRepository contractDetailRepository;
 
@@ -953,7 +953,8 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Ignore
 	@Test
-	// csv書き込み処理(ネストした処理)をmock化することができなかったため、次の行に「throw new Exception()」を書いて、Exceptionを発生させて動作検証を行った。
+	// csv書き込み処理(ネストした処理)をmock化することができなかったため、次の行に「throw new
+	// Exception()」を書いて、Exceptionを発生させて動作検証を行った。
 	// 検証のためには記載の通り実装を一部改変する必要があるためIgnoreしている。
 	public void 異常系_csv出力エラーデータ有_エラーデータの後処理正常終了() throws ParseException, IOException {
 		String outputFileName = "result_initial.csv";
@@ -986,10 +987,11 @@ public class BatchStepComponentSimTest extends TestBase {
 			Assert.assertEquals("拡張項目が更新されていること", "{\"orderCsvCreationStatus\":\"2\",\"orderCsvCreationDate\":\"\"}", contractDetail.getExtendsParameter());
 		}
 	}
-	
+
 	@Ignore
 	@Test
-	// csv書き込み処理(ネストした処理)をmock化することができなかったため、次の行に「throw new Exception()」を書いて、Exceptionを発生させて動作検証を行った。
+	// csv書き込み処理(ネストした処理)をmock化することができなかったため、次の行に「throw new
+	// Exception()」を書いて、Exceptionを発生させて動作検証を行った。
 	// 検証のためには記載の通り実装を一部改変する必要があるためIgnoreしている。
 	public void 異常系_csv出力エラーデータ有_エラーデータの後処理異常終了() throws ParseException, IOException {
 		String outputFileName = "result_initial.csv";
@@ -1023,7 +1025,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			Assert.assertTrue("意図した通りエラーが発生した。", true);
 		}
 	}
-	
+
 	@Test
 	public void 異常系_オーダーCSV作成状態取得処理失敗() throws JsonProcessingException, IOException, ParseException {
 		String outputFileName = "result_initial.csv";
@@ -1042,7 +1044,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
 		dto.setOperationDate("20191018");
 		dto.setType("1");
-		
+
 		List<CreateOrderCsvDataDto> orderDataList = テストデータ作成();
 
 		boolean success = false;
