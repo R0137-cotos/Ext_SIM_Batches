@@ -108,7 +108,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Transactional
 	public boolean process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
 		log.info("SIM独自処理");
-		// 事後処理での失敗の有無を確認するためのリストを定義
 		// 空かどうかでエラーの有無を確認するためIDの重複があっても問題ない
 		List<Long> errorDataIdList = new ArrayList<Long>();
 		// 処理日
@@ -139,7 +138,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					orderCsvCreationStatus = batchUtil.getOrderCsvCreationStatus(o.getExtendsParameter());
 				} catch (IOException e) {
 					errorDataIdList.add(o.getContractIdTemp());
-					log.fatal(String.format("契約明細ID=%dのオーダーCSV作成状態を取得に失敗しました。", o.getContractIdTemp()), e);
+					log.fatal(String.format("契約明細ID=%dのオーダーCSV作成状態の取得に失敗しました。", o.getContractIdTemp()), e);
 				}
 
 				return orderCsvCreationStatus == 0;
