@@ -106,8 +106,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Override
 	@Transactional
-	public void process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
+	public boolean process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
 		log.info("SIM独自処理");
+		// 空かどうかでエラーの有無を確認するためIDの重複があっても問題ない
+		List<Long> errorDataIdList = new ArrayList<Long>();
 		// 処理日
 		Date operationDate = batchUtil.toDate(dto.getOperationDate());
 		// 容量変更データをオーダーCSVに載せる日付(本日付以外では容量変更データをオーダーCSVに載せない)
@@ -120,7 +122,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 		// 以下条件の場合オーダーCSV出力する
 		// １．オーダーCSV作成状態:0(未作成)である
-		// ２．契約種別：新規  かつ 処理日付が営業日である
+		// ２．契約種別：新規 かつ 処理日付が営業日である
 		// または 契約種別：容量変更 かつ 処理日当月最終営業日 - 2営業日
 		// または 契約種別：有償交換 かつ 処理日付が営業日である
 		// ３．種別：新規 かつ 契約.契約種別が新規である
@@ -135,7 +137,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					// 契約明細.拡張項目.オーダーCSV作成状態を取得
 					orderCsvCreationStatus = batchUtil.getOrderCsvCreationStatus(o.getExtendsParameter());
 				} catch (IOException e) {
-					e.printStackTrace();
+					errorDataIdList.add(o.getContractIdTemp());
+					log.fatal(String.format("契約明細ID=%dのオーダーCSV作成状態の取得に失敗しました。", o.getContractIdTemp()), e);
 				}
 
 				return orderCsvCreationStatus == 0;
@@ -262,7 +265,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						mapper.writer(schemaWithOutHeader).writeValues(Files.newBufferedWriter(dto.getTmpFile().toPath(), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.APPEND)).write(map.getValue());
 						successIdList.add(map.getKey());
 					} catch (Exception e) {
-						log.error(messageUtil.createMessageInfo("BatchCannotCreateFiles", new String[] { String.format("オーダーCSV作成") }).getMsg(), e);
+						log.error(messageUtil.createMessageInfo("BatchCannotCreateFiles", new String[] { String.format("契約ID=%dのオーダーCSV作成", map.getKey()) }).getMsg(), e);
 						failedIdList.add(map.getKey());
 					}
 				});
@@ -294,14 +297,16 @@ public class BatchStepComponentSim extends BatchStepComponent {
 							try {
 								restApiClient.callContractApi(contract);
 							} catch (Exception e) {
+								errorDataIdList.add(contractId);
 								log.fatal(String.format("契約ID=%dが契約情報更新APIに失敗しました。", contractId), e);
 							}
 						} catch (Exception e) {
+							errorDataIdList.add(contractId);
 							log.fatal(String.format("契約ID=%dが契約情報明細取得APIに失敗しました。", contractId), e);
 						}
 					});
 
-					// エラー発生個所	
+					// エラー発生個所
 					// 事後処理（手配）
 					successIdList.stream().forEach(ContractId -> {
 						List<Long> arrangementWorkIdListAssign = new ArrayList<>();
@@ -325,18 +330,23 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						try {
 							restApiClient.callAssignWorker(arrangementWorkIdListAssign);
 						} catch (Exception arrangementError) {
+							errorDataIdList.add(ContractId);
 							log.fatal(String.format("担当者登録に失敗しました。"), arrangementError);
 						}
 						// 手配業務受付APIを実行
 						try {
 							restApiClient.callAcceptWorkApi(arrangementWorkIdListAccept);
 						} catch (Exception arrangementError) {
+							errorDataIdList.add(ContractId);
 							log.fatal(String.format("ステータスの変更に失敗しました。"), arrangementError);
 						}
 					});
 				}
+
 				// 出力失敗
 				if (!failedIdList.isEmpty()) {
+					// failedIdListはCSV作成でエラーとなったデータが入っているので、最終的にエラーの有無を判断するerrorDataIdListにadd
+					errorDataIdList.addAll(failedIdList);
 					// 事後処理（拡張項目）
 					Map<String, Object> failedMap = new HashMap<>();
 					String failedExtendsParameter = "{\"orderCsvCreationStatus\":\"2\",\"orderCsvCreationDate\":\"\"}";
@@ -344,17 +354,28 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 					failedMap.put("extendsParam", failedExtendsParameter);
 					failedMap.put("idList", contractDetailIdList);
-					dbUtil.execute("sql/updateExtendsParameter.sql", failedMap);
+					try {
+						dbUtil.execute("sql/updateExtendsParameter.sql", failedMap);
+					} catch (RuntimeException e) {
+						failedIdList.stream().forEach(contractId -> {
+							log.fatal(String.format("契約ID=%dの更新SQLの実行に失敗しました。", contractId), e);
+						});
+					}
 				}
 			}
 		}
+		return errorDataIdList.isEmpty();
 	}
 
 	/**
 	 * オーダーCSV行作成(契約種別：新規)
-	 * @param orderData　オーダーデータ
-	 * @param operationDate 処理日
-	 * @param serialCount 契約番号末尾に付与する連番
+	 * 
+	 * @param orderData
+	 *            オーダーデータ
+	 * @param operationDate
+	 *            処理日
+	 * @param serialCount
+	 *            契約番号末尾に付与する連番
 	 * @return オーダーCSV行
 	 */
 	public FindCreateOrderCsvDataDto createOrderCsvRowDataForNew(CreateOrderCsvDataDto orderData, Date operationDate, int serialCount) {
@@ -391,12 +412,19 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	/**
 	 * オーダーCSV行作成(契約種別：容量変更,有償交換)
-	 * @param orderData オーダーデータ
-	 * @param operationDate 処理日
-	 * @param dto バッチ起動引数のDTO
-	 * @param serialCount 契約番号末尾に付与する連番
-	 * @param index 拡張項目繰返のインデックス
-	 * @param targetRicohItemCode オーダーCSVに載せる対象のリコー品種コード
+	 * 
+	 * @param orderData
+	 *            オーダーデータ
+	 * @param operationDate
+	 *            処理日
+	 * @param dto
+	 *            バッチ起動引数のDTO
+	 * @param serialCount
+	 *            契約番号末尾に付与する連番
+	 * @param index
+	 *            拡張項目繰返のインデックス
+	 * @param targetRicohItemCode
+	 *            オーダーCSVに載せる対象のリコー品種コード
 	 * @return オーダーCSV行
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
@@ -471,7 +499,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	/**
 	 * 拡張項目文字列をオブジェクトに変換する
-	 * @param extendsParameterIterance 拡張項目繰返(文字列)
+	 * 
+	 * @param extendsParameterIterance
+	 *            拡張項目繰返(文字列)
 	 * @return 拡張項目繰返オブジェクト
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
