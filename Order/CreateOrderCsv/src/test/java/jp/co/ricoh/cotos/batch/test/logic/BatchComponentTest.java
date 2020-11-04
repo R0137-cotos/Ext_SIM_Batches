@@ -36,6 +36,7 @@ import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementPicWorkerEm
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
 import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.logic.BatchComponent;
+import jp.co.ricoh.cotos.util.ProcessErrorException;
 import jp.co.ricoh.cotos.util.OperationDateException;
 
 @RunWith(SpringRunner.class)
@@ -405,6 +406,25 @@ public class BatchComponentTest extends TestBase {
 
 		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
 		fileDeleate(outputPath + "result_initial.csv");
+	}
+	
+	@Test
+	public void 異常系_APIエラーが発生すること() throws Exception {
+		テストデータ作成("createOrderTestSuccessData.sql");
+		fileDeleate(outputPath + "result_initial.csv");
+
+		// モック
+		Mockito.doNothing().when(restApiClient).callAssignWorker(Mockito.any());
+		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(Mockito.any());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenThrow(new RuntimeException());
+		Mockito.doNothing().when(restApiClient).callContractApi(Mockito.any());
+		try {
+			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
+		} catch (ProcessErrorException e) {
+			Assert.assertTrue("意図した通りエラーが発生した。", true);
+		} catch (Exception e) {
+			Assert.fail("意図しないエラーが発生した。");
+		}
 	}
 
 	private List<ContractDetail> getContractDetailList() {

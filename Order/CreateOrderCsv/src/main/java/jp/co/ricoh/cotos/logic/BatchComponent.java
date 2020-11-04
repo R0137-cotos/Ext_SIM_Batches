@@ -11,6 +11,7 @@ import jp.co.ricoh.cotos.component.IBatchStepComponent;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDataDto;
 import jp.co.ricoh.cotos.dto.CreateOrderCsvDto;
+import jp.co.ricoh.cotos.util.ProcessErrorException;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -43,7 +44,9 @@ public class BatchComponent {
 			contractType = "'$.extendsParameterList?(@.contractType == \"有償交換\")'";
 		}
 		List<CreateOrderCsvDataDto> orderDataList = component.getDataList(contractType);
-		component.process(dto, orderDataList);
+		if (!component.process(dto, orderDataList)) {
+			throw new ProcessErrorException();
+		}
 	}
 
 	/**
