@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.9.0 (05/11/2020)
+- [**closed**] #8965 バッチ処理エラーをslackに通知するように修正 [#178](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/178)
+
+---
+
 ## v3.8.0 (15/10/2020)
 - [**closed**] #8469 営業日判定バッチ シェル名称変更 [#172](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/172)
 - [**closed**] #8469 営業日判定バッチ シェル名称変更 [#171](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/171)
