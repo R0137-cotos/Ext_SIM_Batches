@@ -22,7 +22,9 @@ public class JobComponent {
 
 	/**
 	 * バッチを順次実行するジョブの実行
-	 * @param args バッチパラメーターリスト
+	 * 
+	 * @param args
+	 *            バッチパラメーターリスト
 	 */
 	public void run(String[] args) {
 
@@ -35,8 +37,8 @@ public class JobComponent {
 			e.printStackTrace();
 			log.fatal("リプライCSV取込処理が一部失敗しました。");
 			System.exit(2);
-		
-		} catch(ProcessErrorException e) {
+
+		} catch (ProcessErrorException e) {
 			log.fatal("リプライCSV取込処理が一部失敗しました。", e);
 			System.exit(2);
 
