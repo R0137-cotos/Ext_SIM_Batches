@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import jp.co.ricoh.cotos.component.IBatchStepComponent;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
+import jp.co.ricoh.cotos.util.ProcessErrorException;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -30,8 +31,10 @@ public class BatchComponent {
 		baseComponent.paramCheck(args);
 
 		IBatchStepComponent component = this.getComponentInstance("SIM");
-		component.process(component.beforeProcess(args));
-
+		// process内でエラーが発生していた場合throwする
+		if (!component.process(component.beforeProcess(args))) {
+			throw new ProcessErrorException();
+		}
 	}
 
 	/**
