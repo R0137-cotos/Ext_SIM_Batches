@@ -7,6 +7,7 @@ import jp.co.ricoh.cotos.BatchConstants;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
 import jp.co.ricoh.cotos.util.DeliveryExpectedDateException;
+import jp.co.ricoh.cotos.util.ProcessErrorException;
 import lombok.extern.log4j.Log4j;
 
 @Component
@@ -33,6 +34,10 @@ public class JobComponent {
 		} catch (DeliveryExpectedDateException e) {
 			e.printStackTrace();
 			log.fatal("リプライCSV取込処理が一部失敗しました。");
+			System.exit(2);
+		
+		} catch(ProcessErrorException e) {
+			log.fatal("リプライCSV取込処理が一部失敗しました。", e);
 			System.exit(2);
 
 		} catch (ErrorCheckException e) {
