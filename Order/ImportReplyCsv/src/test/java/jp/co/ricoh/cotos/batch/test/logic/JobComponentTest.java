@@ -59,7 +59,7 @@ public class JobComponentTest extends TestBase {
 
 	@MockBean
 	RestApiClient restApiClient;
-	
+
 	@SpyBean
 	BatchComponent batchComponent;
 
@@ -207,14 +207,14 @@ public class JobComponentTest extends TestBase {
 			Assert.fail("意図しないエラーが発生した");
 		}
 	}
-	
+
 	@Test
 	public void 異常系_納品日設定無し() throws Exception {
 		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
-		
+
 		try {
 			jobComponent.run(new String[] { "src/test/resources/csv", "NoDeliveryExpectedDate.csv" });
 		} catch (ExitException e) {
@@ -223,7 +223,7 @@ public class JobComponentTest extends TestBase {
 			Assert.fail("意図しないエラーが発生した");
 		}
 	}
-	
+
 	@Test
 	public void 異常系_Exception発生() throws Exception {
 		Mockito.doThrow(new Exception()).when(batchComponent).execute(Mockito.any());
@@ -235,7 +235,7 @@ public class JobComponentTest extends TestBase {
 			Assert.fail("意図しないエラーが発生した");
 		}
 	}
-	
+
 	@Test
 	public void 異常系_Throwable発生() throws Exception {
 		Mockito.doThrow(new Error()).when(batchComponent).execute(Mockito.any());
