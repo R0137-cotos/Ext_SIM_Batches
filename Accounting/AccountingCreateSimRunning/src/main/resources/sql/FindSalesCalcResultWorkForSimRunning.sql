@@ -45,7 +45,7 @@ from (
         cd.id = ic.contract_detail_id AND
         (cd.running_account_sales_date is NULL or trunc(cd.running_account_sales_date, 'MONTH') < to_date(substr(:baseDate, 1, 6), 'YYYYMM')) AND
         ic.cost_type in ('2','4') AND
-        c.lifecycle_status = '6' AND
+        c.lifecycle_status in ('6','7','8') AND
         exists (
             select
                 1
@@ -100,7 +100,7 @@ from (
         ic.id = idc.item_contract_id AND
         (cd.running_account_sales_date is NULL or trunc(cd.running_account_sales_date, 'MONTH') < to_date(substr(:baseDate, 1, 6), 'YYYYMM')) AND
         ic.cost_type in ('2','4') AND
-        c.lifecycle_status = '6' AND
+        c.lifecycle_status in ('6','7','8') AND
         idc.initial_running_div = '2' AND
         idc.trans_to_service_org_code = wwoaic.org_id
 ) target
