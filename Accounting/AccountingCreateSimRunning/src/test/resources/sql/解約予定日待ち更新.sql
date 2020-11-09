@@ -1,0 +1,1 @@
+update contract set lifecycle_status = '8' where id <> 6;
