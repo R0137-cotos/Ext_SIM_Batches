@@ -108,15 +108,19 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Override
 	@Transactional
-	public void process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
+	public boolean process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
 		log.info("SIM独自処理");
+
+		// エラーが発生したことをstackする用のリスト
+		// 最後にこのリストが空か否かを以てエラーの有無を判定してバッチへ終了ステータスを返す
+		List<Boolean> errorCheckList = new ArrayList<>();
 
 		// 納入予定日無しの行が存在するか
 		boolean isNoDeliveryExpectedDate[] = { false };
 
-		//枝番削除した契約番号をキーとしたMap
+		// 枝番削除した契約番号をキーとしたMap
 		Map<String, List<ReplyOrderDto>> contractNumberGroupingMap = csvlist.stream().collect(Collectors.groupingBy(dto -> substringContractNumber(dto.getContractId()), Collectors.mapping(dto -> dto, Collectors.toList())));
-		//枝番削除した契約番号のリスト
+		// 枝番削除した契約番号のリスト
 		List<String> contractNumberList = contractNumberGroupingMap.entrySet().stream().map(map -> map.getKey()).map(c -> substringContractNumber(c)).collect(Collectors.toList());
 
 		// 対象契約取得
@@ -127,10 +131,17 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				ContractSearchParameter searchParam = new ContractSearchParameter();
 				searchParam.setContractNumber(conNumLst.substring(0, 15));
 				searchParam.setContractBranchNumber(conNumLst.substring(16, 17));
-				restApiClient.callFindTargetContractList(searchParam).stream().forEach(contractTmp -> {
-					contractList.add(restApiClient.callFindContract(contractTmp.getId()));
+				List<Contract> c = restApiClient.callFindTargetContractList(searchParam);
+				c.stream().forEach(contractTmp -> {
+					try {
+						contractList.add(restApiClient.callFindContract(contractTmp.getId()));
+					} catch (Exception e) {
+						errorCheckList.add(true);
+						log.fatal(String.format("契約ID=" + contractTmp.getId() + "の契約取得に失敗したため、処理をスキップします。"), e);
+					}
 				});
 			} catch (Exception updateError) {
+				errorCheckList.add(true);
 				log.fatal(String.format("恒久契約識別番号=" + conNumLst + "の契約取得に失敗したため、処理をスキップします。", conNumLst), updateError);
 				return;
 			}
@@ -161,16 +172,17 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			// 各契約リプライCSV一行目の納入予定日が空でない場合のみ、リプライCSV取込処理を実施する
 			if (!StringUtils.isEmpty(replyOrderList.get(0).getDeliveryExpectedDate())) {
 
-				//サービス開始希望日を設定
+				// サービス開始希望日を設定
 				contract.setServiceTermStart(batchUtil.changeDate(replyOrderList.get(0).getDeliveryExpectedDate()));
 
-				//拡張項目繰り返しを設定
+				// 拡張項目繰り返しを設定
 				for (ProductContract p : productContractList) {
 					String extendsParameterIterance = p.getExtendsParameterIterance();
 					Function<String, List<ExtendsParameterDto>> readJsonFunc = batchUtil.Try(x -> batchUtil.readJson(x), (error, x) -> null);
 					List<ExtendsParameterDto> extendsParameterList = readJsonFunc.apply(extendsParameterIterance);
 					if (CollectionUtils.isEmpty(extendsParameterList)) {
 						log.fatal(String.format("契約ID=%dの商品拡張項目読込に失敗しました。", contract.getId()));
+						errorCheckList.add(true);
 						return;
 					}
 
@@ -221,6 +233,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					try {
 						p.setExtendsParameterIterance(om.writeValueAsString(extendsParameterMap));
 					} catch (JsonProcessingException e) {
+						errorCheckList.add(true);
 						log.fatal(String.format("契約ID=%dの商品拡張項目登録に失敗しました。", contract.getId()));
 						return;
 					}
@@ -228,17 +241,19 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				contract.setProductContractList(productContractList);
 
 				boolean hasNoArrangementError = true;
-				//契約更新
+				// 契約更新
 				if (callUpdateContractApi(contract)) {
 					// 成功した場合 手配情報業務完了処理を実施
 					hasNoArrangementError = callCompleteArrangementApi(contract);
 				} else {
+					errorCheckList.add(true);
 					// 失敗した場合スキップする
 					return;
 				}
 				// 手配情報業務完了処理がエラーの場合、元の契約情報で更新した契約情報を再更新する
 				if (!hasNoArrangementError) {
-					//手配完了
+					errorCheckList.add(true);
+					// 手配完了
 					if (!callUpdateContractApi(originalContract)) {
 						// 再更新に失敗した場合手動リカバリが必要となる
 						log.fatal(String.format("契約ID=%dの契約再更新に失敗しました。リカバリが必要となります。", originalContract.getId()));
@@ -250,12 +265,13 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				isNoDeliveryExpectedDate[0] = true;
 			}
 		});
-		//エンティティ(contract)に対して値を更新すると、エンティティマネージャーが更新対象とみなしてしまい、排他制御に引っかかる
+		// エンティティ(contract)に対して値を更新すると、エンティティマネージャーが更新対象とみなしてしまい、排他制御に引っかかる
 		em.clear();
 
 		if (isNoDeliveryExpectedDate[0]) {
 			throw new DeliveryExpectedDateException();
 		}
+		return errorCheckList.isEmpty();
 	}
 
 	private String substringContractNumber(String number) {
@@ -264,7 +280,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	/**
 	 * 契約情報更新API呼び出し
-	 * @param contract 契約情報
+	 * 
+	 * @param contract
+	 *            契約情報
 	 * @return true:API実行結果エラー無し false:API実行結果エラー有り
 	 */
 	private boolean callUpdateContractApi(Contract contract) {
@@ -285,7 +303,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	/**
 	 * 手配情報業務完了API呼び出し
-	 * @param contract 契約情報
+	 * 
+	 * @param contract
+	 *            契約情報
 	 * @return true:API実行結果エラー無し false:API実行結果エラー有り
 	 */
 	private boolean callCompleteArrangementApi(Contract contract) {
