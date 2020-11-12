@@ -92,7 +92,7 @@ public class BatchApplicationTests extends TestBase {
 
 	@Test
 	@Transactional
-	public void 正常系() throws ParseException {
+	public void 正常系_締結中() throws ParseException {
 		// 検証
 		final String baseDate = "20200201";
 		try {
@@ -103,57 +103,43 @@ public class BatchApplicationTests extends TestBase {
 			e.printStackTrace();
 			Assert.fail("異常終了しました。試験失敗です。");
 		}
+		値検証(baseDate);
+	}
 
-		// バッチ実行により生成されたAccountingテーブルを取得
-		Iterable<Accounting> iterableAccounting = accountingRepository.findAll();
-		// 全チェック対象データリスト
-		List<Accounting> allTargetList = new ArrayList<>();
-		// チェック対象売上請求データリスト (データ作成区分=20)
-		List<Accounting> salesTargetList = new ArrayList<>();
-		// チェック対象振替データリスト (データ作成区分=31)
-		List<Accounting> transferTargetList = new ArrayList<>();
-
-		// Accountingテーブルの内容を、データ作成区分ごとに振り分ける
-		for (Accounting accounting : iterableAccounting) {
-			allTargetList.add(accounting);
-			if ("20".equals(accounting.getFfmDataPtn())) {
-				salesTargetList.add(accounting);
-			} else if ("31".equals(accounting.getFfmDataPtn())) {
-				transferTargetList.add(accounting);
-			}
-			if (accounting.getContractId() == 3) {
-				Assert.fail("対象外データ（計上年月日＞計上処理日）が抽出されています。");
-			} else if (accounting.getContractId() == 4) {
-				Assert.fail("対象外データ（費用種別!=月額(2or4)）が抽出されています。");
-			} else if (accounting.getContractId() == 5) {
-				Assert.fail("対象外データ（ランニング区分!=ランニング(2)）が抽出されています。");
-			} else if (accounting.getContractId() == 6) {
-				Assert.fail("対象外データ（ライフサイクル状態!=締結中(6)）が抽出されています。");
-			} else if (accounting.getContractId() == 7) {
-				Assert.fail("対象外データ（商品種類区分=CSP）が抽出されています。");
-			}
+	@Test
+	@Transactional
+	public void 正常系_解約手続き中() throws ParseException {
+		// データ更新
+		context.getBean(DBConfig.class).initTargetTestData("sql/解約手続き中更新.sql");
+		// 検証
+		final String baseDate = "20200201";
+		try {
+			バッチ起動(baseDate);
+		} catch (ExitException e) {
+			Assert.fail("異常終了しました。試験失敗です。");
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了しました。試験失敗です。");
 		}
+		値検証(baseDate);
+	}
 
-		// 全データ共通のチェック
-		allTargetList.forEach(target -> {
-			try {
-				課金計上テーブル登録データ共通チェック(target);
-			} catch (ParseException e) {
-				Assert.fail("チェック処理に失敗しました");
-			}
-		});
-
-		// データ作成区分＝20:売上請求の個別チェック
-		// 契約明細の更新チェック
-		salesTargetList.forEach(target -> {
-			データ作成区分_20_売上請求チェック(target, baseDate);
-			契約明細の更新チェック(target.getContractDetailId());
-		});
-
-		// データ作成区分=31:振替の個別チェック
-		transferTargetList.forEach(target -> {
-			データ作成区分_31_振替の個別チェック(target);
-		});
+	@Test
+	@Transactional
+	public void 正常系_解約予定日待ち() throws ParseException {
+		// データ更新
+		context.getBean(DBConfig.class).initTargetTestData("sql/解約予定日待ち更新.sql");
+		// 検証
+		final String baseDate = "20200201";
+		try {
+			バッチ起動(baseDate);
+		} catch (ExitException e) {
+			Assert.fail("異常終了しました。試験失敗です。");
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了しました。試験失敗です。");
+		}
+		値検証(baseDate);
 	}
 
 	@Test
@@ -802,5 +788,58 @@ public class BatchApplicationTests extends TestBase {
 	private BigDecimal 消費税額計算_端数四捨五入(BigDecimal price, String taxrate) {
 		BigDecimal tax = new BigDecimal(taxrate).multiply(new BigDecimal(0.01));
 		return price.multiply(tax).setScale(0, BigDecimal.ROUND_DOWN);
+	}
+
+	private void 値検証(String baseDate) {
+		// バッチ実行により生成されたAccountingテーブルを取得
+		Iterable<Accounting> iterableAccounting = accountingRepository.findAll();
+		// 全チェック対象データリスト
+		List<Accounting> allTargetList = new ArrayList<>();
+		// チェック対象売上請求データリスト (データ作成区分=20)
+		List<Accounting> salesTargetList = new ArrayList<>();
+		// チェック対象振替データリスト (データ作成区分=31)
+		List<Accounting> transferTargetList = new ArrayList<>();
+
+		// Accountingテーブルの内容を、データ作成区分ごとに振り分ける
+		for (Accounting accounting : iterableAccounting) {
+			allTargetList.add(accounting);
+			if ("20".equals(accounting.getFfmDataPtn())) {
+				salesTargetList.add(accounting);
+			} else if ("31".equals(accounting.getFfmDataPtn())) {
+				transferTargetList.add(accounting);
+			}
+			if (accounting.getContractId() == 3) {
+				Assert.fail("対象外データ（計上年月日＞計上処理日）が抽出されています。");
+			} else if (accounting.getContractId() == 4) {
+				Assert.fail("対象外データ（費用種別!=月額(2or4)）が抽出されています。");
+			} else if (accounting.getContractId() == 5) {
+				Assert.fail("対象外データ（ランニング区分!=ランニング(2)）が抽出されています。");
+			} else if (accounting.getContractId() == 6) {
+				Assert.fail("対象外データ（ライフサイクル状態!=締結中(6)）が抽出されています。");
+			} else if (accounting.getContractId() == 7) {
+				Assert.fail("対象外データ（商品種類区分=CSP）が抽出されています。");
+			}
+		}
+
+		// 全データ共通のチェック
+		allTargetList.forEach(target -> {
+			try {
+				課金計上テーブル登録データ共通チェック(target);
+			} catch (ParseException e) {
+				Assert.fail("チェック処理に失敗しました");
+			}
+		});
+
+		// データ作成区分＝20:売上請求の個別チェック
+		// 契約明細の更新チェック
+		salesTargetList.forEach(target -> {
+			データ作成区分_20_売上請求チェック(target, baseDate);
+			契約明細の更新チェック(target.getContractDetailId());
+		});
+
+		// データ作成区分=31:振替の個別チェック
+		transferTargetList.forEach(target -> {
+			データ作成区分_31_振替の個別チェック(target);
+		});
 	}
 }
