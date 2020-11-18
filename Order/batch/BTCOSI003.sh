@@ -36,7 +36,7 @@ Log.Info "ファイル名：${FILE_NAME}" >> ${LOG_FILE_PATH}
 SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI003} "${DIR_PATH}" "${FILE_NAME}" > /dev/null 2>&1
 BATCH_RET=$?
 if [  ${BATCH_RET} == 2 ]; then
-  Log.Error "BTCOSI003:[SB]リプライCSV取込が一部失敗しました。リプライCSVに納入予定日無しの行が存在します。" >> ${LOG_FILE_PATH};
+  Log.Error "BTCOSI003:[SB]リプライCSV取込が一部失敗しました。ログを確認してください。" >> ${LOG_FILE_PATH};
   exit 2
 elif [  ${BATCH_RET} != 0 ]; then
   Log.Error "BTCOSI003:[SB]リプライCSV取込に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};

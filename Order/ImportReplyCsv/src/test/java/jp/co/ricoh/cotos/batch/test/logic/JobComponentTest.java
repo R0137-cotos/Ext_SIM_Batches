@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +38,7 @@ import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
 import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
 import jp.co.ricoh.cotos.component.RestApiClient;
+import jp.co.ricoh.cotos.logic.BatchComponent;
 import jp.co.ricoh.cotos.logic.JobComponent;
 import jp.co.ricoh.cotos.security.CreateJwt;
 
@@ -57,6 +59,9 @@ public class JobComponentTest extends TestBase {
 
 	@MockBean
 	RestApiClient restApiClient;
+
+	@SpyBean
+	BatchComponent batchComponent;
 
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
@@ -92,6 +97,8 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
+		} catch (ExitException e) {
+			Assert.assertEquals(e.getStatus(), 1);
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}
@@ -150,8 +157,10 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
+		} catch (ExitException e) {
+			Assert.assertEquals("意図した通りエラーが発生した", e.getStatus(), 2);
 		} catch (Exception e) {
-			Assert.fail("テスト失敗");
+			Assert.fail("意図しないエラーが発生した");
 		}
 
 	}
@@ -168,8 +177,10 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
+		} catch (ExitException e) {
+			Assert.assertEquals("意図した通りエラーが発生した", e.getStatus(), 2);
 		} catch (Exception e) {
-			Assert.fail("テスト失敗");
+			Assert.fail("意図しないエラーが発生した");
 		}
 	}
 
@@ -180,6 +191,8 @@ public class JobComponentTest extends TestBase {
 			Assert.fail("パラメータがないのに処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ステータス", 1, e.getStatus());
+		} catch (Exception e) {
+			Assert.fail("意図しないエラーが発生した");
 		}
 	}
 
@@ -190,6 +203,48 @@ public class JobComponentTest extends TestBase {
 			Assert.fail("パラメータが不正なのに処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ステータス", 1, e.getStatus());
+		} catch (Exception e) {
+			Assert.fail("意図しないエラーが発生した");
+		}
+	}
+
+	@Test
+	public void 異常系_納品日設定無し() throws Exception {
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
+
+		try {
+			jobComponent.run(new String[] { "src/test/resources/csv", "NoDeliveryExpectedDate.csv" });
+		} catch (ExitException e) {
+			Assert.assertEquals("意図した通りエラーが発生した", e.getStatus(), 2);
+		} catch (Exception e) {
+			Assert.fail("意図しないエラーが発生した");
+		}
+	}
+
+	@Test
+	public void 異常系_Exception発生() throws Exception {
+		Mockito.doThrow(new Exception()).when(batchComponent).execute(Mockito.any());
+		try {
+			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
+		} catch (ExitException e) {
+			Assert.assertEquals("意図した通りエラーが発生した", e.getStatus(), 1);
+		} catch (Exception e) {
+			Assert.fail("意図しないエラーが発生した");
+		}
+	}
+
+	@Test
+	public void 異常系_Throwable発生() throws Exception {
+		Mockito.doThrow(new Error()).when(batchComponent).execute(Mockito.any());
+		try {
+			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
+		} catch (ExitException e) {
+			Assert.assertEquals("意図した通りエラーが発生した", e.getStatus(), 1);
+		} catch (Exception e) {
+			Assert.fail("意図しないエラーが発生した");
 		}
 	}
 

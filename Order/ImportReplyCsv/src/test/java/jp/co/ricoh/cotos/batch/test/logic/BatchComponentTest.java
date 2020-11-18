@@ -45,6 +45,7 @@ import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
 import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.logic.BatchComponent;
 import jp.co.ricoh.cotos.security.CreateJwt;
+import jp.co.ricoh.cotos.util.ProcessErrorException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -175,8 +176,10 @@ public class BatchComponentTest extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (ProcessErrorException e) {
+			Assert.assertTrue("意図した通りエラーが発生した。", true);
 		} catch (Exception e) {
-			Assert.fail("エラーが発生した。");
+			Assert.fail("意図しないエラーが発生した。");
 		}
 	}
 
@@ -190,8 +193,10 @@ public class BatchComponentTest extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (ProcessErrorException e) {
+			Assert.assertTrue("意図した通りエラーが発生した。", true);
 		} catch (Exception e) {
-			Assert.fail("エラーが発生した。");
+			Assert.fail("意図しないエラーが発生した。");
 		}
 	}
 
@@ -205,8 +210,10 @@ public class BatchComponentTest extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (ProcessErrorException e) {
+			Assert.assertTrue("意図した通りエラーが発生した。", true);
 		} catch (Exception e) {
-			Assert.fail("エラーが発生した。");
+			Assert.fail("意図しないエラーが発生した。");
 		}
 	}
 
@@ -220,8 +227,10 @@ public class BatchComponentTest extends TestBase {
 		テストデータ作成("sql/insertTestData.sql");
 		try {
 			batchComponent.execute(new String[] { filePath, fileName });
+		} catch (ProcessErrorException e) {
+			Assert.assertTrue("意図した通りエラーが発生した。", true);
 		} catch (Exception e) {
-			Assert.fail("エラーが発生した。");
+			Assert.fail("意図しないエラーが発生した。");
 		}
 	}
 
