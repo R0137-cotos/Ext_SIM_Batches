@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.10.0 (19/11/2020)
+- [**closed**] #9149 [本番改善]SIMランニング計上バッチ対象契約条件修正 [#183](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/183)
+- [**closed**] #9128 APIのエラーを検知するように修正 [#182](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/182)
+
+---
+
 ## v3.9.0 (05/11/2020)
 - [**closed**] #8965 バッチ処理エラーをslackに通知するように修正 [#178](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/178)
 
