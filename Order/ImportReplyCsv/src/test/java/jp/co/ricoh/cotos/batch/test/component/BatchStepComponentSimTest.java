@@ -168,6 +168,24 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
+	public void 異常系_納入予定日スラッシュあり() {
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
+		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(契約詳細作成(""));
+
+		try {
+			List<ReplyOrderDto> list = 入力テストデータ作成(true);
+			list.get(0).setDeliveryExpectedDate("2020/11/04");
+			batchStepComponentSim.process(list);
+		} catch (IOException e) {
+			Assert.fail("意図しないエラーが発生した");
+		} catch (DeliveryExpectedDateException e) {
+			Assert.assertTrue("意図した通りエラーが発生した", true);
+		} catch (Exception e) {
+			Assert.fail("意図しないエラーが発生した");
+		}
+	}
+
+	@Test
 	public void 異常系_CSVに納入予定日無し() {
 		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(契約詳細作成(""));

@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,11 +170,16 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			List<ProductContract> productContractList = contractMap.getValue().getProductContractList();
 			List<ReplyOrderDto> replyOrderList = contractNumberGroupingMap.get(contractMap.getValue().getContractNumber() + String.format("%02d", contractMap.getValue().getContractBranchNumber()));
 
-			// 各契約リプライCSV一行目の納入予定日が空でない場合のみ、リプライCSV取込処理を実施する
+			Date deliveryExpectedDate = null;
 			if (!StringUtils.isEmpty(replyOrderList.get(0).getDeliveryExpectedDate())) {
+				deliveryExpectedDate = batchUtil.changeDate(replyOrderList.get(0).getDeliveryExpectedDate());
+			}
+
+			// 各契約リプライCSV一行目の納入予定日が空でないかつ正常な日付の場合のみ、リプライCSV取込処理を実施する
+			if (deliveryExpectedDate != null) {
 
 				// サービス開始希望日を設定
-				contract.setServiceTermStart(batchUtil.changeDate(replyOrderList.get(0).getDeliveryExpectedDate()));
+				contract.setServiceTermStart(deliveryExpectedDate);
 
 				// 拡張項目繰り返しを設定
 				for (ProductContract p : productContractList) {
