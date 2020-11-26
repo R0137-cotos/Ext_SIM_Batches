@@ -266,8 +266,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					}
 				}
 			} else {
-				// リプライCSV一行目の納入予定日が空の契約については、リプライCSV取込処理を行わずにログ出力のみ行う
-				log.fatal(String.format("契約ID=%dの契約更新に失敗しました。リプライCSVに納入予定日がありません。", contract.getId()));
+				// リプライCSV一行目の納入予定日が空もしくはフォーマットエラーの契約については、リプライCSV取込処理を行わずにログ出力のみ行う
+				log.fatal(String.format("契約ID=%dの契約更新に失敗しました。リプライCSVの納入予定日が未設定または指定フォーマットではありません。", contract.getId()));
 				isNoDeliveryExpectedDate[0] = true;
 			}
 		});
