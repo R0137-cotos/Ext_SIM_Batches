@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.11.0 (03/12/2020)
+- [**closed**] #9382 [本番障害]リプライ取込バッチ_納品予定日フォーマットエラー エラーメッセージ修正 [#188](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/188)
+- [**closed**] #9382 [本番障害]リプライ取込バッチ_納品予定日フォーマットエラー [#187](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/187)
+
+---
+
 ## v3.10.0 (19/11/2020)
 - [**closed**] #9149 [本番改善]SIMランニング計上バッチ対象契約条件修正 [#183](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/183)
 - [**closed**] #9128 APIのエラーを検知するように修正 [#182](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/182)
