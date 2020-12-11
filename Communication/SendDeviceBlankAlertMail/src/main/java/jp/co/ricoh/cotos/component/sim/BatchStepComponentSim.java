@@ -105,9 +105,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		// バウンスメールのヘッダーDTO
 		BounceMailHeaderDto bouncemailHeaderDto = new BounceMailHeaderDto();
 		Contract contract = contractRepository.findOne(serchMailTargetDto.getContractId());
-		bouncemailHeaderDto.setContractId(contract.getId());
+		bouncemailHeaderDto.setContractId(contract.getRjManageNumber());
 		bouncemailHeaderDto.setDocNumber(contract.getContractNumber());
-		bouncemailHeaderDto.setContractNumber(contract.getContractNumber());
+		bouncemailHeaderDto.setContractNumber(contract.getImmutableContIdentNumber());
 		bouncemailHeaderDto.setContractBranchNumber(contract.getContractBranchNumber());
 		try {
 			commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), mailAddressBccList, new ArrayList<String>(), mailTextRepalceValueList, null, bouncemailHeaderDto);
