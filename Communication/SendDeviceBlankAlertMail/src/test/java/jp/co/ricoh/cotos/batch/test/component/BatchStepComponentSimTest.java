@@ -137,12 +137,13 @@ public class BatchStepComponentSimTest extends TestBase {
 	@Test
 	@WithMockCustomUser
 	public void 正常系_メール送信テスト() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("sql/SendDeviceBlankAlertMailTests.sql");
 		List<SearchMailTargetDto> serchMailTargetDtoList = new ArrayList<SearchMailTargetDto>();
 		SearchMailTargetDto serchMailTargetDto = new SearchMailTargetDto();
 		serchMailTargetDto.setSeqNo(1L);
 		serchMailTargetDto.setProductGrpMasterId(300L);
 		serchMailTargetDto.setMailAddress("test@example.com");
-		serchMailTargetDto.setContractId(10L);
+		serchMailTargetDto.setContractId(140L);
 		serchMailTargetDtoList.add(serchMailTargetDto);
 		long controlId = 3100;
 		try {

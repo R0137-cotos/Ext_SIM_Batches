@@ -1,6 +1,6 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -140,7 +140,7 @@ public class BatchComponentTest extends TestBase {
 	public void 正常系_メール送信エラー() throws IOException {
 		context.getBean(DBConfig.class).initTargetTestData("sql/SendDeviceBlankAlertMailTests.sql");
 		try {
-			doThrow(new MessagingException()).when(commonSendMail).findMailTemplateMasterAndSendMail(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+			doThrow(new MessagingException()).when(commonSendMail).findMailTemplateMasterAndSendMail(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 			batchComponent.execute(new String[] { "20200203" });
 			mailSendHistoryRepository.count();
 			List<MailSendHistory> mailHistorytList = (List<MailSendHistory>) mailSendHistoryRepository.findAll();

@@ -12,12 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
+import jp.co.ricoh.cotos.commonlib.dto.parameter.communication.BounceMailHeaderDto;
 import jp.co.ricoh.cotos.commonlib.entity.EnumType.ServiceCategory;
 import jp.co.ricoh.cotos.commonlib.entity.common.MailSendHistory;
 import jp.co.ricoh.cotos.commonlib.entity.common.MailSendHistory.MailSendType;
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.master.MailControlMaster;
 import jp.co.ricoh.cotos.commonlib.logic.mail.CommonSendMail;
 import jp.co.ricoh.cotos.commonlib.repository.common.MailSendHistoryRepository;
+import jp.co.ricoh.cotos.commonlib.repository.contract.ContractRepository;
 import jp.co.ricoh.cotos.commonlib.repository.master.MailControlMasterRepository;
 import jp.co.ricoh.cotos.component.BatchUtil;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
@@ -39,6 +42,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Autowired
 	MailControlMasterRepository mailControlMasterRepository;
+
+	@Autowired
+	ContractRepository contractRepository;
 
 	@Autowired
 	BatchUtil batchUtil;
@@ -86,7 +92,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	 * @param mailControlMaster
 	 * @param entity
 	 * @param transactionId
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private void sendMailAndSaveHistory(SearchMailTargetDto serchMailTargetDto, MailControlMaster mailControlMaster) throws Exception {
 		List<String> mailAddressList = new ArrayList<String>();
@@ -95,8 +101,16 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		mailAddressBccList.add(AUDIT_TRAIL_MAIL_ADDRESS);
 		List<String> mailTextRepalceValueList = new ArrayList<String>();
 		mailTextRepalceValueList.add(batchUtil.getTargetDocUrl(serchMailTargetDto.getContractId()));
+
+		// バウンスメールのヘッダーDTO
+		BounceMailHeaderDto bouncemailHeaderDto = new BounceMailHeaderDto();
+		Contract contract = contractRepository.findOne(serchMailTargetDto.getContractId());
+		bouncemailHeaderDto.setContractId(contract.getRjManageNumber());
+		bouncemailHeaderDto.setDocNumber(contract.getContractNumber());
+		bouncemailHeaderDto.setContractNumber(contract.getImmutableContIdentNumber());
+		bouncemailHeaderDto.setContractBranchNumber(contract.getContractBranchNumber());
 		try {
-			commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), mailAddressBccList, new ArrayList<String>(), mailTextRepalceValueList, null);
+			commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), mailAddressBccList, new ArrayList<String>(), mailTextRepalceValueList, null, bouncemailHeaderDto);
 
 			// 送信履歴を更新
 			MailSendHistory mailSendHistory = mailSendHistoryRepository.findByTargetDataIdAndMailControlMasterAndMailSendType(serchMailTargetDto.getContractId(), mailControlMaster, MailSendType.未送信);
