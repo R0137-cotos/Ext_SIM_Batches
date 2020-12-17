@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.12.0 (17/12/2020)
+- [**closed**] #8494 メールヘッダーに設定する項目を変更 [#191](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/191)
+- [**closed**] #8494 バウンスメール対応 [#181](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/181)
+
+---
+
 ## v3.11.0 (03/12/2020)
 - [**closed**] #9382 [本番障害]リプライ取込バッチ_納品予定日フォーマットエラー エラーメッセージ修正 [#188](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/188)
 - [**closed**] #9382 [本番障害]リプライ取込バッチ_納品予定日フォーマットエラー [#187](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/187)
