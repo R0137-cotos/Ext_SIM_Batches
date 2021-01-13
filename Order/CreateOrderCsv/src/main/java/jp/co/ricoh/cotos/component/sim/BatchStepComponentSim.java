@@ -153,7 +153,23 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						}
 					}
 
-					shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), o.getShortestDeliveryDate(), false, vendorNameList);
+					// エクセルファイル突き合わせ
+					int shortestDeliveryDate = o.getShortestDeliveryDate();
+					String postNumber = batchUtil.getPostNumber(o.getContractIdTemp());
+					switch (batchUtil.getSagawaCodeColumnF(postNumber)) {
+					case "1":
+						shortestDeliveryDate -= 1;
+						break;
+					case "2":
+						// 変更なし
+						break;
+					case "3日以上":
+					case "不能":
+					case "離島は問合せ":
+						shortestDeliveryDate += 1;
+					}
+
+					shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), shortestDeliveryDate, false, vendorNameList);
 					return shortBusinessDay.compareTo(o.getConclusionPreferredDate()) > -1;
 				} else if ("2".equals(dto.getType())) {
 					// 処理年月日の次月1日
