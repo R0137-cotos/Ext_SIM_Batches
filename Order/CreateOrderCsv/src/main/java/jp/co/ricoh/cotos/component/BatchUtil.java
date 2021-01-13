@@ -63,7 +63,7 @@ public class BatchUtil {
 	}
 
 	/**
-	 * 設置先（契約用）取得API呼び出し
+	 * 設置先（契約用）取得
 	 * @param contId
 	 * @return
 	 */
