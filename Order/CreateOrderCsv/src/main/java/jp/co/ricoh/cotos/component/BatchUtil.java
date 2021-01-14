@@ -85,7 +85,7 @@ public class BatchUtil {
 		} else {
 			postNumber = contractInstallationLocation.getPostNumber();
 		}
-		postNumber.replace("-", "");
+		postNumber = postNumber.replace("-", "");
 		return postNumber;
 	}
 

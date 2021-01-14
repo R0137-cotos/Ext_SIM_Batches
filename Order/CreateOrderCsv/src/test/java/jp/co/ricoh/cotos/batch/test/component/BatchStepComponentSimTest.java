@@ -1191,7 +1191,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_1() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_取得項目値が1() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1253,7 +1253,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_3日以上() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_取得項目値が3日以上() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1315,7 +1315,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_不能() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_取得項目値が不能() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1377,7 +1377,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_離島は問合せ() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_取得項目値が離島は問合せ() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1439,7 +1439,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_inputPostNumber() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_手入力が存在した場合() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1501,7 +1501,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_1() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_取得項目値が1() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1576,7 +1576,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_3日以上() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_取得項目値が3日以上() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1653,7 +1653,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_不能() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_取得項目値が不能() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1730,7 +1730,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_離島は問合せ() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_取得項目値が離島は問合せ() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1807,7 +1807,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_1() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_取得項目値が1() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1882,7 +1882,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_3日以上() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_取得項目値が3日以上() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1959,7 +1959,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_不能() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_取得項目値が不能() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -2036,7 +2036,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_離島は問合せ() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_取得項目値が離島は問合せ() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -2207,7 +2207,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		}
 		// 0070834 2
 		if (isInputPostNumber) {
-			contractInstallationLocation.setInputPostNumber("0070834");
+			contractInstallationLocation.setInputPostNumber("007-0834");
 		}
 
 		return contractInstallationLocation;
