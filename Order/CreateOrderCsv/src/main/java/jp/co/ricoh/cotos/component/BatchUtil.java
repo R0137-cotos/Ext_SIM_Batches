@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractInstallationLocation;
+import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractInstallationLocationRepository;
 
 @Component
@@ -32,6 +33,9 @@ public class BatchUtil {
 
 	@Autowired
 	ContractInstallationLocationRepository contractInstallationLocationRepository;
+
+	@Autowired
+	CheckUtil checkUtil;
 
 	/**
 	 * 文字列を日付に変換する
@@ -82,17 +86,23 @@ public class BatchUtil {
 		List<String> postNumberList = new ArrayList<String>();
 		ContractInstallationLocation contractInstallationLocation = findContractInstallationLocation(contId);
 
-		if (StringUtils.isNotBlank(contractInstallationLocation.getInputPostNumber())) {
-			postNumberList.add(contractInstallationLocation.getInputPostNumber());
-		}
-		postNumberList.add(contractInstallationLocation.getPostNumber());
-
-		for (int i = 0; i < postNumberList.size(); i++) {
-			if (StringUtils.isNotBlank(postNumberList.get(i))) {
-				postNumberList.set(i, postNumberList.get(i).replace("-", ""));
-			}
+		if (null != contractInstallationLocation) {
+			postNumberList.add(deleteHyphen(contractInstallationLocation.getInputPostNumber()));
+			postNumberList.add(deleteHyphen(contractInstallationLocation.getPostNumber()));
 		}
 		return postNumberList;
+	}
+
+	/**
+	 * -(ハイフン)を省く
+	 * @param str
+	 * @return
+	 */
+	private String deleteHyphen(String str) {
+		if (StringUtils.isNotBlank(str)) {
+			return str.replace("-", "");
+		}
+		return str;
 	}
 
 	/**
