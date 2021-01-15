@@ -4,7 +4,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -76,17 +78,21 @@ public class BatchUtil {
 	 * @param contId
 	 * @return
 	 */
-	public String getPostNumber(long contId) {
-		String postNumber = null;
+	public List<String> getPostNumber(long contId) {
+		List<String> postNumberList = new ArrayList<String>();
 		ContractInstallationLocation contractInstallationLocation = findContractInstallationLocation(contId);
 
 		if (StringUtils.isNotBlank(contractInstallationLocation.getInputPostNumber())) {
-			postNumber = contractInstallationLocation.getInputPostNumber();
-		} else {
-			postNumber = contractInstallationLocation.getPostNumber();
+			postNumberList.add(contractInstallationLocation.getInputPostNumber());
 		}
-		postNumber = postNumber.replace("-", "");
-		return postNumber;
+		postNumberList.add(contractInstallationLocation.getPostNumber());
+
+		for (int i = 0; i < postNumberList.size(); i++) {
+			if (StringUtils.isNotBlank(postNumberList.get(i))) {
+				postNumberList.set(i, postNumberList.get(i).replace("-", ""));
+			}
+		}
+		return postNumberList;
 	}
 
 	/**
@@ -94,7 +100,7 @@ public class BatchUtil {
 	 * @param postNumber
 	 * @return
 	 */
-	public String getSagawaCodeColumnF(String postNumber) {
+	public String getSagawaCodeColumnF(List<String> postNumberList) {
 		FileInputStream in = null;
 		Workbook wb = null;
 
@@ -103,32 +109,32 @@ public class BatchUtil {
 			in = new FileInputStream("src/main/resources/file/佐川コード突き当て.xlsx");
 			wb = WorkbookFactory.create(in);
 		} catch (IOException e) {
-			System.out.println(e.toString());
+			e.printStackTrace();
 		} catch (InvalidFormatException e) {
-			System.out.println(e.toString());
+			e.printStackTrace();
 		} finally {
 			try {
 				in.close();
 			} catch (IOException e) {
-				System.out.println(e.toString());
+				e.printStackTrace();
 			}
 		}
 
 		Sheet sheet = wb.getSheetAt(0);
 
 		// 行が見つからなくなるか、項目値が取得できるまで繰り返す
-		for (Row row : sheet) {
-			// A列と郵便番号を比較し、F列を取得
-			if (postNumber.equals(row.getCell(0).getStringCellValue())) {
-				switch (row.getCell(5).getCachedFormulaResultTypeEnum()) {
-				case NUMERIC:
-					System.out.println(String.valueOf((int) row.getCell(5).getNumericCellValue()));
-					return String.valueOf((int) row.getCell(5).getNumericCellValue());
-				case STRING:
-					System.out.println(row.getCell(5).getStringCellValue());
-					return row.getCell(5).getStringCellValue();
-				default:
-					return null;
+		for (String postNumber : postNumberList) {
+			for (Row row : sheet) {
+				// A列と郵便番号を比較し、F列を取得
+				if (postNumber.equals(row.getCell(0).getStringCellValue())) {
+					switch (row.getCell(5).getCachedFormulaResultTypeEnum()) {
+					case NUMERIC:
+						return String.valueOf((int) row.getCell(5).getNumericCellValue());
+					case STRING:
+						return row.getCell(5).getStringCellValue();
+					default:
+						return null;
+					}
 				}
 			}
 		}

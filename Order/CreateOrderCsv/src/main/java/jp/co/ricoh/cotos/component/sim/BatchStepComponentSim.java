@@ -104,6 +104,18 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	private static final int NOT_DISENGAGEMENT = 0;
 
+	private static final String SAGAWA_CODE_COULMN_F_1 = "1";
+
+	private static final String SAGAWA_CODE_COULMN_F_2 = "2";
+
+	private static final String SAGAWA_CODE_COULMN_F_ORVER_3 = "3日以上";
+
+	private static final String SAGAWA_CODE_COULMN_F_IMP = "不能";
+
+	private static final String SAGAWA_CODE_COULMN_F_ILD = "離島は問合せ";
+
+	private static final String SAGAWA_CODE_COULMN_F_ERROR = "ERROR";
+
 	@Override
 	@Transactional
 	public boolean process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
@@ -155,18 +167,26 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 					// エクセルファイル突き合わせ
 					int shortestDeliveryDate = o.getShortestDeliveryDate();
-					String postNumber = batchUtil.getPostNumber(o.getContractIdTemp());
-					switch (batchUtil.getSagawaCodeColumnF(postNumber)) {
-					case "1":
+					List<String> postNumber = batchUtil.getPostNumber(o.getContractIdTemp());
+					// 配送にかかる日数を地域に合わせる
+					String sagawaCodeColumnF = batchUtil.getSagawaCodeColumnF(postNumber);
+					if (StringUtils.isBlank(sagawaCodeColumnF)) {
+						sagawaCodeColumnF = "ERROR";
+					}
+					switch (sagawaCodeColumnF) {
+					case SAGAWA_CODE_COULMN_F_1:
 						shortestDeliveryDate -= 1;
 						break;
-					case "2":
+					case SAGAWA_CODE_COULMN_F_2:
 						// 変更なし
 						break;
-					case "3日以上":
-					case "不能":
-					case "離島は問合せ":
+					case SAGAWA_CODE_COULMN_F_ORVER_3:
+					case SAGAWA_CODE_COULMN_F_IMP:
+					case SAGAWA_CODE_COULMN_F_ILD:
+					case SAGAWA_CODE_COULMN_F_ERROR:
 						shortestDeliveryDate += 1;
+						break;
+					//取得できなかったとき
 					}
 
 					shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), shortestDeliveryDate, false, vendorNameList);

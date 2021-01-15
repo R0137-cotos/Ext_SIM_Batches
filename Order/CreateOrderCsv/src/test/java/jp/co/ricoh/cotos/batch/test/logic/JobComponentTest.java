@@ -121,7 +121,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("2", false)).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
@@ -144,7 +144,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(null);
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("2", false)).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
@@ -471,7 +471,7 @@ public class JobComponentTest extends TestBase {
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callAcceptWorkApi(anyList());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindOneContractApi(anyLong());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("2", false)).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
@@ -493,7 +493,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("2", false)).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
@@ -515,7 +515,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindOneContractApi(anyLong());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("2", false)).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
@@ -592,10 +592,11 @@ public class JobComponentTest extends TestBase {
 	 * @param isInputPostNumber
 	 * @return
 	 */
-	private ContractInstallationLocation ContractInstallationLocationMock(String wantSagawaCodeColumnF, boolean isInputPostNumber) {
+	private ContractInstallationLocation ContractInstallationLocationMock(String wantSagawaCodeColumnF, String isInputPostNumber) {
 		ContractInstallationLocation contractInstallationLocation = new ContractInstallationLocation();
 		contractInstallationLocation.setId(1);
 
+		// 郵便番号をセット
 		// 9633602 1
 		// 6890535 2
 		// 9020067 3日以上
@@ -617,10 +618,24 @@ public class JobComponentTest extends TestBase {
 		case "不能":
 			contractInstallationLocation.setPostNumber("9750000");
 			break;
+		case "失敗":
+			contractInstallationLocation.setPostNumber("0000000000000");
+			break;
+		case "無":
+			break;
 		}
+		// isInputPostNumberがtrueの時郵便番号(手入力)に郵便番号をセット
 		// 0070834 2
-		if (isInputPostNumber) {
-			contractInstallationLocation.setInputPostNumber("0070834");
+		switch (isInputPostNumber) {
+		case "無":
+			break;
+		case "2":
+			contractInstallationLocation.setInputPostNumber("007-0834");
+			break;
+		case "失敗":
+			contractInstallationLocation.setInputPostNumber("0000000000000");
+			break;
+		default:
 		}
 
 		return contractInstallationLocation;
