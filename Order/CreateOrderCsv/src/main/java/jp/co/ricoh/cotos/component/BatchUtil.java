@@ -78,7 +78,7 @@ public class BatchUtil {
 	}
 
 	/**
-	 * 郵便番号取得（-(ハイフン)を省く）
+	 * 郵便番号取得
 	 * @param contId
 	 * @return
 	 */
