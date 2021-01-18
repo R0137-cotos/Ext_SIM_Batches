@@ -136,7 +136,7 @@ public class BatchUtil {
 		for (String postNumber : postNumberList) {
 			for (Row row : sheet) {
 				// A列と郵便番号を比較し、F列を取得
-				if (postNumber.equals(row.getCell(0).getStringCellValue())) {
+				if (row.getCell(0).getStringCellValue().equals(postNumber)) {
 					switch (row.getCell(5).getCachedFormulaResultTypeEnum()) {
 					case NUMERIC:
 						return String.valueOf((int) row.getCell(5).getNumericCellValue());
