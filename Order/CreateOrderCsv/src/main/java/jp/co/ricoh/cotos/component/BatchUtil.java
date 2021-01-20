@@ -115,18 +115,25 @@ public class BatchUtil {
 		Workbook wb = null;
 
 		// エクセルファイルを読み込む
+		Exception error = null;
 		try {
 			in = new FileInputStream("src/main/resources/file/佐川コード突き当て.xlsx");
 			wb = WorkbookFactory.create(in);
 		} catch (IOException e) {
 			e.printStackTrace();
+			error = e;
 		} catch (InvalidFormatException e) {
 			e.printStackTrace();
+			error = e;
 		} finally {
 			try {
 				in.close();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
+				return "ERROR";
+			}
+			if (error != null) {
+				return "ERROR";
 			}
 		}
 

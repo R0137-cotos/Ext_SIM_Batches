@@ -2388,6 +2388,70 @@ public class BatchStepComponentSimTest extends TestBase {
 		fileDeleate(outputPath + outputFileName);
 	}
 
+	@Test
+	@Ignore //デバッグモードにてgetSagawaCodeColumnF()のエクセルファイル読み込みでIOException InvalidFormatException確認用
+	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付無し_ファイルエラー() throws IOException, ParseException {
+		String outputFileName = "result_initial.csv";
+		String tempFileName = "temp.csv";
+
+		fileDeleate(outputPath + outputFileName);
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
+
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
+
+		// バッチ起動引数
+		// 20191018 ← 非営業日カレンダーマスタに存在しないことを想定
+		CreateOrderCsvDto dto = new CreateOrderCsvDto();
+		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
+		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
+		dto.setOperationDate("20191018");
+		dto.setType("1");
+
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
+		createOrderCsvDataDto.setId(1L);
+		createOrderCsvDataDto.setContractIdTemp(1L);
+		createOrderCsvDataDto.setContractNumber("CC2019122400101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
+		createOrderCsvDataDto.setQuantity("1");
+		createOrderCsvDataDto.setRicohItemCode("SI0001");
+		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
+		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
+		createOrderCsvDataDto.setShortestDeliveryDate(8);
+		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
+		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
+		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
+		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
+		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
+		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
+		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
+		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
+		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setContractDetailId(11L);
+		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
+		createOrderCsvDataDto.setContractType(ContractType.新規);
+		createOrderCsvDataDto.setVendorShortName("SB");
+		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
+		orderDataList.add(createOrderCsvDataDto);
+
+		try {
+			batchStepComponent.process(dto, orderDataList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了");
+		}
+		File csvFile = Paths.get(outputPath, outputFileName).toFile();
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", csvFile.exists());
+		fileDeleate(outputPath + outputFileName);
+	}
+
 	private List<ContractDetail> getContractDetailList() {
 		List<ContractDetail> contractDetailList = new ArrayList<ContractDetail>();
 		ContractDetail contractDetail = new ContractDetail();
