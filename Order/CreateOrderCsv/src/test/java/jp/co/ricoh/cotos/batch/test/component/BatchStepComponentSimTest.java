@@ -1586,8 +1586,9 @@ public class BatchStepComponentSimTest extends TestBase {
 		Mockito.doReturn(ContractInstallationLocationMock("3日以上", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
-		// 20191016 サービス利用希望日 - 8営業日 +1 ※共通の非営業日マスタだと最短納期日範囲外
-		// 20191017 サービス利用希望日 - 8営業日
+		// 20191015 サービス利用希望日 - 8営業日 +1 ※共通の非営業日マスタだと最短納期日範囲外
+		// 20191016 サービス利用希望日 - 8営業日
+		// 20191017 SBのみ非営業日
 		// 20191018 サービス利用希望日 - 7営業日
 		// 20191019 非営業日
 		// 20191020 非営業日
@@ -1605,7 +1606,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
 		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191016");
+		dto.setOperationDate("20191015");
 		dto.setType("1");
 
 		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -1663,8 +1664,9 @@ public class BatchStepComponentSimTest extends TestBase {
 		Mockito.doReturn(ContractInstallationLocationMock("不能", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
-		// 20191016 サービス利用希望日 - 8営業日 +1 ※共通の非営業日マスタだと最短納期日範囲外
-		// 20191017 サービス利用希望日 - 8営業日
+		// 20191015 サービス利用希望日 - 8営業日 +1 ※共通の非営業日マスタだと最短納期日範囲外
+		// 20191016 サービス利用希望日 - 8営業日
+		// 20191017 SBのみ非営業日
 		// 20191018 サービス利用希望日 - 7営業日
 		// 20191019 非営業日
 		// 20191020 非営業日
@@ -1682,7 +1684,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
 		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191016");
+		dto.setOperationDate("20191015");
 		dto.setType("1");
 
 		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -1740,8 +1742,9 @@ public class BatchStepComponentSimTest extends TestBase {
 		Mockito.doReturn(ContractInstallationLocationMock("離島は問合せ", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
-		// 20191016 サービス利用希望日 - 8営業日 +1 ※共通の非営業日マスタだと最短納期日範囲外
-		// 20191017 サービス利用希望日 - 8営業日
+		// 20191015 サービス利用希望日 - 8営業日 +1 ※共通の非営業日マスタだと最短納期日範囲外
+		// 20191016 サービス利用希望日 - 8営業日
+		// 20191017 SBのみ非営業日
 		// 20191018 サービス利用希望日 - 7営業日
 		// 20191019 非営業日
 		// 20191020 非営業日
@@ -1759,7 +1762,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
 		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191016");
+		dto.setOperationDate("20191015");
 		dto.setType("1");
 
 		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -1970,7 +1973,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 		// SBの営業日
 		// 20191016 最短納期日範囲外のため、CSV出力されない
-		// 20191017 非営業日
+		// 20191017 SBのみ非営業日
 		// 20191018 サービス利用希望日 - 7営業日(8営業日 -1)
 		// 20191019 非営業日
 		// 20191020 非営業日
@@ -1978,7 +1981,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// 20191022 非営業日
 		// 20191023 サービス利用希望日 - 5営業日
 		// 20191024 サービス利用希望日 - 4営業日
-		// 20191025 非営業日
+		// 20191025 SBのみ非営業日
 		// 20191026 非営業日
 		// 20191027 非営業日
 		// 20191028 サービス利用希望日 - 3営業日
@@ -2047,7 +2050,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// SBの営業日
 		// 20191015 最短納期日範囲外のため、CSV出力されない
 		// 20191016 サービス利用希望日 - 8営業日
-		// 20191017 非営業日
+		// 20191017 SBのみ非営業日
 		// 20191018 サービス利用希望日 - 7営業日
 		// 20191019 非営業日
 		// 20191020 非営業日
@@ -2055,7 +2058,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// 20191022 非営業日
 		// 20191023 サービス利用希望日 - 5営業日
 		// 20191024 サービス利用希望日 - 4営業日
-		// 20191025 非営業日
+		// 20191025 SBのみ非営業日
 		// 20191026 非営業日
 		// 20191027 非営業日
 		// 20191028 サービス利用希望日 - 3営業日
@@ -2125,7 +2128,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// 20191014 最短納期日範囲外のため、CSV出力されない
 		// 20191015 サービス利用希望日 - 8営業日 +1
 		// 20191016 サービス利用希望日 - 8営業日
-		// 20191017 非営業日
+		// 20191017 SBのみ非営業日
 		// 20191018 サービス利用希望日 - 7営業日
 		// 20191019 非営業日
 		// 20191020 非営業日
@@ -2133,7 +2136,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// 20191022 非営業日
 		// 20191023 サービス利用希望日 - 5営業日
 		// 20191024 サービス利用希望日 - 4営業日
-		// 20191025 非営業日
+		// 20191025 SBのみ非営業日
 		// 20191026 非営業日
 		// 20191027 非営業日
 		// 20191028 サービス利用希望日 - 3営業日
@@ -2202,7 +2205,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// SBの営業日
 		// 20191015 最短納期日範囲外のため、CSV出力されない
 		// 20191016 サービス利用希望日 - 8営業日 +1
-		// 20191017 非営業日
+		// 20191017 SBのみ非営業日
 		// 20191018 サービス利用希望日 - 8営業日
 		// 20191019 非営業日
 		// 20191020 非営業日
@@ -2210,7 +2213,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// 20191022 非営業日
 		// 20191023 サービス利用希望日 - 5営業日
 		// 20191024 サービス利用希望日 - 4営業日
-		// 20191025 非営業日
+		// 20191025 SBのみ非営業日
 		// 20191026 非営業日
 		// 20191027 非営業日
 		// 20191028 サービス利用希望日 - 3営業日
@@ -2280,7 +2283,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// 20191014 最短納期日範囲外のため、CSV出力されない
 		// 20191015 サービス利用希望日 - 8営業日 +1
 		// 20191016 サービス利用希望日 - 8営業日
-		// 20191017 非営業日
+		// 20191017 SBのみ非営業日
 		// 20191018 サービス利用希望日 - 7営業日
 		// 20191019 非営業日
 		// 20191020 非営業日
@@ -2288,7 +2291,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// 20191022 非営業日
 		// 20191023 サービス利用希望日 - 5営業日
 		// 20191024 サービス利用希望日 - 4営業日
-		// 20191025 非営業日
+		// 20191025 SBのみ非営業日
 		// 20191026 非営業日
 		// 20191027 非営業日
 		// 20191028 サービス利用希望日 - 3営業日
