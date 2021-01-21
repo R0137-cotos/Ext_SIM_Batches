@@ -438,7 +438,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
-		// 20191017 サービス利用希望日 - 8営業日 ※共通の非営業日マスタだと最短納期日範囲外
+		// 20191016 サービス利用希望日 - 8営業日 ※共通の非営業日マスタだと最短納期日範囲外
+		// 20191017 SBのみ非営業日
 		// 20191018 サービス利用希望日 - 7営業日
 		// 20191019 非営業日
 		// 20191020 非営業日
@@ -456,7 +457,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
 		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191017");
+		dto.setOperationDate("20191016");
 		dto.setType("1");
 
 		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
