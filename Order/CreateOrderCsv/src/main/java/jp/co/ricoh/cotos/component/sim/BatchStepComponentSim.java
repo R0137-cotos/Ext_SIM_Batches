@@ -190,7 +190,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						break;
 					case SAGAWA_CODE_COULMN_F_ERROR:
 						errorDataIdList.add(o.getContractIdTemp());
-						log.fatal(String.format("契約明細ID=%d時にエクセルファイルの読み込みに失敗しました。", o.getContractIdTemp()));
+						log.fatal(String.format("契約明細ID=%dについてのオーダーCSV出力有無判定処理実行時に佐川コード突き当てファイルの読み込みに失敗しました。", o.getContractIdTemp()));
 						return false;
 					}
 

@@ -1191,441 +1191,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_取得項目値が1() throws IOException, ParseException {
-		String outputFileName = "result_initial.csv";
-		String tempFileName = "temp.csv";
-
-		fileDeleate(outputPath + outputFileName);
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
-		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("1", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
-
-		// バッチ起動引数
-		// 20191018 ← 非営業日カレンダーマスタに存在しないことを想定
-		CreateOrderCsvDto dto = new CreateOrderCsvDto();
-		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
-		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191018");
-		dto.setType("1");
-
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
-		createOrderCsvDataDto.setId(3L);
-		createOrderCsvDataDto.setContractIdTemp(3L);
-		createOrderCsvDataDto.setContractNumber("CC2019122400103");
-		createOrderCsvDataDto.setContractBranchNumber(1);
-		createOrderCsvDataDto.setQuantity("1");
-		createOrderCsvDataDto.setRicohItemCode("SI0001");
-		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
-		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
-		createOrderCsvDataDto.setShortestDeliveryDate(8);
-		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
-		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
-		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
-		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
-		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
-		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
-		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
-		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
-		createOrderCsvDataDto.setContractDetailId(11L);
-		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
-		createOrderCsvDataDto.setContractType(ContractType.新規);
-		createOrderCsvDataDto.setVendorShortName("SB");
-		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
-		orderDataList.add(createOrderCsvDataDto);
-		try {
-			batchStepComponent.process(dto, orderDataList);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail("異常終了");
-		}
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + outputFileName));
-		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/expected_Toukibo.csv"));
-		Assert.assertArrayEquals(expected, actuals);
-		fileDeleate(outputPath + outputFileName);
-	}
-
-	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_取得項目値が3日以上() throws IOException, ParseException {
-		String outputFileName = "result_initial.csv";
-		String tempFileName = "temp.csv";
-
-		fileDeleate(outputPath + outputFileName);
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
-		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("3日以上", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
-
-		// バッチ起動引数
-		// 20191018 ← 非営業日カレンダーマスタに存在しないことを想定
-		CreateOrderCsvDto dto = new CreateOrderCsvDto();
-		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
-		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191018");
-		dto.setType("1");
-
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
-		createOrderCsvDataDto.setId(3L);
-		createOrderCsvDataDto.setContractIdTemp(3L);
-		createOrderCsvDataDto.setContractNumber("CC2019122400103");
-		createOrderCsvDataDto.setContractBranchNumber(1);
-		createOrderCsvDataDto.setQuantity("1");
-		createOrderCsvDataDto.setRicohItemCode("SI0001");
-		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
-		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
-		createOrderCsvDataDto.setShortestDeliveryDate(8);
-		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
-		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
-		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
-		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
-		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
-		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
-		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
-		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
-		createOrderCsvDataDto.setContractDetailId(11L);
-		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
-		createOrderCsvDataDto.setContractType(ContractType.新規);
-		createOrderCsvDataDto.setVendorShortName("SB");
-		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
-		orderDataList.add(createOrderCsvDataDto);
-		try {
-			batchStepComponent.process(dto, orderDataList);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail("異常終了");
-		}
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + outputFileName));
-		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/expected_Toukibo.csv"));
-		Assert.assertArrayEquals(expected, actuals);
-		fileDeleate(outputPath + outputFileName);
-	}
-
-	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_取得項目値が不能() throws IOException, ParseException {
-		String outputFileName = "result_initial.csv";
-		String tempFileName = "temp.csv";
-
-		fileDeleate(outputPath + outputFileName);
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
-		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("不能", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
-
-		// バッチ起動引数
-		// 20191018 ← 非営業日カレンダーマスタに存在しないことを想定
-		CreateOrderCsvDto dto = new CreateOrderCsvDto();
-		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
-		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191018");
-		dto.setType("1");
-
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
-		createOrderCsvDataDto.setId(3L);
-		createOrderCsvDataDto.setContractIdTemp(3L);
-		createOrderCsvDataDto.setContractNumber("CC2019122400103");
-		createOrderCsvDataDto.setContractBranchNumber(1);
-		createOrderCsvDataDto.setQuantity("1");
-		createOrderCsvDataDto.setRicohItemCode("SI0001");
-		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
-		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
-		createOrderCsvDataDto.setShortestDeliveryDate(8);
-		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
-		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
-		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
-		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
-		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
-		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
-		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
-		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
-		createOrderCsvDataDto.setContractDetailId(11L);
-		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
-		createOrderCsvDataDto.setContractType(ContractType.新規);
-		createOrderCsvDataDto.setVendorShortName("SB");
-		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
-		orderDataList.add(createOrderCsvDataDto);
-		try {
-			batchStepComponent.process(dto, orderDataList);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail("異常終了");
-		}
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + outputFileName));
-		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/expected_Toukibo.csv"));
-		Assert.assertArrayEquals(expected, actuals);
-		fileDeleate(outputPath + outputFileName);
-	}
-
-	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_取得項目値が離島は問合せ() throws IOException, ParseException {
-		String outputFileName = "result_initial.csv";
-		String tempFileName = "temp.csv";
-
-		fileDeleate(outputPath + outputFileName);
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
-		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("離島は問合せ", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
-
-		// バッチ起動引数
-		// 20191018 ← 非営業日カレンダーマスタに存在しないことを想定
-		CreateOrderCsvDto dto = new CreateOrderCsvDto();
-		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
-		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191018");
-		dto.setType("1");
-
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
-		createOrderCsvDataDto.setId(3L);
-		createOrderCsvDataDto.setContractIdTemp(3L);
-		createOrderCsvDataDto.setContractNumber("CC2019122400103");
-		createOrderCsvDataDto.setContractBranchNumber(1);
-		createOrderCsvDataDto.setQuantity("1");
-		createOrderCsvDataDto.setRicohItemCode("SI0001");
-		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
-		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
-		createOrderCsvDataDto.setShortestDeliveryDate(8);
-		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
-		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
-		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
-		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
-		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
-		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
-		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
-		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
-		createOrderCsvDataDto.setContractDetailId(11L);
-		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
-		createOrderCsvDataDto.setContractType(ContractType.新規);
-		createOrderCsvDataDto.setVendorShortName("SB");
-		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
-		orderDataList.add(createOrderCsvDataDto);
-		try {
-			batchStepComponent.process(dto, orderDataList);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail("異常終了");
-		}
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + outputFileName));
-		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/expected_Toukibo.csv"));
-		Assert.assertArrayEquals(expected, actuals);
-		fileDeleate(outputPath + outputFileName);
-	}
-
-	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_手入力が存在した場合() throws IOException, ParseException {
-		String outputFileName = "result_initial.csv";
-		String tempFileName = "temp.csv";
-
-		fileDeleate(outputPath + outputFileName);
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
-		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("1", "2")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
-
-		// バッチ起動引数
-		// 20191018 ← 非営業日カレンダーマスタに存在しないことを想定
-		CreateOrderCsvDto dto = new CreateOrderCsvDto();
-		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
-		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191018");
-		dto.setType("1");
-
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
-		createOrderCsvDataDto.setId(3L);
-		createOrderCsvDataDto.setContractIdTemp(3L);
-		createOrderCsvDataDto.setContractNumber("CC2019122400103");
-		createOrderCsvDataDto.setContractBranchNumber(1);
-		createOrderCsvDataDto.setQuantity("1");
-		createOrderCsvDataDto.setRicohItemCode("SI0001");
-		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
-		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
-		createOrderCsvDataDto.setShortestDeliveryDate(8);
-		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
-		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
-		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
-		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
-		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
-		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
-		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
-		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
-		createOrderCsvDataDto.setContractDetailId(11L);
-		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
-		createOrderCsvDataDto.setContractType(ContractType.新規);
-		createOrderCsvDataDto.setVendorShortName("SB");
-		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
-		orderDataList.add(createOrderCsvDataDto);
-		try {
-			batchStepComponent.process(dto, orderDataList);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail("異常終了");
-		}
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + outputFileName));
-		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/expected_Toukibo.csv"));
-		Assert.assertArrayEquals(expected, actuals);
-		fileDeleate(outputPath + outputFileName);
-	}
-
-	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_郵便番号と手入力共に誤りがあった場合() throws IOException, ParseException {
-		String outputFileName = "result_initial.csv";
-		String tempFileName = "temp.csv";
-
-		fileDeleate(outputPath + outputFileName);
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
-		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("失敗", "失敗")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
-
-		// バッチ起動引数
-		// 20191018 ← 非営業日カレンダーマスタに存在しないことを想定
-		CreateOrderCsvDto dto = new CreateOrderCsvDto();
-		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
-		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191018");
-		dto.setType("1");
-
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
-		createOrderCsvDataDto.setId(3L);
-		createOrderCsvDataDto.setContractIdTemp(3L);
-		createOrderCsvDataDto.setContractNumber("CC2019122400103");
-		createOrderCsvDataDto.setContractBranchNumber(1);
-		createOrderCsvDataDto.setQuantity("1");
-		createOrderCsvDataDto.setRicohItemCode("SI0001");
-		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
-		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
-		createOrderCsvDataDto.setShortestDeliveryDate(8);
-		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
-		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
-		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
-		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
-		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
-		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
-		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
-		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
-		createOrderCsvDataDto.setContractDetailId(11L);
-		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
-		createOrderCsvDataDto.setContractType(ContractType.新規);
-		createOrderCsvDataDto.setVendorShortName("SB");
-		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
-		orderDataList.add(createOrderCsvDataDto);
-		try {
-			batchStepComponent.process(dto, orderDataList);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail("異常終了");
-		}
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + outputFileName));
-		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/expected_Toukibo.csv"));
-		Assert.assertArrayEquals(expected, actuals);
-		fileDeleate(outputPath + outputFileName);
-	}
-
-	@Test
-	public void 正常系_オーダーCSV作成_新規_業務区登記簿コピー添付あり_ワークフロー状態が作業完了_手入力が存在し誤りがあった場合() throws IOException, ParseException {
-		String outputFileName = "result_initial.csv";
-		String tempFileName = "temp.csv";
-
-		fileDeleate(outputPath + outputFileName);
-		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
-		// モック
-		doNothing().when(restApiClient).callAssignWorker(anyList());
-		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("1", "失敗")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
-
-		// バッチ起動引数
-		// 20191018 ← 非営業日カレンダーマスタに存在しないことを想定
-		CreateOrderCsvDto dto = new CreateOrderCsvDto();
-		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
-		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191018");
-		dto.setType("1");
-
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
-		createOrderCsvDataDto.setId(3L);
-		createOrderCsvDataDto.setContractIdTemp(3L);
-		createOrderCsvDataDto.setContractNumber("CC2019122400103");
-		createOrderCsvDataDto.setContractBranchNumber(1);
-		createOrderCsvDataDto.setQuantity("1");
-		createOrderCsvDataDto.setRicohItemCode("SI0001");
-		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
-		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
-		createOrderCsvDataDto.setShortestDeliveryDate(8);
-		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
-		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
-		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
-		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
-		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
-		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
-		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
-		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
-		createOrderCsvDataDto.setContractDetailId(11L);
-		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
-		createOrderCsvDataDto.setContractType(ContractType.新規);
-		createOrderCsvDataDto.setVendorShortName("SB");
-		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
-		orderDataList.add(createOrderCsvDataDto);
-		try {
-			batchStepComponent.process(dto, orderDataList);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail("異常終了");
-		}
-		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + outputFileName));
-		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/expected_Toukibo.csv"));
-		Assert.assertArrayEquals(expected, actuals);
-		fileDeleate(outputPath + outputFileName);
-	}
-
-	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_取得項目値が1() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_佐川コード突き当て結果が1() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1700,7 +1266,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_取得項目値が3日以上() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_佐川コード突き当て結果が3日以上() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1777,7 +1343,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_取得項目値が不能() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_佐川コード突き当て結果が不能() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1854,7 +1420,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_取得項目値が離島は問合せ() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_佐川コード突き当て結果が離島は問合せ() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -1931,7 +1497,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_取得項目値が1() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_佐川コード突き当て結果が1() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -2006,7 +1572,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_取得項目値が3日以上() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_佐川コード突き当て結果が3日以上() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -2083,7 +1649,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_取得項目値が不能() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_佐川コード突き当て結果が不能() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -2160,7 +1726,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_取得項目値が離島は問合せ() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲確認_SBのみ非営業日を含む_佐川コード突き当て結果が離島は問合せ() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -2385,6 +1951,392 @@ public class BatchStepComponentSimTest extends TestBase {
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + outputFileName));
 		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/expected/expected_ShortestDeliveryDate_SB+1.csv"));
 		Assert.assertArrayEquals(expected, actuals);
+		fileDeleate(outputPath + outputFileName);
+	}
+
+	@Test
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_SB_佐川コード突き当て結果が1() throws IOException, ParseException {
+		String outputFileName = "result_initial.csv";
+		String tempFileName = "temp.csv";
+
+		fileDeleate(outputPath + outputFileName);
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doReturn(ContractInstallationLocationMock("1", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
+
+		// SBの営業日
+		// 20191016 最短納期日範囲外のため、CSV出力されない
+		// 20191017 非営業日
+		// 20191018 サービス利用希望日 - 7営業日(8営業日 -1)
+		// 20191019 非営業日
+		// 20191020 非営業日
+		// 20191021 サービス利用希望日 - 6営業日
+		// 20191022 非営業日
+		// 20191023 サービス利用希望日 - 5営業日
+		// 20191024 サービス利用希望日 - 4営業日
+		// 20191025 非営業日
+		// 20191026 非営業日
+		// 20191027 非営業日
+		// 20191028 サービス利用希望日 - 3営業日
+		// 20191029 サービス利用希望日 - 2営業日
+		// 20191030 サービス利用希望日 - 1営業日
+		// 20191031 サービス利用希望日
+		CreateOrderCsvDto dto = new CreateOrderCsvDto();
+		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
+		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
+		dto.setOperationDate("20191016");
+		dto.setType("1");
+
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
+		createOrderCsvDataDto.setId(1L);
+		createOrderCsvDataDto.setContractIdTemp(1L);
+		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
+		createOrderCsvDataDto.setQuantity("1");
+		createOrderCsvDataDto.setRicohItemCode("SI0001");
+		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
+		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
+		createOrderCsvDataDto.setShortestDeliveryDate(8);
+		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
+		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
+		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
+		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
+		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
+		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
+		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
+		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
+		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setContractDetailId(11L);
+		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
+		createOrderCsvDataDto.setContractType(ContractType.新規);
+		createOrderCsvDataDto.setVendorShortName("SB");
+		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
+		orderDataList.add(createOrderCsvDataDto);
+		try {
+			batchStepComponent.process(dto, orderDataList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了");
+		}
+		File csvFile = Paths.get(outputPath, outputFileName).toFile();
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", csvFile.exists());
+		fileDeleate(outputPath + outputFileName);
+	}
+
+	@Test
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_SB_佐川コード突き当て結果が2() throws IOException, ParseException {
+		String outputFileName = "result_initial.csv";
+		String tempFileName = "temp.csv";
+
+		fileDeleate(outputPath + outputFileName);
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
+
+		// SBの営業日
+		// 20191015 最短納期日範囲外のため、CSV出力されない
+		// 20191016 サービス利用希望日 - 8営業日
+		// 20191017 非営業日
+		// 20191018 サービス利用希望日 - 7営業日
+		// 20191019 非営業日
+		// 20191020 非営業日
+		// 20191021 サービス利用希望日 - 6営業日
+		// 20191022 非営業日
+		// 20191023 サービス利用希望日 - 5営業日
+		// 20191024 サービス利用希望日 - 4営業日
+		// 20191025 非営業日
+		// 20191026 非営業日
+		// 20191027 非営業日
+		// 20191028 サービス利用希望日 - 3営業日
+		// 20191029 サービス利用希望日 - 2営業日
+		// 20191030 サービス利用希望日 - 1営業日
+		// 20191031 サービス利用希望日
+		CreateOrderCsvDto dto = new CreateOrderCsvDto();
+		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
+		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
+		dto.setOperationDate("20191015");
+		dto.setType("1");
+
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
+		createOrderCsvDataDto.setId(1L);
+		createOrderCsvDataDto.setContractIdTemp(1L);
+		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
+		createOrderCsvDataDto.setQuantity("1");
+		createOrderCsvDataDto.setRicohItemCode("SI0001");
+		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
+		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
+		createOrderCsvDataDto.setShortestDeliveryDate(8);
+		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
+		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
+		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
+		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
+		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
+		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
+		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
+		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
+		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setContractDetailId(11L);
+		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
+		createOrderCsvDataDto.setContractType(ContractType.新規);
+		createOrderCsvDataDto.setVendorShortName("SB");
+		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
+		orderDataList.add(createOrderCsvDataDto);
+		try {
+			batchStepComponent.process(dto, orderDataList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了");
+		}
+		File csvFile = Paths.get(outputPath, outputFileName).toFile();
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", csvFile.exists());
+		fileDeleate(outputPath + outputFileName);
+	}
+
+	@Test
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_SB_佐川コード突き当て結果が3日以上() throws IOException, ParseException {
+		String outputFileName = "result_initial.csv";
+		String tempFileName = "temp.csv";
+
+		fileDeleate(outputPath + outputFileName);
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doReturn(ContractInstallationLocationMock("3日以上", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
+
+		// SBの営業日
+		// 20191014 最短納期日範囲外のため、CSV出力されない
+		// 20191015 サービス利用希望日 - 8営業日 +1
+		// 20191016 サービス利用希望日 - 8営業日
+		// 20191017 非営業日
+		// 20191018 サービス利用希望日 - 7営業日
+		// 20191019 非営業日
+		// 20191020 非営業日
+		// 20191021 サービス利用希望日 - 6営業日
+		// 20191022 非営業日
+		// 20191023 サービス利用希望日 - 5営業日
+		// 20191024 サービス利用希望日 - 4営業日
+		// 20191025 非営業日
+		// 20191026 非営業日
+		// 20191027 非営業日
+		// 20191028 サービス利用希望日 - 3営業日
+		// 20191029 サービス利用希望日 - 2営業日
+		// 20191030 サービス利用希望日 - 1営業日
+		// 20191031 サービス利用希望日
+		CreateOrderCsvDto dto = new CreateOrderCsvDto();
+		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
+		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
+		dto.setOperationDate("20191014");
+		dto.setType("1");
+
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
+		createOrderCsvDataDto.setId(1L);
+		createOrderCsvDataDto.setContractIdTemp(1L);
+		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
+		createOrderCsvDataDto.setQuantity("1");
+		createOrderCsvDataDto.setRicohItemCode("SI0001");
+		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
+		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
+		createOrderCsvDataDto.setShortestDeliveryDate(8);
+		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
+		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
+		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
+		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
+		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
+		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
+		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
+		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
+		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setContractDetailId(11L);
+		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
+		createOrderCsvDataDto.setContractType(ContractType.新規);
+		createOrderCsvDataDto.setVendorShortName("SB");
+		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
+		orderDataList.add(createOrderCsvDataDto);
+		try {
+			batchStepComponent.process(dto, orderDataList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了");
+		}
+		File csvFile = Paths.get(outputPath, outputFileName).toFile();
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", csvFile.exists());
+		fileDeleate(outputPath + outputFileName);
+	}
+
+	@Test
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_SB_佐川コード突き当て結果が不能() throws IOException, ParseException {
+		String outputFileName = "result_initial.csv";
+		String tempFileName = "temp.csv";
+
+		fileDeleate(outputPath + outputFileName);
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doReturn(ContractInstallationLocationMock("不能", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
+
+		// SBの営業日
+		// 20191015 最短納期日範囲外のため、CSV出力されない
+		// 20191016 サービス利用希望日 - 8営業日 +1
+		// 20191017 非営業日
+		// 20191018 サービス利用希望日 - 8営業日
+		// 20191019 非営業日
+		// 20191020 非営業日
+		// 20191021 サービス利用希望日 - 6営業日
+		// 20191022 非営業日
+		// 20191023 サービス利用希望日 - 5営業日
+		// 20191024 サービス利用希望日 - 4営業日
+		// 20191025 非営業日
+		// 20191026 非営業日
+		// 20191027 非営業日
+		// 20191028 サービス利用希望日 - 3営業日
+		// 20191029 サービス利用希望日 - 2営業日
+		// 20191030 サービス利用希望日 - 1営業日
+		// 20191031 サービス利用希望日
+		CreateOrderCsvDto dto = new CreateOrderCsvDto();
+		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
+		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
+		dto.setOperationDate("20191014");
+		dto.setType("1");
+
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
+		createOrderCsvDataDto.setId(1L);
+		createOrderCsvDataDto.setContractIdTemp(1L);
+		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
+		createOrderCsvDataDto.setQuantity("1");
+		createOrderCsvDataDto.setRicohItemCode("SI0001");
+		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
+		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
+		createOrderCsvDataDto.setShortestDeliveryDate(8);
+		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
+		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
+		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
+		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
+		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
+		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
+		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
+		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
+		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setContractDetailId(11L);
+		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
+		createOrderCsvDataDto.setContractType(ContractType.新規);
+		createOrderCsvDataDto.setVendorShortName("SB");
+		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
+		orderDataList.add(createOrderCsvDataDto);
+		try {
+			batchStepComponent.process(dto, orderDataList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了");
+		}
+		File csvFile = Paths.get(outputPath, outputFileName).toFile();
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", csvFile.exists());
+		fileDeleate(outputPath + outputFileName);
+	}
+
+	@Test
+	public void 正常系_オーダーCSV作成_新規_最短納期日範囲外_SB_佐川コード突き当て結果が離島は問合せ() throws IOException, ParseException {
+		String outputFileName = "result_initial.csv";
+		String tempFileName = "temp.csv";
+
+		fileDeleate(outputPath + outputFileName);
+		context.getBean(DBConfig.class).initTargetTestData("createOrderTestSuccessData.sql");
+		// モック
+		doNothing().when(restApiClient).callAssignWorker(anyList());
+		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
+		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
+		doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doReturn(ContractInstallationLocationMock("離島は問合せ", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
+
+		// SBの営業日
+		// 20191014 最短納期日範囲外のため、CSV出力されない
+		// 20191015 サービス利用希望日 - 8営業日 +1
+		// 20191016 サービス利用希望日 - 8営業日
+		// 20191017 非営業日
+		// 20191018 サービス利用希望日 - 7営業日
+		// 20191019 非営業日
+		// 20191020 非営業日
+		// 20191021 サービス利用希望日 - 6営業日
+		// 20191022 非営業日
+		// 20191023 サービス利用希望日 - 5営業日
+		// 20191024 サービス利用希望日 - 4営業日
+		// 20191025 非営業日
+		// 20191026 非営業日
+		// 20191027 非営業日
+		// 20191028 サービス利用希望日 - 3営業日
+		// 20191029 サービス利用希望日 - 2営業日
+		// 20191030 サービス利用希望日 - 1営業日
+		// 20191031 サービス利用希望日
+		CreateOrderCsvDto dto = new CreateOrderCsvDto();
+		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
+		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
+		dto.setOperationDate("20191014");
+		dto.setType("1");
+
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+		CreateOrderCsvDataDto createOrderCsvDataDto = new CreateOrderCsvDataDto();
+		createOrderCsvDataDto.setId(1L);
+		createOrderCsvDataDto.setContractIdTemp(1L);
+		createOrderCsvDataDto.setContractNumber("CIC201912240101");
+		createOrderCsvDataDto.setContractBranchNumber(1);
+		createOrderCsvDataDto.setQuantity("1");
+		createOrderCsvDataDto.setRicohItemCode("SI0001");
+		createOrderCsvDataDto.setItemContractName("データSIM Type-C 2GB");
+		createOrderCsvDataDto.setConclusionPreferredDate(sdFormat.parse("2019-10-31 00:00:00"));
+		createOrderCsvDataDto.setShortestDeliveryDate(8);
+		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
+		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
+		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
+		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
+		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
+		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
+		createOrderCsvDataDto.setPicFaxNumber("dummy_pic_fax_number_location");
+		createOrderCsvDataDto.setPicMailAddress("dummy_mail_address@xx.xx");
+		createOrderCsvDataDto.setExtendsParameter("{\"orderCsvCreationStatus\":\"0\",\"orderCsvCreationDate\":\"\"}");
+		createOrderCsvDataDto.setContractDetailId(11L);
+		createOrderCsvDataDto.setUpdatedAt(sdFormat.parse("2018-09-19 12:09:10"));
+		createOrderCsvDataDto.setContractType(ContractType.新規);
+		createOrderCsvDataDto.setVendorShortName("SB");
+		List<CreateOrderCsvDataDto> orderDataList = new ArrayList<CreateOrderCsvDataDto>();
+		orderDataList.add(createOrderCsvDataDto);
+		try {
+			batchStepComponent.process(dto, orderDataList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了");
+		}
+		File csvFile = Paths.get(outputPath, outputFileName).toFile();
+		Assert.assertFalse("オーダーCSVが出力されていないこと。", csvFile.exists());
 		fileDeleate(outputPath + outputFileName);
 	}
 
