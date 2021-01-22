@@ -28,7 +28,8 @@ from (
         c.service_term_end,
         null as trans_to_service_org_code,
         c.immutable_cont_ident_number,
-        cc.company_name_kana
+        cc.company_name_kana,
+        null as emp_number
     from
         contract c,
         contract_detail cd,
@@ -82,7 +83,8 @@ from (
         c.service_term_end,
         wwoaic.cubic_org_id,
         c.immutable_cont_ident_number,
-        null as company_name_kana
+        null as company_name_kana,
+        mem.emb_emp_number as emp_number
     from
         contract c,
         contract_detail cd,
@@ -90,7 +92,8 @@ from (
         product_master pm,
         item_contract ic,
         item_detail_contract idc,
-        MV_WJMOC020_ORG_ALL_INFO_COM wwoaic
+        MV_WJMOC020_ORG_ALL_INFO_COM wwoaic,
+        mv_employee_master mem
     where
         c.id = pc.contract_id AND
         c.id = cd.contract_id AND
@@ -102,5 +105,17 @@ from (
         ic.cost_type in ('2','4') AND
         c.lifecycle_status in ('6','7','8') AND
         idc.initial_running_div = '2' AND
-        idc.trans_to_service_org_code = wwoaic.org_id
+        idc.trans_to_service_org_code = wwoaic.org_id AND
+        mem.emp_id IN (
+             SELECT
+                mv_t_jmci108.sus_sal_mom_shain_cd
+             FROM
+                mv_t_jmci101
+                INNER JOIN
+                   mv_t_jmci108
+                   ON
+                      mv_t_jmci101.customer_site_number = mv_t_jmci108.customer_site_number
+             WHERE
+                mv_t_jmci101.original_system_code = c.billing_customer_sp_code AND
+                mv_t_jmci101.sales_unit_code = '3139' )
 ) target
