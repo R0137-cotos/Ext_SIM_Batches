@@ -1,7 +1,7 @@
 package jp.co.ricoh.cotos.component;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -111,13 +111,13 @@ public class BatchUtil {
 	 * @return
 	 */
 	public String getSagawaCodeColumnF(List<String> postNumberList) {
-		InputStream in = null;
+		FileInputStream in = null;
 		Workbook wb = null;
 
 		// エクセルファイルを読み込む
 		Exception error = null;
 		try {
-			in = this.getClass().getClassLoader().getResourceAsStream("file/佐川コード突き当て.xlsx");
+			in = new FileInputStream("src/main/resources/file/佐川コード突き当て.xlsx");
 			wb = WorkbookFactory.create(in);
 		} catch (IOException e) {
 			e.printStackTrace();
