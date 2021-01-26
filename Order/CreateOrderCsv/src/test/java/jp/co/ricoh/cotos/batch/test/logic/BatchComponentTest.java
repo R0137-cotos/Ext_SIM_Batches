@@ -20,7 +20,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -30,17 +29,15 @@ import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.ContractType;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
-import jp.co.ricoh.cotos.commonlib.entity.contract.ContractInstallationLocation;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementPicWorkerEmpRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
-import jp.co.ricoh.cotos.component.BatchUtil;
 import jp.co.ricoh.cotos.component.RestApiClient;
 import jp.co.ricoh.cotos.logic.BatchComponent;
-import jp.co.ricoh.cotos.util.OperationDateException;
 import jp.co.ricoh.cotos.util.ProcessErrorException;
+import jp.co.ricoh.cotos.util.OperationDateException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -60,9 +57,6 @@ public class BatchComponentTest extends TestBase {
 
 	@Autowired
 	ArrangementPicWorkerEmpRepository arrangementPicWorkerEmpRepository;
-
-	@SpyBean
-	BatchUtil batchUtil;
 
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
@@ -107,7 +101,6 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("2", false)).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 		try {
 			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
@@ -131,7 +124,6 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(null);
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
-		Mockito.doReturn(ContractInstallationLocationMock("2", false)).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 		try {
 			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
@@ -415,7 +407,7 @@ public class BatchComponentTest extends TestBase {
 		Assert.assertFalse("オーダーCSVが出力されていないこと。", Files.exists(Paths.get("output/result_initial.csv")));
 		fileDeleate(outputPath + "result_initial.csv");
 	}
-
+	
 	@Test
 	public void 異常系_APIエラーが発生すること() throws Exception {
 		テストデータ作成("createOrderTestSuccessData.sql");
@@ -426,7 +418,6 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(Mockito.any());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenThrow(new RuntimeException());
 		Mockito.doNothing().when(restApiClient).callContractApi(Mockito.any());
-		Mockito.doReturn(ContractInstallationLocationMock("2", false)).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 		try {
 			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (ProcessErrorException e) {
@@ -467,45 +458,5 @@ public class BatchComponentTest extends TestBase {
 			contract.setContractType(ContractType.契約変更);
 		}
 		return contract;
-	}
-
-	/**
-	 * 設置先（契約用）モック
-	 * @param wantSagawaCodeColumnF
-	 * @param isInputPostNumber
-	 * @return
-	 */
-	private ContractInstallationLocation ContractInstallationLocationMock(String wantSagawaCodeColumnF, boolean isInputPostNumber) {
-		ContractInstallationLocation contractInstallationLocation = new ContractInstallationLocation();
-		contractInstallationLocation.setId(1);
-
-		// 9633602 1
-		// 6890535 2
-		// 9020067 3日以上
-		// 1000104 離島は問合せ
-		// 9750000 不能
-		switch (wantSagawaCodeColumnF) {
-		case "1":
-			contractInstallationLocation.setPostNumber("9633602");
-			break;
-		case "2":
-			contractInstallationLocation.setPostNumber("6890535");
-			break;
-		case "3日以上":
-			contractInstallationLocation.setPostNumber("9020067");
-			break;
-		case "離島は問合せ":
-			contractInstallationLocation.setPostNumber("1000104");
-			break;
-		case "不能":
-			contractInstallationLocation.setPostNumber("9750000");
-			break;
-		}
-		// 0070834 2
-		if (isInputPostNumber) {
-			contractInstallationLocation.setInputPostNumber("0070834");
-		}
-
-		return contractInstallationLocation;
 	}
 }
