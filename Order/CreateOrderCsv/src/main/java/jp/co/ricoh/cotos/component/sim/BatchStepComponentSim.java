@@ -104,6 +104,20 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	private static final int NOT_DISENGAGEMENT = 0;
 
+	private static final String SAGAWA_CODE_COULMN_F_1 = "1";
+
+	private static final String SAGAWA_CODE_COULMN_F_2 = "2";
+
+	private static final String SAGAWA_CODE_COULMN_F_ORVER_3 = "3日以上";
+
+	private static final String SAGAWA_CODE_COULMN_F_IMP = "不能";
+
+	private static final String SAGAWA_CODE_COULMN_F_ILD = "離島は問合せ";
+
+	private static final String SAGAWA_CODE_COULMN_F_ERROR = "ERROR";
+
+	private static final String SAGAWA_CODE_COULMN_F_NULL = "NULL";
+
 	@Override
 	@Transactional
 	public boolean process(CreateOrderCsvDto dto, List<CreateOrderCsvDataDto> orderDataList) throws ParseException, JsonProcessingException, IOException {
@@ -153,7 +167,34 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						}
 					}
 
-					shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), o.getShortestDeliveryDate(), false, vendorNameList);
+					// エクセルファイル突き合わせ
+					int shortestDeliveryDate = o.getShortestDeliveryDate();
+					List<String> postNumber = batchUtil.getPostNumber(o.getContractIdTemp());
+					// 配送にかかる日数を地域に合わせる
+					String sagawaCodeColumnF = batchUtil.getSagawaCodeColumnF(postNumber);
+					if (StringUtils.isBlank(sagawaCodeColumnF)) {
+						sagawaCodeColumnF = "NULL";
+					}
+					switch (sagawaCodeColumnF) {
+					case SAGAWA_CODE_COULMN_F_1:
+						shortestDeliveryDate -= 1;
+						break;
+					case SAGAWA_CODE_COULMN_F_2:
+						// 変更なし
+						break;
+					case SAGAWA_CODE_COULMN_F_ORVER_3:
+					case SAGAWA_CODE_COULMN_F_IMP:
+					case SAGAWA_CODE_COULMN_F_ILD:
+					case SAGAWA_CODE_COULMN_F_NULL:
+						shortestDeliveryDate += 1;
+						break;
+					case SAGAWA_CODE_COULMN_F_ERROR:
+						errorDataIdList.add(o.getContractIdTemp());
+						log.fatal(String.format("契約明細ID=%dについてのオーダーCSV出力有無判定処理実行時に佐川コード突き当てファイルの読み込みに失敗しました。", o.getContractIdTemp()));
+						return false;
+					}
+
+					shortBusinessDay = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(operationDate, Calendar.DAY_OF_MONTH), shortestDeliveryDate, false, vendorNameList);
 					return shortBusinessDay.compareTo(o.getConclusionPreferredDate()) > -1;
 				} else if ("2".equals(dto.getType())) {
 					// 処理年月日の次月1日

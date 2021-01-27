@@ -6,7 +6,6 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doThrow;
 
 import java.io.File;
-import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -15,15 +14,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.management.RuntimeErrorException;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -38,16 +34,17 @@ import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.ContractType;
-import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
+import jp.co.ricoh.cotos.commonlib.entity.contract.ContractInstallationLocation;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
+import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
+import jp.co.ricoh.cotos.component.BatchUtil;
 import jp.co.ricoh.cotos.component.RestApiClient;
-import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.logic.JobComponent;
 import jp.co.ricoh.cotos.security.CreateJwt;
 
@@ -73,6 +70,9 @@ public class JobComponentTest extends TestBase {
 
 	@SpyBean
 	BusinessDayUtil businessDayUtil;
+
+	@SpyBean
+	BatchUtil batchUtil;
 
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
@@ -121,6 +121,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
@@ -143,6 +144,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(null);
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
@@ -469,6 +471,7 @@ public class JobComponentTest extends TestBase {
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callAcceptWorkApi(anyList());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindOneContractApi(anyLong());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
@@ -490,6 +493,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
@@ -511,6 +515,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindOneContractApi(anyLong());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
+		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		try {
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
@@ -521,7 +526,7 @@ public class JobComponentTest extends TestBase {
 		}
 		fileDeleate(outputPath + "result_initial.csv");
 	}
-	
+
 	@Test
 	public void 異常系_意図しないエラー発生_Exception() throws FileAlreadyExistsException {
 		Mockito.doThrow(new RuntimeException()).when(businessDayUtil).getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(Mockito.any());
@@ -534,7 +539,7 @@ public class JobComponentTest extends TestBase {
 		}
 		fileDeleate(outputPath + "result_initial.csv");
 	}
-	
+
 	@Test
 	public void 異常系_意図しないエラー発生_Throwable() {
 		Mockito.doThrow(new ThreadDeath()).when(businessDayUtil).getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(Mockito.any());
@@ -579,5 +584,60 @@ public class JobComponentTest extends TestBase {
 			contract.setContractType(ContractType.契約変更);
 		}
 		return contract;
+	}
+
+	/**
+	 * 設置先（契約用）モック
+	 * @param wantSagawaCodeColumnF
+	 * @param isInputPostNumber
+	 * @return
+	 */
+	private ContractInstallationLocation ContractInstallationLocationMock(String wantSagawaCodeColumnF, String isInputPostNumber) {
+		ContractInstallationLocation contractInstallationLocation = new ContractInstallationLocation();
+		contractInstallationLocation.setId(1);
+
+		// 郵便番号をセット
+		// 9633602 1
+		// 6890535 2
+		// 9020067 3日以上
+		// 1000104 離島は問合せ
+		// 9750000 不能
+		switch (wantSagawaCodeColumnF) {
+		case "1":
+			contractInstallationLocation.setPostNumber("9633602");
+			break;
+		case "2":
+			contractInstallationLocation.setPostNumber("6890535");
+			break;
+		case "3日以上":
+			contractInstallationLocation.setPostNumber("9020067");
+			break;
+		case "離島は問合せ":
+			contractInstallationLocation.setPostNumber("1000104");
+			break;
+		case "不能":
+			contractInstallationLocation.setPostNumber("9750000");
+			break;
+		case "失敗":
+			contractInstallationLocation.setPostNumber("0000000000000");
+			break;
+		case "無":
+			break;
+		}
+		// isInputPostNumberがtrueの時郵便番号(手入力)に郵便番号をセット
+		// 0070834 2
+		switch (isInputPostNumber) {
+		case "無":
+			break;
+		case "2":
+			contractInstallationLocation.setInputPostNumber("007-0834");
+			break;
+		case "失敗":
+			contractInstallationLocation.setInputPostNumber("0000000000000");
+			break;
+		default:
+		}
+
+		return contractInstallationLocation;
 	}
 }
