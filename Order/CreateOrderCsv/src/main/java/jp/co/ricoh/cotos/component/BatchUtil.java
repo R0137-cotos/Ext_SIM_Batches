@@ -22,12 +22,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
+import jp.co.ricoh.cotos.commonlib.dto.result.SagawaCodeDto;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractInstallationLocation;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractInstallationLocationRepository;
-import jp.co.ricoh.cotos.dto.SagawaCodeDto;
 
 @Component
 public class BatchUtil {
@@ -118,7 +118,6 @@ public class BatchUtil {
 		// 佐川コード突き当てCSV読込
 		try {
 			InputStream in = this.getClass().getResourceAsStream("/file/佐川コード突き当て.csv");
-			// ★SagawaCodeDtoをCommonLibsに用意してから、
 			CsvMapper mapper = new CsvMapper();
 			CsvSchema schema = CsvSchema.emptySchema().withHeader();
 			CsvSchema quoteSchema = mapper.schemaFor(SagawaCodeDto.class).withoutQuoteChar();
