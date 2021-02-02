@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -45,7 +44,6 @@ import jp.co.ricoh.cotos.util.ProcessErrorException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Ignore
 public class BatchComponentTest extends TestBase {
 
 	static ConfigurableApplicationContext context;

@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -51,7 +50,6 @@ import jp.co.ricoh.cotos.security.CreateJwt;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Ignore
 public class JobComponentTest extends TestBase {
 
 	static ConfigurableApplicationContext context;
