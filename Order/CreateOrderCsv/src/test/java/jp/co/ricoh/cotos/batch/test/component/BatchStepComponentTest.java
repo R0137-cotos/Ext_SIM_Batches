@@ -29,7 +29,6 @@ import jp.co.ricoh.cotos.util.OperationDateException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Ignore
 public class BatchStepComponentTest extends TestBase {
 
 	static ConfigurableApplicationContext context;
