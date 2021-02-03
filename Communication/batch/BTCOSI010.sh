@@ -38,5 +38,5 @@ echo ""
 echo "--1234--"
 echo "."
 echo "QUIT"
-} | python -m telnetlib 10.237.225.216 25
+} | python -m telnetlib 10.237.225.216 25 2>> $2
 

@@ -42,6 +42,9 @@ import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ItemContractRepository;
 import jp.co.ricoh.cotos.commonlib.repository.master.CommonMasterDetailRepository;
+import jp.co.ricoh.cotos.commonlib.repository.master.MvEmployeeMasterRepository;
+import jp.co.ricoh.cotos.commonlib.repository.master.MvTJmci101MasterRepository;
+import jp.co.ricoh.cotos.commonlib.repository.master.MvTJmci108MasterRepository;
 import jp.co.ricoh.cotos.commonlib.repository.master.MvWjmoc020OrgAllInfoComRepository;
 
 @RunWith(SpringRunner.class)
@@ -70,6 +73,15 @@ public class BatchApplicationTests extends TestBase {
 
 	@Autowired
 	MvWjmoc020OrgAllInfoComRepository mvWjmoc020OrgAllInfoComRepository;
+
+	@Autowired
+	MvEmployeeMasterRepository mvEmployeeMasterRepository;
+
+	@Autowired
+	MvTJmci101MasterRepository mvTJmci101MasterRepository;
+
+	@Autowired
+	MvTJmci108MasterRepository mvTJmci108MasterRepository;
 
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
@@ -168,6 +180,12 @@ public class BatchApplicationTests extends TestBase {
 		// 50 契約金額
 		Assert.assertTrue("契約金額が契約明細.金額と同じであること",
 				accounting.getFfmContractPrice().compareTo(contractDetail.getAmountSummary()) == 0);
+
+		// 77 売上社員設定区分
+		Assert.assertNull("売上社員設定区分がNullであること", accounting.getFfmSalesEmpType());
+
+		// 78 売上社員コード
+		Assert.assertNull("売上社員コードがNullであること", accounting.getFfmSalesEmpCd());
 
 		// 84 代直区分（販売店データリンク・売上用）
 		// ※SIMは商流区分=1のみ
@@ -284,6 +302,9 @@ public class BatchApplicationTests extends TestBase {
 				.filter(idc -> idc.getInitialRunningDiv() == InitialRunningDiv.ランニング).collect(Collectors.toList());
 		List<MvWjmoc020OrgAllInfoCom> orgMasterList = new ArrayList<>();
 
+		// 得意先コードをキーに導出した売上担当社員の従業員番号を取得
+		String empNumber = mvEmployeeMasterRepository.findByMomEmployeeId(mvTJmci108MasterRepository.findByCustomerSiteNumber(mvTJmci101MasterRepository.findByOriginalSystemCode(contract.getBillingCustomerSpCode()).getCustomerSiteNumber()).getSusSalMomShainCd()).getEmpNumber();
+
 		// 品種明細（契約用）の振替先課所コードと紐づくoM組織情報提供マスタ.CUBIC部門コードのリストを取得
 		try {
 			Date date = (new SimpleDateFormat("yyyy/MM/dd")).parse("2019/08/19");
@@ -305,6 +326,12 @@ public class BatchApplicationTests extends TestBase {
 			Assert.assertTrue("振替先課所コードが'MoM組織情報提供マスタ.CUBIC部門コードであること", orgMasterList.stream()
 					.anyMatch(oml -> accounting.getFfmTrnsLocationCd().equals(oml.getCubicOrgId())));
 		}
+
+		// 77 売上社員設定区分
+		Assert.assertTrue("売上社員設定区分が1(固定)であること", StringUtils.equals(accounting.getFfmSalesEmpType(), "1"));
+
+		// 78 売上社員コード
+		Assert.assertTrue("売上社員コードが得意先コードをキーに導出した売上担当社員の従業員番号コードであること", StringUtils.equals(accounting.getFfmSalesEmpCd(), empNumber));
 
 		// 83 振替先振替金額
 		Assert.assertTrue("振替先振替金額が品種明細(契約用).原価＊契約明細.数量であること", itemDetailContractList.stream()
@@ -461,10 +488,6 @@ public class BatchApplicationTests extends TestBase {
 		Assert.assertNull("売上課所設定区分がNullであること", accounting.getFfmSalesLocationType());
 		// 76 売上課所コード
 		Assert.assertNull("売上課所コードがNullであること", accounting.getFfmSalesLocationCd());
-		// 77 売上社員設定区分
-		Assert.assertNull("売上社員設定区分がNullであること", accounting.getFfmSalesEmpType());
-		// 78 売上社員コード
-		Assert.assertNull("売上社員コードがNullであること", accounting.getFfmSalesEmpCd());
 		// 79 値引番号
 		Assert.assertNull("値引番号がNullであること", accounting.getFfmDiscntNo());
 		// 80 伝票番号
