@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.15.0 (04/02/2021)
+- [**closed**] #8276 郵便番号に応じて最短納期日数を修正CSV読み取り [#203](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/203)
+- [**closed**] #9697 SIMメール失敗時ログ出力 追加修正 [#201](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/201)
+- [**closed**] #9697 SIMメール失敗時ログ出力 [#200](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/200)
+- [**closed**] #9312 計上データ作成バッチ(SIM)で作成データパターンが振替の場合に設定する値を追加 [#195](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/195)
+
+---
+
 ## v3.12.0 (17/12/2020)
 - [**closed**] #8494 メールヘッダーに設定する項目を変更 [#191](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/191)
 - [**closed**] #8494 バウンスメール対応 [#181](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/181)
