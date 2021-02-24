@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.AfterClass;
@@ -892,9 +893,14 @@ public class BatchApplicationTests extends TestBase {
 
 	private void 旧契約が計上処理対象となっていることを確認() {
 		List<Accounting> accountingList = (List<Accounting>) accountingRepository.findAll();
-		accountingList.stream().filter(accounting -> accounting.getContractId() == 200).forEach(accounting -> {
-			Contract contract = contractRepository.findOne(accounting.getContractId());
-			Assert.assertEquals("旧契約の契約が処理対象になっていること", LifecycleStatus.旧契約, contract.getLifecycleStatus());
-		});
+		List<Accounting> accountingListContractId200 = accountingList.stream().filter(accounting -> accounting.getContractId() == 200).collect(Collectors.toList());
+		if (CollectionUtils.isEmpty(accountingListContractId200)) {
+			Assert.fail("想定外のデータが対象になっている、あるいは対象データ無しとなっている。");
+		} else {
+			accountingListContractId200.stream().forEach(accounting -> {
+				Contract contract = contractRepository.findOne(accounting.getContractId());
+				Assert.assertEquals("旧契約の契約が処理対象になっていること", LifecycleStatus.旧契約, contract.getLifecycleStatus());
+			});
+		}
 	}
 }
