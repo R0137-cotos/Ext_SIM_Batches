@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.AfterClass;
@@ -35,6 +36,7 @@ import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail.RunningAccount
 import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ItemContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ItemDetailContract;
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.LifecycleStatus;
 import jp.co.ricoh.cotos.commonlib.entity.master.CommonMasterDetail;
 import jp.co.ricoh.cotos.commonlib.entity.master.MvWjmoc020OrgAllInfoCom;
 import jp.co.ricoh.cotos.commonlib.repository.accounting.AccountingRepository;
@@ -152,6 +154,29 @@ public class BatchApplicationTests extends TestBase {
 			Assert.fail("異常終了しました。試験失敗です。");
 		}
 		値検証(baseDate);
+	}
+
+	// 以下のようなデータを作成し、処理対象としている
+	// 新規　　　　契約ID:100　ライフサイクル:旧契約　サービス開始日:2020/10/1　課金開始日:2020/11/1　サービス利用希望日:2020/10/1
+	// 情報変更　契約ID:200　ライフサイクル:旧契約　サービス開始日:2020/10/1　課金開始日:2020/11/1　サービス利用希望日:2020/10/1
+	// 契約変更　契約ID:300　ライフサイクル:締結中　サービス開始日:2020/11/4　課金開始日:2020/12/1　サービス利用希望日:2020/10/1
+	@Test
+	@Transactional
+	public void 正常系_課金開始日考慮() throws ParseException {
+		// データ更新
+		// 検証
+		final String baseDate = "20201105";
+		try {
+			バッチ起動(baseDate);
+		} catch (ExitException e) {
+			Assert.fail("異常終了しました。試験失敗です。");
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了しました。試験失敗です。");
+		}
+
+		値検証(baseDate);
+		旧契約が計上処理対象となっていることを確認();
 	}
 
 	@Test
@@ -864,5 +889,18 @@ public class BatchApplicationTests extends TestBase {
 		transferTargetList.forEach(target -> {
 			データ作成区分_31_振替の個別チェック(target);
 		});
+	}
+
+	private void 旧契約が計上処理対象となっていることを確認() {
+		List<Accounting> accountingList = (List<Accounting>) accountingRepository.findAll();
+		List<Accounting> accountingListContractId200 = accountingList.stream().filter(accounting -> accounting.getContractId() == 200).collect(Collectors.toList());
+		if (CollectionUtils.isEmpty(accountingListContractId200)) {
+			Assert.fail("想定外のデータが対象になっている、あるいは対象データ無しとなっている。");
+		} else {
+			accountingListContractId200.stream().forEach(accounting -> {
+				Contract contract = contractRepository.findOne(accounting.getContractId());
+				Assert.assertEquals("旧契約の契約が処理対象になっていること", LifecycleStatus.旧契約, contract.getLifecycleStatus());
+			});
+		}
 	}
 }
