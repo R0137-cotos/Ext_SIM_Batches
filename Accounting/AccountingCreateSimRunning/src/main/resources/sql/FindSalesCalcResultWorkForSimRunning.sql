@@ -36,7 +36,8 @@ from (
         product_contract pc,
         product_master pm,
         item_contract ic,
-        customer_contract cc
+        customer_contract cc,
+        v_valid_contract_period_history history
     where
         c.id = pc.contract_id AND
         c.id = cd.contract_id AND
@@ -46,16 +47,8 @@ from (
         cd.id = ic.contract_detail_id AND
         (cd.running_account_sales_date is NULL or trunc(cd.running_account_sales_date, 'MONTH') < to_date(substr(:baseDate, 1, 6), 'YYYYMM')) AND
         ic.cost_type in ('2','4') AND
-        c.lifecycle_status in ('6','7','8') AND
-        exists (
-            select
-                1
-            from
-                item_detail_contract idc
-            where
-                idc.initial_running_div = '2' AND
-                ic.id = idc.item_contract_id
-        )
+        c.id = history.contract_id AND
+        to_date(:baseDate, 'YYYY/MM/DD') between history.contract_date_start and history.contract_date_end
     union all
     select
         c.rj_manage_number,
@@ -93,6 +86,8 @@ from (
         item_contract ic,
         item_detail_contract idc,
         MV_WJMOC020_ORG_ALL_INFO_COM wwoaic,
+         mv_t_jmci101 mv_101,
+        mv_t_jmci108 mv_108,
         mv_employee_master mem
     where
         c.id = pc.contract_id AND
@@ -103,19 +98,28 @@ from (
         ic.id = idc.item_contract_id AND
         (cd.running_account_sales_date is NULL or trunc(cd.running_account_sales_date, 'MONTH') < to_date(substr(:baseDate, 1, 6), 'YYYYMM')) AND
         ic.cost_type in ('2','4') AND
-        c.lifecycle_status in ('6','7','8') AND
         idc.initial_running_div = '2' AND
         idc.trans_to_service_org_code = wwoaic.org_id AND
-        mem.emp_id IN (
-             SELECT
-                mv_t_jmci108.sus_sal_mom_shain_cd
-             FROM
-                mv_t_jmci101
-                INNER JOIN
-                   mv_t_jmci108
-                   ON
-                      mv_t_jmci101.customer_site_number = mv_t_jmci108.customer_site_number
-             WHERE
-                mv_t_jmci101.original_system_code = c.billing_customer_sp_code AND
-                mv_t_jmci101.sales_unit_code = '3139' )
+        mv_101.original_system_code = c.billing_customer_sp_code AND
+        mv_101.sales_unit_code = '3139' AND
+        mv_101.customer_site_number = mv_108.customer_site_number AND
+        exists ( 
+            select 
+                1 
+            from 
+                mv_employee_master mem2
+            where 
+                mem2.emp_id = mv_108.sus_sal_mom_shain_cd
+        ) AND
+        mem.emp_id = mv_108.sus_sal_mom_shain_cd AND
+        exists (
+            select 
+                1 
+            from 
+                v_valid_contract_period_history history
+            where 
+                c.id = history.contract_id AND
+                to_date(:baseDate, 'YYYY/MM/DD') between history.contract_date_start and history.contract_date_end AND 
+                history.PRODUCT_CLASS_DIV = 'SIM'
+        )
 ) target
