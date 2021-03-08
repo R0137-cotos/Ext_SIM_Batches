@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.16.0 (08/03/2021)
+- [**closed**] #9976 SIMランニングSQLのパフォーマンス改善 [#210](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/210)
+- [**closed**] #9868 課金開始日を考慮するようにSQL修正 [#209](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/209)
+
+---
+
 ## v3.15.0 (04/02/2021)
 - [**closed**] #8276 郵便番号に応じて最短納期日数を修正CSV読み取り [#203](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/203)
 - [**closed**] #9697 SIMメール失敗時ログ出力 追加修正 [#201](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/201)
