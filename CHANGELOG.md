@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.19.0 (14/04/2021)
+- [**closed**] #10737 [改善]SIMオーダーメール送信BCC変更 [#213](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/213)
+
+---
+
 ## v3.16.0 (08/03/2021)
 - [**closed**] #9976 SIMランニングSQLのパフォーマンス改善 [#210](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/210)
 - [**closed**] #9868 課金開始日を考慮するようにSQL修正 [#209](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/209)
