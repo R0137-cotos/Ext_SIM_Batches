@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.19.1 (19/04/2021)
+- [**closed**] #11004 CommonLibs最新化 [#217](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/217)
+
+---
+
 ## v3.19.0 (14/04/2021)
 - [**closed**] #10737 [改善]SIMオーダーメール送信BCC変更 [#213](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/213)
 
