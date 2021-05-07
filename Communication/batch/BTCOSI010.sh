@@ -6,17 +6,23 @@
 {
 echo "HELO jp.ricoh.com"
 echo "MAIL FROM: zjc_rmobile_sb_order@jp.ricoh.com"
-echo "RCPT TO: SBBGRP-RJMobile@g.softbank.co.jp"
-echo "RCPT TO: sbcs-kitting@fw.softbank.co.jp"
-echo "RCPT TO: SP_Biz-kanri@g.softbank.co.jp"
-echo "RCPT TO: shuu_nishikawa@jp.ricoh.com"
-echo "RCPT TO: masatoshi_kubo@jp.ricoh.com"
+if [ `hostname` = "product-batch-1" ];then
+  echo "RCPT TO: SBBGRP-RJMobile@g.softbank.co.jp"
+  echo "RCPT TO: sbcs-kitting@fw.softbank.co.jp"
+  echo "RCPT TO: SP_Biz-kanri@g.softbank.co.jp"
+  echo "RCPT TO: shuu_nishikawa@jp.ricoh.com"
+  echo "RCPT TO: masatoshi_kubo@jp.ricoh.com"
+fi
 echo "RCPT TO: zjp_cotos_apl_maintenance@jp.ricoh.com"
 echo "DATA"
 echo "From: zjc_rmobile_sb_order@jp.ricoh.com"
-echo "To: SBBGRP-RJMobile@g.softbank.co.jp"
-echo "CC: sbcs-kitting@fw.softbank.co.jp;SP_Biz-kanri@g.softbank.co.jp;shuu_nishikawa@jp.ricoh.com;masatoshi_kubo@jp.ricoh.com;"
-echo "BCC: zjp_cotos_apl_maintenance@jp.ricoh.com"
+if [ `hostname` = "product-batch-1" ];then
+  echo "To: SBBGRP-RJMobile@g.softbank.co.jp"
+  echo "CC: sbcs-kitting@fw.softbank.co.jp;SP_Biz-kanri@g.softbank.co.jp;shuu_nishikawa@jp.ricoh.com;masatoshi_kubo@jp.ricoh.com;"
+  echo "BCC: zjp_cotos_apl_maintenance@jp.ricoh.com"
+else
+  echo "To: zjp_cotos_apl_maintenance@jp.ricoh.com"
+fi
 echo "Subject: =?UTF-8?B?POino+e0hD7jgJDjg6rjgrPjg7zjg6Ljg5DjgqTjg6soU0lNKeOAkQ==?=`date "+%Y/%m/%d"`"
 echo "Content-Type: multipart/mixed; boundary=\"1234\""
 echo "Content-Transfer-Encoding: base64"
