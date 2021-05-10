@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.20.0 (10/05/2021)
+- [**closed**] #10010 [改善]SIMメール送信処理でテスト環境実行時にCOTOS開発メンバー以外にメールが飛ばないようにする [#215](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/215)
+
+---
+
 ## v3.19.1 (19/04/2021)
 - [**closed**] #11004 CommonLibs最新化 [#217](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/217)
 
