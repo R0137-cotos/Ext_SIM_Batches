@@ -408,7 +408,8 @@ public class BatchApplicationTests extends TestBase {
 				StringUtils.equals(accounting.getFfmNspKey(),
 						accounting.getFfmContractDocNo().substring(3) + itemContract.getRicohItemCode() + accounting.getId()));
 		// 28 案件番号
-		Assert.assertNull("案件番号がNullであること", accounting.getFfmProjectNo());
+		Assert.assertTrue("案件番号がRJ管理番号と同じであること",
+				StringUtils.equals(accounting.getFfmProjectNo(), accounting.getRjManageNumber()));
 		// 29 契約書番号
 		Assert.assertTrue("契約書番号が契約.契約番号であること",
 				StringUtils.equals(accounting.getFfmContractDocNo(), contract.getContractNumber()));

@@ -131,6 +131,7 @@ public class AccountingExecutionParameterCreate {
 		// →ここでは null のままとする
 
 		// 28 案件番号
+		entity.setFfmProjectNo(work.getRjManageNumber());
 
 		// 29 契約書番号
 		entity.setFfmContractDocNo(work.getContractNumber());
