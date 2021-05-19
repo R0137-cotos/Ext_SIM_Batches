@@ -24,5 +24,5 @@ echo "5paw6KaP5aWR57SE44Gu44Oq44OX44Op44KkQ1NW44GM5omA5a6a44Gu44OV44Kp44Or44OA44
 echo ""
 echo "."
 echo "QUIT"
-} | python -m telnetlib 10.237.225.216 25
+} | python -m telnetlib 10.236.225.216 25
 
