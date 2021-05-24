@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.21.0 (24/05/2021)
+- [**closed**] #11296 [本番障害]SIMメールサーバーIP変更 [#221](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/221)
+
+---
+
 ## v3.20.0 (10/05/2021)
 - [**closed**] #10010 [改善]SIMメール送信処理でテスト環境実行時にCOTOS開発メンバー以外にメールが飛ばないようにする [#215](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/215)
 
