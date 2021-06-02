@@ -45,6 +45,6 @@ BCC=tatsuya.kamada@jp.ricoh.com
 ATTACHE_FILE="${DIR_PATH}/${FILE_NAME}"
 
 Log.Info "  メール送信を開始します。" >> ${LOG_FILE_PATH}
-${COMMON}/executeSendCsvMail.sh ${FROM} ${TO} ${CC} ${BCC} ${SUBJECT} ${ATTACHE_FILE}
+${COMMON}/executeSendCsvMailCcBcc.sh ${FROM} ${TO} ${CC} ${BCC} ${SUBJECT} ${ATTACHE_FILE}
 
 Log.Info "BTCOSI006:[SB]オーダーメール送信が完了しました。" >> ${LOG_FILE_PATH}
