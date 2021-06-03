@@ -42,9 +42,8 @@ FROM=zjc_rmobile_sb_order@jp.ricoh.com
 TO=Tatsuya.Kamada1@jp.ricoh.com
 CC=Tatsuya.Homma@jp.ricoh.com
 BCC=tatsuya.kamada@jp.ricoh.com
-ATTACHE_FILE="${DIR_PATH}/${FILE_NAME}"
 
 Log.Info "  メール送信を開始します。" >> ${LOG_FILE_PATH}
-${COMMON}/executeSendCsvMailCcBcc.sh ${FROM} ${TO} ${CC} ${BCC} ${SUBJECT} ${ATTACHE_FILE}
+${COMMON}/executeSendCsvMailCcBcc.sh ${FROM} ${TO} ${CC} ${BCC} ${SUBJECT} ${DIR_PATH} ${FILE_NAME}
 
 Log.Info "BTCOSI006:[SB]オーダーメール送信が完了しました。" >> ${LOG_FILE_PATH}
