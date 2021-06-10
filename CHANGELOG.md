@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.22.0 (10/06/2021)
+- [**closed**] #11413 [改善]SIMメール(新規・解約)送信方法修正 [#226](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/226)
+
+---
+
 ## v3.21.0 (24/05/2021)
 - [**closed**] #11296 [本番障害]SIMメールサーバーIP変更 [#221](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/221)
 
