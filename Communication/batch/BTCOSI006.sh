@@ -1,48 +1,42 @@
-#!/bin/sh
+#!/bin/bash
 ################################################
 ### バッチID: BTCOSI006
 ### 機能名：  オーダーメール送信
 ################################################
-type=$2
-subject=$3
-{
-echo "HELO jp.ricoh.com"
-echo "MAIL FROM: zjc_rmobile_sb_order@jp.ricoh.com"
-if [ `hostname` = "product-batch-1" ];then
-  echo "RCPT TO: SBBGRP-RJMobile@g.softbank.co.jp"
-  echo "RCPT TO: sbcs-kitting@fw.softbank.co.jp"
-  echo "RCPT TO: SP_Biz-kanri@g.softbank.co.jp"
-  echo "RCPT TO: shuu_nishikawa@jp.ricoh.com"
-  echo "RCPT TO: masatoshi_kubo@jp.ricoh.com"
-fi
-echo "RCPT TO: zjp_cotos_apl_maintenance@jp.ricoh.com"
-echo "DATA"
-echo "From: zjc_rmobile_sb_order@jp.ricoh.com"
-if [ `hostname` = "product-batch-1" ];then
-  echo "To: SBBGRP-RJMobile@g.softbank.co.jp"
-  echo "CC: sbcs-kitting@fw.softbank.co.jp;SP_Biz-kanri@g.softbank.co.jp;shuu_nishikawa@jp.ricoh.com;masatoshi_kubo@jp.ricoh.com;"
-  echo "BCC: zjp_cotos_apl_maintenance@jp.ricoh.com"
-else
-  echo "To: zjp_cotos_apl_maintenance@jp.ricoh.com"
-fi
-echo "Subject: =?UTF-8?B?${subject}==?=`date "+%Y/%m/%d"`"
-echo "Content-Type: multipart/mixed; boundary=\"1234\""
-echo "Content-Transfer-Encoding: base64"
-echo "MIME-Version: 1.0"
-echo ""
-echo "--1234"
-echo "Content-Type: text/plain; charset=UTF-8"
-echo ""
-echo ""
-echo "--1234"
-echo "Content-Type: text/plain; name=`date "+%Y%m%d"`_SIM_${type}.csv"
-echo "Content-Transfer-Encoding: base64"
-echo "Content-Disposition: attachment; filename=`date "+%Y%m%d"`_SIM_${type}.csv"
-echo ""
-cat $1 | base64
-echo ""
-echo "--1234--"
-echo "."
-echo "QUIT"
-} | python -m telnetlib 10.236.225.216 25 2>> $4
 
+# 共通設定シェルが2階層上のディレクトリに存在することを前提とする
+BATCH_BASE_PATH=$(cd $(dirname $0);cd ../..;pwd)
+source ${BATCH_BASE_PATH}/config.sh
+
+# ログファイルパス
+LOG_FILE_PATH="${LOG_DIR}/BTCOSI006.log"
+
+Log.Info "BTCOSI006:[SB]オーダーメール送信を開始します。" >> ${LOG_FILE_PATH}
+
+################################################
+### パラメーター設定
+################################################
+if [ $# -ne 2 ]; then
+  Log.Error "実行するには2個の引数が必要です。処理を終了します。" >> ${LOG_FILE_PATH}
+  exit 1
+fi
+
+### ファイルパス
+FILE_PATH=$1
+### 件名
+SUBJECT=$2
+
+Log.Info "ファイルパス：${FILE_PATH}" >> ${LOG_FILE_PATH}
+Log.Info "件名：${SUBJECT}" >> ${LOG_FILE_PATH}
+
+################################################
+### メール送信
+################################################
+FROM=zjc_rmobile_sb_order@jp.ricoh.com
+TO=SBBGRP-RJMobile@g.softbank.co.jp
+CC=sbcs-kitting@fw.softbank.co.jp,SP_Biz-kanri@g.softbank.co.jp,shuu_nishikawa@jp.ricoh.com,masatoshi_kubo@jp.ricoh.com
+BCC=zjp_cotos_apl_maintenance@jp.ricoh.com
+
+${COMMON}/executeSendCsvMailCcBcc.sh ${FROM} ${TO} ${CC} ${BCC} ${SUBJECT} ${FILE_PATH}
+
+Log.Info "BTCOSI006:[SB]オーダーメール送信が完了しました。" >> ${LOG_FILE_PATH}
