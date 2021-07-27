@@ -2,6 +2,7 @@ package jp.co.ricoh.cotos.batch.exec.step;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -422,11 +423,7 @@ public class AccountingExecutionParameterCreate {
 
 		// 147 コメント１ 恒久契約識別番号 ＋ 顧客の企業名（カナ）を半角カナ変換
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
-			String halfWidthCompanyKana = Optional.ofNullable(work.getCompanyNameKana()).filter(s -> StringUtils.isNotEmpty(s)).map(s -> {
-				Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
-				return transliterator.transliterate(s);
-			}).orElse("");
-			entity.setFfmOutputComment1(work.getImmutableContIdentNumber() + halfWidthCompanyKana);
+			entity.setFfmOutputComment1(buildFfmOutputComment1(work));
 		}
 		// 148 コメント２
 		// 149 強制フラグ
@@ -539,5 +536,33 @@ public class AccountingExecutionParameterCreate {
 		// 251 拡張項目 テナントID
 
 		return entity;
+	}
+
+	/**
+	 * コメント1に出力する内容を組み立てて返却する<br>
+	 * <br>
+	 * 契約.RJ管理番号 + 納品書・請求書印字用コメント + 顧客の企業名(カナ)を半角カナ変換<br>
+	 * 例) XXX123456789 123456789012 ｱｲｳｴｵｶｷｸｹｺ
+	 *
+	 * @param work 計上データWORK
+	 * @return コメント1
+	 */
+	private String buildFfmOutputComment1(SalesCalcResultWorkForCspRunning work) {
+		ArrayList<String> commentList = new ArrayList<String>();
+		commentList.add(work.getRjManageNumber());
+		if (!StringUtils.isEmpty(work.getPurchaseManageNumber())) {
+			commentList.add(work.getPurchaseManageNumber());
+		}
+		if (!StringUtils.isEmpty(work.getCompanyNameKana())) {
+			commentList.add(convertFullWidthToHarfWidth(work.getCompanyNameKana()));
+		}
+		return String.join(" ", commentList);
+	}
+
+	private String convertFullWidthToHarfWidth(String targetString) {
+		return Optional.ofNullable(targetString).filter(s -> StringUtils.isNotEmpty(s)).map(s -> {
+			Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
+			return transliterator.transliterate(s);
+		}).orElse("");
 	}
 }
