@@ -3,10 +3,11 @@ package jp.co.ricoh.cotos.batch;
 import java.util.Arrays;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import lombok.Data;
@@ -25,7 +26,7 @@ public class DBConfig {
 		Arrays.asList(dbUtil.loadSQLFromClasspath("clearData.sql").split(";")).stream().forEach(sql -> em.createNativeQuery(sql).executeUpdate());
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void initTargetTestData(String path) {
 		Arrays.asList(dbUtil.loadSQLFromClasspath(path).split(";")).stream().forEach(sql -> em.createNativeQuery(sql).executeUpdate());
 	}
