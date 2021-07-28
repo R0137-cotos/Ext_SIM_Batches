@@ -550,10 +550,10 @@ public class AccountingExecutionParameterCreate {
 	private String buildFfmOutputComment1(SalesCalcResultWorkForCspRunning work) {
 		ArrayList<String> commentList = new ArrayList<String>();
 		commentList.add(work.getRjManageNumber());
-		if (!StringUtils.isEmpty(work.getPurchaseManageNumber())) {
+		if (StringUtils.isNotEmpty(work.getPurchaseManageNumber())) {
 			commentList.add(work.getPurchaseManageNumber());
 		}
-		if (!StringUtils.isEmpty(work.getCompanyNameKana())) {
+		if (StringUtils.isNotEmpty(work.getCompanyNameKana())) {
 			commentList.add(convertFullWidthToHarfWidth(work.getCompanyNameKana()));
 		}
 		return String.join(" ", commentList);

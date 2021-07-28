@@ -332,9 +332,9 @@ public class BatchApplicationTests extends TestBase {
 			Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
 			return transliterator.transliterate(s);
 		}).orElse("");
-		if (!StringUtils.isEmpty(contract.getPurchaseManageNumber())) {
+		if (StringUtils.isNotEmpty(contract.getPurchaseManageNumber())) {
 			Assert.assertEquals("コメント１が契約.RJ管理番号 ＋ 契約.納品書・請求書印字用コメント ＋ 顧客の企業名（カナ）を半角カナ変換と同じであること", String.format("%s %s %s", contract.getRjManageNumber(), contract.getPurchaseManageNumber(), halfWidthCompanyKana), accounting.getFfmOutputComment1());
-		} else if (!StringUtils.isEmpty(halfWidthCompanyKana)) {
+		} else if (StringUtils.isNotEmpty(halfWidthCompanyKana)) {
 			Assert.assertEquals("コメント１が契約.RJ管理番号 ＋ 顧客の企業名（カナ）を半角カナ変換と同じであること", String.format("%s %s", contract.getRjManageNumber(), halfWidthCompanyKana), accounting.getFfmOutputComment1());
 		} else {
 			Assert.assertEquals("コメント１が契約.RJ管理番号と同じであること", contract.getRjManageNumber(), accounting.getFfmOutputComment1());
