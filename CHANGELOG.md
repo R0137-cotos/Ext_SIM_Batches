@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.0.0 (30/07/2021)
+- [**closed**] #10819 案件番号項目にRJ管理番号を入れる [#220](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/220)
+
+---
+
 ## v3.22.0 (10/06/2021)
 - [**closed**] #11413 [改善]SIMメール(新規・解約)送信方法修正 [#226](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/226)
 
