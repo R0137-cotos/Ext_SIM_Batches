@@ -1,0 +1,1 @@
+update contract set purchase_manage_number = null where id = 8;
