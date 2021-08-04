@@ -238,7 +238,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		entity.setContractNumber("CC2020041400140");
 		entity.setContractBranchNumber(1);
 		entity.setContractType("1");
-		entity.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"915868\",\"productName\":\"リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料\",\"lineNumber\":\"11111\",\"serialNumber\":\"1\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"11\"}]}");
+		entity.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"915868\",\"productName\":\"リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料\",\"lineNumber\":\"11111\",\"serialNumber\":\"1\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"11\"},{\"id\":1,\"contractType\":\"解約\",\"productCode\":\"915868\",\"productName\":\"リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料\",\"lineNumber\":\"11111\",\"serialNumber\":\"1\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"11\"},{\"id\":1,\"contractType\":\"解約済\",\"productCode\":\"915868\",\"productName\":\"リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料\",\"lineNumber\":\"11111\",\"serialNumber\":\"1\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"11\"}]}");
 		entity.setItemContractName("リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料");
 		entity.setLifecycleStatus("8");
 		entity.setRicohItemCode("915868");
