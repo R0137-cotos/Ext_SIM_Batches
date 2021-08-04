@@ -172,7 +172,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					// 契約に紐づく複数の契約明細それぞれの商品を全て商品(契約用).拡張項目繰返にまとめて持ってる
 					// よって、CSVの各行データを作成する際には、拡張項目繰返の内同じ品種の行だけ抽出する
 					// filter:契約.リコー品種コード=拡張項目繰返.商品コード
-					extendsParameterIteranceDtoList.stream().filter(epi -> orderData.getRicohItemCode().equals(epi.getProductCode())).forEach(j -> {
+					// filter:拡張項目繰返.種別≠解約
+					// filter:拡張項目繰返.種別≠解約済
+					extendsParameterIteranceDtoList.stream().filter(epi -> orderData.getRicohItemCode().equals(epi.getProductCode())).filter(epi -> !("解約".equals(epi.getContractType()))).filter(epi -> !("解約済".equals(epi.getContractType()))).forEach(j -> {
 						CancelOrderCsvDto orderCsvEntity = new CancelOrderCsvDto();
 						orderCsvEntity.setContractIdTemp(orderData.getContractIdTemp());
 						orderCsvEntity.setContractId(orderData.getContractNumber() + String.format("%02d", orderData.getContractBranchNumber()) + String.format("%03d", branchNumberIndex[0] + 1));
