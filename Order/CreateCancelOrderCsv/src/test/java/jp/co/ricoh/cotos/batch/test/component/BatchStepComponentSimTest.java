@@ -238,7 +238,16 @@ public class BatchStepComponentSimTest extends TestBase {
 		entity.setContractNumber("CC2020041400140");
 		entity.setContractBranchNumber(1);
 		entity.setContractType("1");
-		entity.setExtendsParameterIterance("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"915868\",\"productName\":\"リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料\",\"lineNumber\":\"11111\",\"serialNumber\":\"1\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"11\"},{\"id\":1,\"contractType\":\"解約\",\"productCode\":\"915868\",\"productName\":\"リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料\",\"lineNumber\":\"11111\",\"serialNumber\":\"1\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"11\"},{\"id\":1,\"contractType\":\"解約済\",\"productCode\":\"915868\",\"productName\":\"リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料\",\"lineNumber\":\"11111\",\"serialNumber\":\"1\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"11\"}]}");
+		StringBuilder sb = new StringBuilder();
+		sb.append("{\"extendsParameterList\":[");
+		// 拡張項目繰返.種別 = 新規
+		sb.append("{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"915868\",\"productName\":\"リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料\",\"lineNumber\":\"11111\",\"serialNumber\":\"1\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"11\"},");
+		// 拡張項目繰返.種別 = 解約
+		sb.append("{\"id\":1,\"contractType\":\"解約\",\"productCode\":\"000000\",\"productName\":\"リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料\",\"lineNumber\":\"11111\",\"serialNumber\":\"1\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"11\"},");
+		// 拡張項目繰返.種別 = 解約済
+		sb.append("{\"id\":1,\"contractType\":\"解約済\",\"productCode\":\"555555\",\"productName\":\"リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料\",\"lineNumber\":\"11111\",\"serialNumber\":\"1\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"11\"}");
+		sb.append("]}");
+		entity.setExtendsParameterIterance(sb.toString());
 		entity.setItemContractName("リコーモバイル通信サービス　データＳＩＭ（Ｓ）２ＧＢ　月額利用料");
 		entity.setLifecycleStatus("8");
 		entity.setRicohItemCode("915868");
