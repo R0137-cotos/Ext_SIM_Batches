@@ -29,6 +29,8 @@ from (
         null as trans_to_service_org_code,
         c.immutable_cont_ident_number,
         cc.company_name_kana,
+        c.purchase_manage_number,
+        pm.product_class_div as accounting_product_class_div,
         null as emp_number
     from
         contract c,
@@ -77,6 +79,8 @@ from (
         wwoaic.cubic_org_id,
         c.immutable_cont_ident_number,
         null as company_name_kana,
+        c.purchase_manage_number,
+        pm.product_class_div as accounting_product_class_div,
         mem.emb_emp_number as emp_number
     from
         contract c,

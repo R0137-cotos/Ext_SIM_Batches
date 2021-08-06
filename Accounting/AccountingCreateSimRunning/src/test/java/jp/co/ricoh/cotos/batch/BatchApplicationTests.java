@@ -31,12 +31,12 @@ import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.entity.EnumType.InitialRunningDiv;
 import jp.co.ricoh.cotos.commonlib.entity.accounting.Accounting;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
+import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.LifecycleStatus;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail.RunningAccountSalesStatus;
 import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ItemContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ItemDetailContract;
-import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.LifecycleStatus;
 import jp.co.ricoh.cotos.commonlib.entity.master.CommonMasterDetail;
 import jp.co.ricoh.cotos.commonlib.entity.master.MvWjmoc020OrgAllInfoCom;
 import jp.co.ricoh.cotos.commonlib.repository.accounting.AccountingRepository;
@@ -179,6 +179,28 @@ public class BatchApplicationTests extends TestBase {
 		旧契約が計上処理対象となっていることを確認();
 	}
 
+	/**
+	 * NOTE: 納品書・請求書印字用コメントがNULLでないケースは「正常系_締結中」でカバー
+	 *       納品書・請求書印字用コメント、企業名がともにNULLのケースは「正常系_課金開始日考慮」でカバー
+	 */
+	@Test
+	@Transactional
+	public void 正常系_納品書_請求書印字用コメントがnull() throws ParseException {
+		// データ更新
+		context.getBean(DBConfig.class).initTargetTestData("sql/納品書・請求書印字用コメントがnull.sql");
+		// 検証
+		final String baseDate = "20200201";
+		try {
+			バッチ起動(baseDate);
+		} catch (ExitException e) {
+			Assert.fail("異常終了しました。試験失敗です。");
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了しました。試験失敗です。");
+		}
+		値検証(baseDate);
+		}
+
 	@Test
 	public void パラメータ不正() {
 		// 検証
@@ -306,13 +328,17 @@ public class BatchApplicationTests extends TestBase {
 		Assert.assertTrue("今回の請求回数が1(固定)であること", accounting.getFfmThisBillingCnt() == 1);
 
 		// 147 コメント１
-		String halfWidthCompanyKana = Optional.ofNullable(customerContract.getCompanyNameKana())
-				.filter(s -> StringUtils.isNotEmpty(s)).map(s -> {
-					Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
-					return transliterator.transliterate(s);
-				}).orElse("");
-		Assert.assertTrue("コメント１が恒久契約識別番号 ＋ 顧客の企業名（カナ）を半角カナ変換と同じであること", StringUtils.equals(
-				accounting.getFfmOutputComment1(), contract.getImmutableContIdentNumber() + halfWidthCompanyKana));
+		String halfWidthCompanyKana = Optional.ofNullable(customerContract.getCompanyNameKana()).filter(s -> StringUtils.isNotEmpty(s)).map(s -> {
+			Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
+			return transliterator.transliterate(s);
+		}).orElse("");
+		if (StringUtils.isNotEmpty(contract.getPurchaseManageNumber())) {
+			Assert.assertEquals("コメント１が契約.RJ管理番号 ＋ 契約.納品書・請求書印字用コメント ＋ 顧客の企業名（カナ）を半角カナ変換と同じであること", String.format("%s %s %s", contract.getRjManageNumber(), contract.getPurchaseManageNumber(), halfWidthCompanyKana), accounting.getFfmOutputComment1());
+		} else if (StringUtils.isNotEmpty(halfWidthCompanyKana)) {
+			Assert.assertEquals("コメント１が契約.RJ管理番号 ＋ 顧客の企業名（カナ）を半角カナ変換と同じであること", String.format("%s %s", contract.getRjManageNumber(), halfWidthCompanyKana), accounting.getFfmOutputComment1());
+		} else {
+			Assert.assertEquals("コメント１が契約.RJ管理番号と同じであること", contract.getRjManageNumber(), accounting.getFfmOutputComment1());
+		}
 
 		// 154 納品場所識別
 		Assert.assertTrue("納品場所識別が11(固定)であること", StringUtils.equals(accounting.getFfmDstType(), "11"));
