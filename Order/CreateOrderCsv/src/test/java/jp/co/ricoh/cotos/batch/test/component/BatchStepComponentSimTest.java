@@ -136,8 +136,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -198,8 +198,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -260,8 +260,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -322,8 +322,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -397,8 +397,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -474,8 +474,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -551,8 +551,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -616,8 +616,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -682,8 +682,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -748,8 +748,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -811,8 +811,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -875,8 +875,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -939,8 +939,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -1240,8 +1240,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -1317,8 +1317,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -1394,8 +1394,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -1471,8 +1471,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -1546,8 +1546,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -1624,8 +1624,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -1702,8 +1702,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -1780,8 +1780,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -1857,8 +1857,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -1932,8 +1932,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -2010,8 +2010,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -2087,8 +2087,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -2164,8 +2164,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -2242,8 +2242,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -2319,8 +2319,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -2397,8 +2397,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -2460,8 +2460,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -2529,8 +2529,8 @@ public class BatchStepComponentSimTest extends TestBase {
 		createOrderCsvDataDto.setShortestDeliveryDate(8);
 		createOrderCsvDataDto.setPicName("dummy_pic_name_location");
 		createOrderCsvDataDto.setPicNameKana("dummy_pic_name_kana_location");
-		createOrderCsvDataDto.setPostNumber("dummy_post_number_location");
-		createOrderCsvDataDto.setAddress("dummy_address_location");
+		createOrderCsvDataDto.setPostNumber("input_post_number_location");
+		createOrderCsvDataDto.setAddress("input_address_location");
 		createOrderCsvDataDto.setCompanyName("dummy_company_name_location");
 		createOrderCsvDataDto.setOfficeName("dummy_office_name_locationdummy_pic_dept_name_location");
 		createOrderCsvDataDto.setPicPhoneNumber("dummy_pic_phone_number_location");
@@ -2591,10 +2591,10 @@ public class BatchStepComponentSimTest extends TestBase {
 		case "無":
 			break;
 		case "2":
-			contractInstallationLocation.setInputPostNumber("007-0834");
+			contractInstallationLocation.setPostNumber("007-0834");
 			break;
 		case "失敗":
-			contractInstallationLocation.setInputPostNumber("0000000000000");
+			contractInstallationLocation.setPostNumber("0000000000000");
 			break;
 		default:
 		}
