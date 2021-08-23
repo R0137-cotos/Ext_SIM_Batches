@@ -10,8 +10,8 @@ SELECT
   data.shortest_delivery_date AS shortest_delivery_date,
   data.pic_name AS pic_name,
   data.pic_name_kana AS pic_name_kana,
-  data.post_number AS post_number,
-  data.address AS address,
+  data.input_post_number AS post_number,
+  data.input_address AS address,
   data.company_name AS company_name,
   data.office_name AS office_name,
   data.pic_phone_number AS pic_phone_number,
@@ -36,8 +36,8 @@ FROM
 	im.shortest_delivery_date,                         --品種マスタ.最短納入日数
 	location.pic_name,                                 --設置先(契約用).MoM非連携_担当者氏名
 	location.pic_name_kana,                            --設置先(契約用).MoM非連携_担当者氏名(カナ)
-	location.post_number,                              --設置先(契約用).郵便番号
-	location.address,                                  --設置先(契約用).住所
+	location.input_post_number,                        --設置先(契約用).MoM非連携_郵便番号(手入力)
+	location.input_address,                            --設置先(契約用).MoM非連携_住所(手入力)
 	location.company_name,                             --設置先(契約用).企業名
 	CONCAT(
 		location.office_name,                          --設置先(契約用).事業所名
