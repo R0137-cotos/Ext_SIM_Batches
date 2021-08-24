@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.1.0 (24/08/2021)
+- [**closed**] #12079 [本番障害]オーダーCSV送信時に手入力された郵便番号と住所が連携されていない [#233](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/233)
+- [**closed**] #11494 全解約時に抽出するデータ条件の追加 [#232](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/232)
+- [**closed**] #7974 FFM出力コメント１の内容を修正 [#231](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/231)
+
+---
+
 ## v4.0.0 (30/07/2021)
 - [**closed**] #10819 案件番号項目にRJ管理番号を入れる [#220](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/220)
 
