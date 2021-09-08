@@ -1,5 +1,7 @@
 package jp.co.ricoh.cotos.batch.test.component;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
 import jp.co.ricoh.cotos.component.BatchUtil;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
+import jp.co.ricoh.cotos.component.sim.BatchStepComponentSim;
 import jp.co.ricoh.cotos.dto.ReplyOrderDto;
 import jp.co.ricoh.cotos.security.CreateJwt;
 
@@ -56,6 +59,9 @@ public class BatchStepComponentSimTests extends TestBase {
 
 	@SpyBean(name = "SIM")
 	BatchStepComponent batchStepComponent;
+
+	@SpyBean
+	BatchStepComponentSim batchStepComponentSim;
 
 	@AfterClass
 	public static void exit() throws Exception {
@@ -156,12 +162,69 @@ public class BatchStepComponentSimTests extends TestBase {
 		// 手配情報完了APIを無効にする
 		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
-
 		try {
-			batchStepComponent.process(null);
 		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void process_異常系_callUpdateContractApi_返り値_false() throws IOException {
+		// 契約情報更新APIを失敗にする
+		Mockito.doReturn(false).when(batchStepComponentSim).callUpdateContractApi(Mockito.any(Contract.class));
+		// 手配業務受付APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
+		// 手配情報完了APIを無効にする
+		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
+		Boolean isAllSuccess = null;
+		try {
+			isAllSuccess = batchStepComponent.process(batchStepComponent.beforeProcess(new String[] { filePath, fileName }));
+		} catch (ErrorCheckException e) {
+			Assert.fail("エラーが発生した。");
+		}
+		assertFalse(isAllSuccess);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void process_異常系_数量減分_拡張項目繰返_なし() throws IOException {
+		// 契約情報更新APIを無効にする
+		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
+		// 手配業務受付APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
+		// 手配情報完了APIを無効にする
+		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertCancelReplySuccessTestData2.sql");
+		Boolean isAllSuccess = null;
+		try {
+			isAllSuccess = batchStepComponent.process(batchStepComponent.beforeProcess(new String[] { filePath, fileName }));
+		} catch (ErrorCheckException e) {
+			Assert.fail("エラーが発生した。");
+		}
+		assertFalse(isAllSuccess);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void process_異常系_手配情報更新処理_失敗() throws IOException {
+		// 契約情報更新APIを失敗にする
+		Mockito.doReturn(false).when(batchStepComponentSim).callUpdateContractApi(Mockito.any(Contract.class));
+		// 手配業務受付APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
+		// 手配情報完了APIを成功にする
+		Mockito.doReturn(true).when(batchStepComponentSim).callCompleteArrangementApi(Mockito.any(Contract.class), Mockito.anyBoolean());
+		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
+		Boolean isAllSuccess = null;
+		try {
+			isAllSuccess = batchStepComponent.process(batchStepComponent.beforeProcess(new String[] { filePath, fileName }));
+		} catch (ErrorCheckException e) {
+			Assert.fail("エラーが発生した。");
+		}
+		assertFalse(isAllSuccess);
 	}
 
 	private void テストデータ作成(String sql) {

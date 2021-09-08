@@ -47,7 +47,7 @@ public interface IBatchStepComponent {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public void process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException;
+	public Boolean process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException;
 
 	/**
 	 * 事後処理
