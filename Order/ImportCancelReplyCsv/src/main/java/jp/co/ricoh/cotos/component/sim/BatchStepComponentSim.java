@@ -78,8 +78,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Autowired
 	EntityManager em;
 
-	public int inProcessErrorCount = 0;
-
 	@Override
 	public List<ReplyOrderDto> beforeProcess(String[] args) throws IOException {
 		log.info("SIM独自処理");
