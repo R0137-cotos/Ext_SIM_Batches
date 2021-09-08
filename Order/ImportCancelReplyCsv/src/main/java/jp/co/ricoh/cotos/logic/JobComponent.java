@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import jp.co.ricoh.cotos.BatchConstants;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
+import jp.co.ricoh.cotos.component.sim.BatchStepComponentSim;
 import lombok.extern.log4j.Log4j;
 
 @Component
@@ -14,6 +15,9 @@ public class JobComponent {
 
 	@Autowired
 	BatchComponent batchComponent;
+
+	@Autowired
+	BatchStepComponentSim batchStepComponentSim;
 
 	@Autowired
 	private MessageUtil messageUtil;
@@ -26,8 +30,12 @@ public class JobComponent {
 
 		try {
 			log.info(messageUtil.createMessageInfo("BatchProcessStartInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
-			batchComponent.execute(args);
+			Boolean isAllSuccess = batchComponent.execute(args);
 			log.info(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
+			if(!isAllSuccess) {
+				log.error("1件以上のエラーがあります。");
+				System.exit(1);
+			}
 
 		} catch (ErrorCheckException e) {
 			e.getErrorInfoList().stream().forEach(errorInfo -> log.error(errorInfo.getErrorId() + ":" + errorInfo.getErrorMessage()));

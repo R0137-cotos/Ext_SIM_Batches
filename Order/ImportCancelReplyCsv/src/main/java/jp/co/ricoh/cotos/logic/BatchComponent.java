@@ -21,15 +21,15 @@ public class BatchComponent {
 
 	/**
 	 * バッチ処理
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public void execute(String[] args) throws Exception {
+	public Boolean execute(String[] args) throws Exception {
 
 		// パラメータチェック
 		baseComponent.paramCheck(args);
 
 		IBatchStepComponent component = this.getComponentInstance("SIM");
-		component.process(component.beforeProcess(args));
+		return component.process(component.beforeProcess(args));
 	}
 
 	/**
