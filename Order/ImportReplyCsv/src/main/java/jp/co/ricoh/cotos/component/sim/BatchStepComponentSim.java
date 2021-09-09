@@ -127,23 +127,29 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		// 対象契約取得
 		List<Contract> contractList = new ArrayList<>();
 		contractNumberList.stream().forEach(conNumLst -> {
-			// 契約情報取得 恒久契約識別番号
+			// 契約情報取得 文書番号
 			try {
 				ContractSearchParameter searchParam = new ContractSearchParameter();
 				searchParam.setContractNumber(conNumLst.substring(0, 15));
 				searchParam.setContractBranchNumber(conNumLst.substring(16, 17));
 				List<Contract> c = restApiClient.callFindTargetContractList(searchParam);
-				c.stream().forEach(contractTmp -> {
-					try {
-						contractList.add(restApiClient.callFindContract(contractTmp.getId()));
-					} catch (Exception e) {
-						errorCheckList.add(true);
-						log.fatal(String.format("契約ID=" + contractTmp.getId() + "の契約取得に失敗したため、処理をスキップします。"), e);
-					}
-				});
+				if (!c.isEmpty()) {
+					c.stream().forEach(contractTmp -> {
+						try {
+							contractList.add(restApiClient.callFindContract(contractTmp.getId()));
+						} catch (Exception e) {
+							errorCheckList.add(true);
+							log.fatal(String.format("契約ID=" + contractTmp.getId() + "の契約取得に失敗したため、処理をスキップします。"), e);
+						}
+					});
+				} else {
+					errorCheckList.add(true);
+					log.fatal(String.format("文書番号=" + conNumLst + "の契約取得に失敗したため、処理をスキップします。", conNumLst));
+					return;
+				}
 			} catch (Exception updateError) {
 				errorCheckList.add(true);
-				log.fatal(String.format("恒久契約識別番号=" + conNumLst + "の契約取得に失敗したため、処理をスキップします。", conNumLst), updateError);
+				log.fatal(String.format("文書番号=" + conNumLst + "の契約取得に失敗したため、処理をスキップします。", conNumLst), updateError);
 				return;
 			}
 		});
