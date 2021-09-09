@@ -110,7 +110,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		log.info("SIM独自処理");
 
 		// ラムダ式内でラムダ式外で設定された変数が変更できないのでエラーリストを作成する。
-		List<Boolean> inProcessErrorList = new ArrayList();
+		List<Boolean> errorList = new ArrayList();
 
 		if (CollectionUtils.isEmpty(csvlist)) {
 			log.info("取込データが0件のため処理を終了します");
@@ -177,7 +177,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					// 成功した場合 手配情報業務完了処理を実施
 					hasNoArrangementError = callCompleteArrangementApi(contract, true);
 				} else {
-					inProcessErrorList.add(false);
+					errorList.add(false);
 					// 失敗した場合スキップする
 					return;
 				}
@@ -215,7 +215,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					if (CollectionUtils.isEmpty(extendsParameterList)) {
 						log.fatal(String.format("契約ID=%dの商品拡張項目繰返読込に失敗しました。", contract.getId()));
 						hasJsonError = true;
-						inProcessErrorList.add(false);
+						errorList.add(false);
 						return;
 					}
 
@@ -253,7 +253,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						e.printStackTrace();
 						log.fatal(String.format("契約ID=%dの商品拡張項目登録に失敗しました。", contract.getId()));
 						hasJsonError = true;
-						inProcessErrorList.add(false);
+						errorList.add(false);
 						return;
 					}
 				}
@@ -271,7 +271,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					if (!callUpdateContractApi(contract)) {
 						// 失敗した場合エラーログを出力しスキップする
 						log.fatal(String.format("契約ID=%dの契約更新に失敗しました。リカバリが必要となります。", contract.getId()));
-						inProcessErrorList.add(false);
+						errorList.add(false);
 						return;
 					}
 				}
@@ -281,11 +281,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		em.clear();
 
 		// 実行処理にエラーが1件でも存在していた場合は返り値にfalseを渡す
-		if (inProcessErrorList.isEmpty()) {
-			return true;
-		} else {
-			return false;
-		}
+		return errorList.isEmpty();
 	}
 
 	/**
