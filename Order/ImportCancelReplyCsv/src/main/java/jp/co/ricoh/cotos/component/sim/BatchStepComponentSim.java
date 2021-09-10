@@ -289,7 +289,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	 * @param contract 契約情報
 	 * @return true:API実行結果エラー無し false:API実行結果エラー有り
 	 */
-	public boolean callUpdateContractApi(Contract contract) {
+	private boolean callUpdateContractApi(Contract contract) {
 		if (contract == null) {
 			return false;
 		}
@@ -310,7 +310,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	 * @param allCancelFlg 全解約フラグ
 	 * @return true:API実行結果エラー無し false:API実行結果エラー有り
 	 */
-	public boolean callCompleteArrangementApi(Contract contract, boolean allCancelFlg) {
+	private boolean callCompleteArrangementApi(Contract contract, boolean allCancelFlg) {
 		if (contract == null) {
 			return false;
 		}

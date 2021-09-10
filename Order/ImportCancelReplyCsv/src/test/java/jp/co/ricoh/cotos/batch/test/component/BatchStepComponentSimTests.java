@@ -28,7 +28,6 @@ import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
 import jp.co.ricoh.cotos.component.BatchUtil;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
-import jp.co.ricoh.cotos.component.sim.BatchStepComponentSim;
 import jp.co.ricoh.cotos.dto.ReplyOrderDto;
 import jp.co.ricoh.cotos.security.CreateJwt;
 
@@ -59,9 +58,6 @@ public class BatchStepComponentSimTests extends TestBase {
 
 	@SpyBean(name = "SIM")
 	BatchStepComponent batchStepComponent;
-
-	@SpyBean
-	BatchStepComponentSim batchStepComponentSim;
 
 	@AfterClass
 	public static void exit() throws Exception {
@@ -170,9 +166,11 @@ public class BatchStepComponentSimTests extends TestBase {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void process_異常系_callUpdateContractApi_返り値_false() throws IOException {
-		// 契約情報更新APIを失敗にする
-		Mockito.doReturn(false).when(batchStepComponentSim).callUpdateContractApi(Mockito.any(Contract.class));
+	public void process_異常系_契約情報更新API_エラー発生() throws IOException {
+		// 契約情報更新APIでエラーを発生させる
+		Mockito.doThrow(new RuntimeException()).when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
 		// 手配業務受付APIを無効にする
 		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
 		// 手配情報完了APIを無効にする
@@ -210,13 +208,15 @@ public class BatchStepComponentSimTests extends TestBase {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void process_異常系_手配情報更新処理_失敗() throws IOException {
-		// 契約情報更新APIを失敗にする
-		Mockito.doReturn(false).when(batchStepComponentSim).callUpdateContractApi(Mockito.any(Contract.class));
+	public void process_異常系_手配情報更新処理API_エラー発生() throws IOException {
+		// 契約情報更新APIでエラーを発生させる
+		Mockito.doThrow(new Exception()).when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
 		// 手配業務受付APIを無効にする
 		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
-		// 手配情報完了APIを成功にする
-		Mockito.doReturn(true).when(batchStepComponentSim).callCompleteArrangementApi(Mockito.any(Contract.class), Mockito.anyBoolean());
+		// 手配情報完了APIを無効にする
+		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
 		Boolean isAllSuccess = null;
 		try {
