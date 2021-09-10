@@ -23,7 +23,7 @@ public class BatchComponent {
 	 * バッチ処理
 	 * @throws Exception
 	 */
-	public Boolean execute(String[] args) throws Exception {
+	public boolean execute(String[] args) throws Exception {
 
 		// パラメータチェック
 		baseComponent.paramCheck(args);

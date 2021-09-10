@@ -30,9 +30,9 @@ public class JobComponent {
 
 		try {
 			log.info(messageUtil.createMessageInfo("BatchProcessStartInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
-			Boolean isAllSuccess = batchComponent.execute(args);
+			boolean isAllSuccess = batchComponent.execute(args);
 			log.info(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
-			if(!isAllSuccess) {
+			if (!isAllSuccess) {
 				log.error("1件以上のエラーがあります。");
 				System.exit(1);
 			}

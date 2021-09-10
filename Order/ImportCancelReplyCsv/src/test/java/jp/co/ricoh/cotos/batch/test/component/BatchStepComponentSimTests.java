@@ -20,6 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
@@ -45,6 +48,9 @@ public class BatchStepComponentSimTests extends TestBase {
 
 	@Autowired
 	BatchMomInfoProperties batchProperty;
+
+	@SpyBean
+	ObjectMapper om;
 
 	@Autowired
 	public void injectContext(ConfigurableApplicationContext injectContext) {
@@ -167,8 +173,25 @@ public class BatchStepComponentSimTests extends TestBase {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void process_異常系_契約情報更新API_エラー発生() throws IOException {
-		// 契約情報更新APIでエラーを発生させる
-		Mockito.doThrow(new RuntimeException()).when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
+		// 手配業務受付APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
+		// 手配情報完了APIを無効にする
+		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
+		Boolean isAllSuccess = null;
+		try {
+			isAllSuccess = batchStepComponent.process(batchStepComponent.beforeProcess(new String[] { filePath, fileName }));
+		} catch (ErrorCheckException e) {
+			Assert.fail("エラーが発生した。");
+		}
+		assertFalse(isAllSuccess);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void process_異常系_契約情報を再更新に失敗した場合() throws IOException {
 		// 手配担当者登録APIを無効にする
 		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
 		// 手配業務受付APIを無効にする
@@ -196,7 +219,7 @@ public class BatchStepComponentSimTests extends TestBase {
 		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
 		// 手配情報完了APIを無効にする
 		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
-		テストデータ作成("sql/insertCancelReplySuccessTestData2.sql");
+		テストデータ作成("sql/insertCancelReplyFailTestData_NoExtendsParameterIterance.sql");
 		Boolean isAllSuccess = null;
 		try {
 			isAllSuccess = batchStepComponent.process(batchStepComponent.beforeProcess(new String[] { filePath, fileName }));
@@ -209,8 +232,8 @@ public class BatchStepComponentSimTests extends TestBase {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void process_異常系_手配情報更新処理API_エラー発生() throws IOException {
-		// 契約情報更新APIでエラーを発生させる
-		Mockito.doThrow(new Exception()).when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 契約情報更新APIを無効にする
+		Mockito.doNothing().doThrow(new RuntimeException()).when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
 		// 手配担当者登録APIを無効にする
 		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
 		// 手配業務受付APIを無効にする
@@ -218,6 +241,30 @@ public class BatchStepComponentSimTests extends TestBase {
 		// 手配情報完了APIを無効にする
 		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
+		Boolean isAllSuccess = null;
+		try {
+			isAllSuccess = batchStepComponent.process(batchStepComponent.beforeProcess(new String[] { filePath, fileName }));
+		} catch (ErrorCheckException e) {
+			Assert.fail("エラーが発生した。");
+		}
+		assertFalse(isAllSuccess);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void process_異常系_数量減文_商品拡張項目登録失敗() throws IOException {
+		// 契約情報更新APIを無効にする
+		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
+		// 手配業務受付APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
+		// 手配情報完了APIを無効にする
+		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
+		// 商品拡張項目登録を失敗にする。
+		// エラーを出力したいコード以前に、readJsonメソッドでwriteValueAsStringメソッドが呼ばれているので、最初にdoCallRealMethodを使用している。
+		Mockito.doCallRealMethod().doThrow(JsonProcessingException.class).when(om).writeValueAsString(Mockito.anyMap());
+		テストデータ作成("sql/insertCancelReplyFailTestData_OnlyPartCancelList.sql");
 		Boolean isAllSuccess = null;
 		try {
 			isAllSuccess = batchStepComponent.process(batchStepComponent.beforeProcess(new String[] { filePath, fileName }));

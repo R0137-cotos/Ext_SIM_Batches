@@ -106,7 +106,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Override
 	@Transactional
-	public Boolean process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
+	public boolean process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
 		log.info("SIM独自処理");
 
 		// ラムダ式内でラムダ式外で設定された変数が変更できないのでエラーリストを作成する。
@@ -114,7 +114,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 		if (CollectionUtils.isEmpty(csvlist)) {
 			log.info("取込データが0件のため処理を終了します");
-			return false;
 		}
 
 		// 枝番削除した契約番号をキーとしたMap
@@ -186,6 +185,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					if (!callUpdateContractApi(originalContract)) {
 						// 再更新に失敗した場合手動リカバリが必要となる
 						log.fatal(String.format("契約ID=%dの契約再更新に失敗しました。リカバリが必要となります。", originalContract.getId()));
+						errorList.add(false);
 					}
 				}
 			});
@@ -215,7 +215,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					if (CollectionUtils.isEmpty(extendsParameterList)) {
 						log.fatal(String.format("契約ID=%dの商品拡張項目繰返読込に失敗しました。", contract.getId()));
 						hasJsonError = true;
-						errorList.add(false);
 						return;
 					}
 
@@ -253,7 +252,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						e.printStackTrace();
 						log.fatal(String.format("契約ID=%dの商品拡張項目登録に失敗しました。", contract.getId()));
 						hasJsonError = true;
-						errorList.add(false);
 						return;
 					}
 				}
@@ -261,6 +259,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 				// JSONエラーが存在する場合は契約情報更新・手配情報業務完了をスキップする
 				if (hasJsonError) {
+					errorList.add(false);
 					return;
 				}
 
@@ -280,7 +279,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		// エンティティ(contract)に対して値を更新すると、エンティティマネージャーが更新対象とみなしてしまい、排他制御に引っかかる
 		em.clear();
 
-		// 実行処理にエラーが1件でも存在していた場合は返り値にfalseを渡す
 		return errorList.isEmpty();
 	}
 
