@@ -59,7 +59,7 @@ public class ImportCancelReplyCsvTests extends TestBase {
 		}
 	}
 
-	// APIのモック化ができないことに起因して、main実行時にエラーが発生するためスキップする。
+	// main実行時にspringを再起動することに起因してAPIのモック化ができない。APIのモック化ができないことでエラーが発生するためスキップする。
 	// バッチ処理内容のテストはJobComponent側でテストをしている。
 	@SuppressWarnings("unchecked")
 	@Test
