@@ -144,7 +144,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
 		// 手配情報完了APIを無効にする
 		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
-		テストデータ作成("sql/insertCancelReplySuccessTestData2.sql");
+		テストデータ作成("sql/insertCancelReplyFailTestData_NoExtendsParameterIterance.sql");
 		try {
 			jobComponent.run(new String[] { filePath, fileName });
 		} catch (ExitException e) {

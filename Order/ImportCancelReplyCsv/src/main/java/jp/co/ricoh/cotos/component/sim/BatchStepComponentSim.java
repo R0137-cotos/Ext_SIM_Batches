@@ -215,6 +215,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					if (CollectionUtils.isEmpty(extendsParameterList)) {
 						log.fatal(String.format("契約ID=%dの商品拡張項目繰返読込に失敗しました。", contract.getId()));
 						hasJsonError = true;
+						errorList.add(false);
 						return;
 					}
 
@@ -252,6 +253,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						e.printStackTrace();
 						log.fatal(String.format("契約ID=%dの商品拡張項目登録に失敗しました。", contract.getId()));
 						hasJsonError = true;
+						errorList.add(false);
 						return;
 					}
 				}
@@ -259,7 +261,6 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 				// JSONエラーが存在する場合は契約情報更新・手配情報業務完了をスキップする
 				if (hasJsonError) {
-					errorList.add(false);
 					return;
 				}
 
