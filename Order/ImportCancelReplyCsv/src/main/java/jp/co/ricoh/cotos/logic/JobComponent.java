@@ -33,7 +33,7 @@ public class JobComponent {
 			boolean isAllSuccess = batchComponent.execute(args);
 			log.info(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
 			if (!isAllSuccess) {
-				log.error("1件以上のエラーがあります。");
+				log.error("解約リプライ取込で一部異常終了しました。");
 				System.exit(1);
 			}
 
