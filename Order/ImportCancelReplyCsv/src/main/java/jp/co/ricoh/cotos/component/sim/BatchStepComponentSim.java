@@ -114,6 +114,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 		if (CollectionUtils.isEmpty(csvlist)) {
 			log.info("取込データが0件のため処理を終了します");
+			return true;
 		}
 
 		// 枝番削除した契約番号をキーとしたMap
