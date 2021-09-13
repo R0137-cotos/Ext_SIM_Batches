@@ -165,6 +165,7 @@ public class BatchStepComponentSimTests extends TestBase {
 		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
 		try {
+			batchStepComponent.process(null);
 		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
