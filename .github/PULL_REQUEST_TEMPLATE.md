@@ -5,3 +5,6 @@
  - [ ] DBへの変更はFlywayに反映させています。
  - [ ] ソースコードフォーマットはEclipseでバッチリです。
  - [ ] Javaバッチ追加時は起動用シェルもセットで用意しています。
+ - [ ] [構成ファイル種類毎のルール](https://mygithub.ritscm.xyz/cotos/BatchLightTemplate/tree/develop#batchlighttemplate)通りにファイルを修正しています。
+ - [ ] 例外を握りつぶす場合はLog.Warnでのログ出力およびその理由をコメントで記載しています。
+ 
