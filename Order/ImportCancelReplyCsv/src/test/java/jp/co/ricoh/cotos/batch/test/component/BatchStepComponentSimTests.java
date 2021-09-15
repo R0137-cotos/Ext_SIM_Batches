@@ -253,7 +253,7 @@ public class BatchStepComponentSimTests extends TestBase {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void process_異常系_数量減文_商品拡張項目登録失敗() throws IOException {
+	public void process_異常系_数量減分_商品拡張項目登録失敗() throws IOException {
 		// 契約情報更新APIを無効にする
 		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
 		// 手配担当者登録APIを無効にする
@@ -265,6 +265,25 @@ public class BatchStepComponentSimTests extends TestBase {
 		// 商品拡張項目登録を失敗にする。
 		// エラーを出力したいコード以前に、readJsonメソッドでwriteValueAsStringメソッドが呼ばれているので、最初にdoCallRealMethodを使用している。
 		Mockito.doCallRealMethod().doThrow(JsonProcessingException.class).when(om).writeValueAsString(Mockito.anyMap());
+		テストデータ作成("sql/insertCancelReplyFailTestData_OnlyPartCancelList.sql");
+		Boolean isAllSuccess = null;
+		try {
+			isAllSuccess = batchStepComponent.process(batchStepComponent.beforeProcess(new String[] { filePath, fileName }));
+		} catch (ErrorCheckException e) {
+			Assert.fail("エラーが発生した。");
+		}
+		assertFalse(isAllSuccess);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void process_異常系_数量減分_手配情報更新処理API失敗() throws IOException {
+		// 契約情報更新APIを無効にする
+		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
+		// 手配業務受付APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
 		テストデータ作成("sql/insertCancelReplyFailTestData_OnlyPartCancelList.sql");
 		Boolean isAllSuccess = null;
 		try {

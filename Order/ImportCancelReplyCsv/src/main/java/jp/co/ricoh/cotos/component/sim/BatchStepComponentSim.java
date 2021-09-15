@@ -275,6 +275,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						errorList.add(false);
 						return;
 					}
+				} else {
+					errorList.add(false);
 				}
 			});
 		});
