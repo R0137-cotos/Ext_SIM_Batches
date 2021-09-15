@@ -43,11 +43,12 @@ public interface IBatchStepComponent {
 	/**
 	 * プロセス
 	 * @param csvlist CSVリスト
+	 * @return true: 処理成功、false: 処理失敗
 	 * @throws JsonProcessingException
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public void process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException;
+	public boolean process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException;
 
 	/**
 	 * 事後処理
