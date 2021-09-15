@@ -276,6 +276,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						return;
 					}
 				} else {
+					log.fatal(String.format("契約ID=%dの手配情報更新に失敗しました。", contract.getId()));
 					errorList.add(false);
 				}
 			});
