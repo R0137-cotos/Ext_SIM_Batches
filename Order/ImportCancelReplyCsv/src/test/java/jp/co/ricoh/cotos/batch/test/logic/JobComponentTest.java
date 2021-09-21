@@ -133,6 +133,25 @@ public class JobComponentTest extends TestBase {
 		}
 	}
 
+	@Test
+	public void 異常系_JOB_run中にエラーが発生() throws IOException {
+
+		// 契約情報更新APIを無効にする
+		Mockito.doNothing().when(batchUtil).callUpdateContract(Mockito.any(Contract.class));
+		// 手配担当者登録APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAssignWorker(Mockito.anyList());
+		// 手配業務受付APIを無効にする
+		Mockito.doNothing().when(batchUtil).callAcceptWorkApi(Mockito.anyList());
+		// 手配情報完了APIを無効にする
+		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
+		テストデータ作成("sql/insertCancelReplyFailTestData_NoExtendsParameterIterance.sql");
+		try {
+			jobComponent.run(new String[] { filePath, fileName });
+		} catch (ExitException e) {
+			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
+		}
+	}
+
 	private void テストデータ作成(String sql) {
 		context.getBean(DBConfig.class).clearData();
 		context.getBean(DBConfig.class).initTargetTestData(sql);

@@ -106,12 +106,15 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Override
 	@Transactional
-	public void process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
+	public boolean process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
 		log.info("SIM独自処理");
+
+		// ラムダ式内でラムダ式外で設定された変数が変更できないのでエラーリストを作成する。
+		List<Boolean> errorList = new ArrayList();
 
 		if (CollectionUtils.isEmpty(csvlist)) {
 			log.info("取込データが0件のため処理を終了します");
-			return;
+			return true;
 		}
 
 		// 枝番削除した契約番号をキーとしたMap
@@ -174,6 +177,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					// 成功した場合 手配情報業務完了処理を実施
 					hasNoArrangementError = callCompleteArrangementApi(contract, true);
 				} else {
+					errorList.add(false);
 					// 失敗した場合スキップする
 					return;
 				}
@@ -182,6 +186,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					if (!callUpdateContractApi(originalContract)) {
 						// 再更新に失敗した場合手動リカバリが必要となる
 						log.fatal(String.format("契約ID=%dの契約再更新に失敗しました。リカバリが必要となります。", originalContract.getId()));
+						errorList.add(false);
 					}
 				}
 			});
@@ -211,6 +216,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 					if (CollectionUtils.isEmpty(extendsParameterList)) {
 						log.fatal(String.format("契約ID=%dの商品拡張項目繰返読込に失敗しました。", contract.getId()));
 						hasJsonError = true;
+						errorList.add(false);
 						return;
 					}
 
@@ -248,6 +254,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						e.printStackTrace();
 						log.fatal(String.format("契約ID=%dの商品拡張項目登録に失敗しました。", contract.getId()));
 						hasJsonError = true;
+						errorList.add(false);
 						return;
 					}
 				}
@@ -261,17 +268,23 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				// 手配情報更新処理を実施
 				// 数量減の場合はワークフロー状態を売上可能に更新するため、手配情報更新→契約情報更新の順に処理する必要がある
 				if (callCompleteArrangementApi(contract, false)) {
-					// 成功した場合 契約情報更新処理を実施 
+					// 成功した場合 契約情報更新処理を実施
 					if (!callUpdateContractApi(contract)) {
 						// 失敗した場合エラーログを出力しスキップする
 						log.fatal(String.format("契約ID=%dの契約更新に失敗しました。リカバリが必要となります。", contract.getId()));
+						errorList.add(false);
 						return;
 					}
+				} else {
+					log.fatal(String.format("契約ID=%dの手配情報更新に失敗しました。", contract.getId()));
+					errorList.add(false);
 				}
 			});
 		});
 		// エンティティ(contract)に対して値を更新すると、エンティティマネージャーが更新対象とみなしてしまい、排他制御に引っかかる
 		em.clear();
+
+		return errorList.isEmpty();
 	}
 
 	/**
