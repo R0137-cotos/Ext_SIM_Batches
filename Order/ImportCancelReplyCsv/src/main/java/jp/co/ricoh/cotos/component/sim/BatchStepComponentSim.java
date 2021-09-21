@@ -104,6 +104,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		return csvlist;
 	}
 
+	/**
+	 * @return true: 処理成功、false: 処理失敗
+	 */
 	@Override
 	@Transactional
 	public boolean process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
@@ -129,6 +132,18 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		contractNumberListFromCsv.stream().forEach(conNumLst -> joiner.add(conNumLst));
 		queryParams.put("contractNumberList", joiner.toString());
 		List<Contract> contractList = dbUtil.loadFromSQLFile("sql/findTargetContract.sql", Contract.class, queryParams);
+
+		// 契約の数が0件だった場合、異常終了する
+		if (contractList.isEmpty()) {
+			log.error("対象契約データが0件のため、異常終了しました。");
+			return false;
+		}
+		// csvから取得した契約番号の数と契約の数が一致していなければ、異常終了する
+		// 取得できた契約は後続の処理を実行する
+		if (contractList.size() != contractNumberListFromCsv.size()) {
+			log.error("対象契約データが一部存在しないため、異常終了しました。");
+			errorList.add(false);
+		}
 
 		// 全解約分の抽出
 		// filter:ライフサイクル=解約予定日待ち
