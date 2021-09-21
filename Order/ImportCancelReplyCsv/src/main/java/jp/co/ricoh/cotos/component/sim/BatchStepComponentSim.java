@@ -133,43 +133,28 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		queryParams.put("contractNumberList", joiner.toString());
 		List<Contract> contractList = dbUtil.loadFromSQLFile("sql/findTargetContract.sql", Contract.class, queryParams);
 
-		// csvから取得した契約番号の数と契約の数が一致していなければ、異常終了する
-		// 取得できた契約は後続の処理を実行する
-		if (contractList.size() != contractNumberListFromCsv.size()) {
-			contractNumberListFromCsv.stream().forEach(conNumLst -> {
-				contractList.stream().forEach(contract -> {
-					if (conNumLst.contains(String.valueOf(contract.getId()))) {
-						log.fatal(String.format("文書番号=" + conNumLst + "の契約取得に失敗したため、処理をスキップします。", conNumLst));
-						errorList.add(false);
-					}
-				});
-			});
-
-		}
+		// 契約が0件の場合、異常終了とする
 		if (contractList.isEmpty()) {
 			log.error("対象契約データが0件のため、異常終了しました。");
 			return false;
 		}
 
-		//		List<Contract> contractList = new ArrayList<>();
-		//
-		//		// 対象契約取得
-		//		contractNumberListFromCsv.stream().forEach(conNumLst -> {
-		//			Map<String, Object> queryParams = new HashMap<>();
-		//			queryParams.put("contractNumberList", conNumLst);
-		//			try {
-		//				contractList.add(dbUtil.loadSingleFromSQLFile("sql/findTargetContract.sql", Contract.class, queryParams));
-		//			}catch (Exception e){
-		//				errorList.add(false);
-		//				log.fatal(String.format("文書番号=" + conNumLst + "の契約取得に失敗したため、処理をスキップします。", conNumLst));
-		//			}
-		//		});
-		//
-		//		// 契約の数が0件だった場合、異常終了する
-		//		if (contractList.isEmpty()) {
-		//			log.error("対象契約データが0件のため、異常終了しました。");
-		//			return false;
-		//		}
+		// CSVから取得した契約番号の数と契約の数が一致していない場合、異常終了とする
+		// 取得できた契約は後続の処理を実行する
+		if (contractList.size() != contractNumberListFromCsv.size()) {
+
+			// 取得した契約から契約番号のリストを作成
+			List<String> contractNumberListFromContract = new ArrayList<>();
+			contractList.stream().forEach(contract -> {
+				contractNumberListFromContract.add(contract.getContractNumber());
+			});
+
+			// CSVから取得した契約番号に該当しない契約を絞り込む。
+			contractNumberListFromCsv.stream().filter(e -> !contractNumberListFromContract.contains(e)).forEach(conNumLstFromCsv -> {
+				log.fatal(String.format("文書番号=" + conNumLstFromCsv + "の契約取得に失敗したため、処理をスキップします。", conNumLstFromCsv));
+			});
+			errorList.add(false);
+		}
 
 		// 全解約分の抽出
 		// filter:ライフサイクル=解約予定日待ち
