@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.3.0 (21/09/2021)
+- [**closed**] #12150 手配情報更新処理に失敗した場合、異常終了する処理の追加 [#243](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/243)
+- [**closed**] #12150[改善]解約リプライCSVで一部異常終了しても正常終了して処理される [#240](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/240)
+- [**closed**] #12151 [改善]リプライCSVで存在しない契約を指定しても正常終了して処理される(ログには表示される) [#241](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/241)
+
+---
+
 ## v4.1.0 (24/08/2021)
 - [**closed**] #12079 [本番障害]オーダーCSV送信時に手入力された郵便番号と住所が連携されていない [#233](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/233)
 - [**closed**] #11494 全解約時に抽出するデータ条件の追加 [#232](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/232)
