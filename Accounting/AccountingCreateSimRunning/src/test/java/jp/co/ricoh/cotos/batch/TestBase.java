@@ -47,6 +47,9 @@ public class TestBase {
 				if (1 == status) {
 					throw new ExitException(status);
 				}
+				if (2 == status) {
+					throw new ExitException(status);
+				}
 			}
 
 			@Override

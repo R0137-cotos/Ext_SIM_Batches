@@ -1,6 +1,7 @@
 package jp.co.ricoh.cotos.batch.exec;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -57,6 +58,9 @@ public class AccountingCreateSimRunning {
 
 	/** 処理完了件数 */
 	private long processCompleteCnt = 0L;
+	
+	/** 処理エラー件数 */
+	private long processErrorCnt = 0L;
 
 	/**
 	 * 計上データ作成（SIMランニング分）のビジネスロジック実行
@@ -100,13 +104,18 @@ public class AccountingCreateSimRunning {
 				this.processCompleteCnt++;
 			} else {
 				accountingExecution.updateContractDetail(JobStepResult.FAILURE);
-				log.info(String.format("RJ管理番号%sの計上データ作成に失敗しました。", work.getRjManageNumber()));
+				log.error(String.format("RJ管理番号%sの計上データ作成に失敗しました。", work.getRjManageNumber()));
+				this.processErrorCnt++;
 			}
-			accountingExecution.updateContractDetail(JobStepResult.SUCCESS);
 		});
 
 		log.info("処理正常終了件数：" + this.processCompleteCnt);
-		log.info("!!!! 計上データ作成（SIMランニング分）を正常終了します。 !!!!");
+		if (processErrorCnt == 0) {
+			log.info("!!!! 計上データ作成（SIMランニング分）を正常終了します。 !!!!");
+		} else {
+			log.error("!!!! 計上データ作成（SIMランニング分）を一部正常終了します。 !!!!");
+			System.exit(2);
+		}
 
 		return;
 	}
@@ -132,7 +141,8 @@ public class AccountingCreateSimRunning {
 		try {
 			result = accountingExecution.execute();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.toString());
+			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
 		}
 		return result == JobStepResult.SUCCESS;
 	}
