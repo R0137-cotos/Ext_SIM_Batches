@@ -133,17 +133,43 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		queryParams.put("contractNumberList", joiner.toString());
 		List<Contract> contractList = dbUtil.loadFromSQLFile("sql/findTargetContract.sql", Contract.class, queryParams);
 
-		// 契約の数が0件だった場合、異常終了する
+		// csvから取得した契約番号の数と契約の数が一致していなければ、異常終了する
+		// 取得できた契約は後続の処理を実行する
+		if (contractList.size() != contractNumberListFromCsv.size()) {
+			contractNumberListFromCsv.stream().forEach(conNumLst -> {
+				contractList.stream().forEach(contract -> {
+					if (conNumLst.contains(String.valueOf(contract.getId()))) {
+						log.fatal(String.format("文書番号=" + conNumLst + "の契約取得に失敗したため、処理をスキップします。", conNumLst));
+						errorList.add(false);
+					}
+				});
+			});
+
+		}
 		if (contractList.isEmpty()) {
 			log.error("対象契約データが0件のため、異常終了しました。");
 			return false;
 		}
-		// csvから取得した契約番号の数と契約の数が一致していなければ、異常終了する
-		// 取得できた契約は後続の処理を実行する
-		if (contractList.size() != contractNumberListFromCsv.size()) {
-			log.error("対象契約データが一部存在しないため、異常終了しました。");
-			errorList.add(false);
-		}
+
+		//		List<Contract> contractList = new ArrayList<>();
+		//
+		//		// 対象契約取得
+		//		contractNumberListFromCsv.stream().forEach(conNumLst -> {
+		//			Map<String, Object> queryParams = new HashMap<>();
+		//			queryParams.put("contractNumberList", conNumLst);
+		//			try {
+		//				contractList.add(dbUtil.loadSingleFromSQLFile("sql/findTargetContract.sql", Contract.class, queryParams));
+		//			}catch (Exception e){
+		//				errorList.add(false);
+		//				log.fatal(String.format("文書番号=" + conNumLst + "の契約取得に失敗したため、処理をスキップします。", conNumLst));
+		//			}
+		//		});
+		//
+		//		// 契約の数が0件だった場合、異常終了する
+		//		if (contractList.isEmpty()) {
+		//			log.error("対象契約データが0件のため、異常終了しました。");
+		//			return false;
+		//		}
 
 		// 全解約分の抽出
 		// filter:ライフサイクル=解約予定日待ち
