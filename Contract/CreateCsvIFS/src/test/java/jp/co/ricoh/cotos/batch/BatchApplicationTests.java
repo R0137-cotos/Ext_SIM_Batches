@@ -58,6 +58,7 @@ public class BatchApplicationTests extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractData.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
@@ -80,6 +81,7 @@ public class BatchApplicationTests extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("all/Create17OrdersSinki.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
@@ -100,6 +102,7 @@ public class BatchApplicationTests extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractDataCapacityChange.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
@@ -122,6 +125,7 @@ public class BatchApplicationTests extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("all/Create17OrdersYouryou.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
@@ -142,6 +146,7 @@ public class BatchApplicationTests extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractDataPaidExchange.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
@@ -164,6 +169,7 @@ public class BatchApplicationTests extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("all/Create17OrdersYuusyoukoukan.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
@@ -184,6 +190,7 @@ public class BatchApplicationTests extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractDataAll.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
@@ -204,6 +211,7 @@ public class BatchApplicationTests extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("all/InsertCancelContract.sql");
 		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
@@ -226,6 +234,7 @@ public class BatchApplicationTests extends TestBase {
 	@Test
 	public void 正常系_商品種類区分一致なし_CSVファイルを出力されないこと() throws IOException {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 		context.getBean(DBConfig.class).initTargetTestData("flgE/InsertContractData.sql");
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
@@ -236,6 +245,77 @@ public class BatchApplicationTests extends TestBase {
 		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
 		Assert.assertEquals("1件も契約が作成済みになっていないこと", 0, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
 		Assert.assertEquals("契約の作成日時が設定されていないこと", 0, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力できること_新規_音声SIM() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractData_VSIM.sql");
+		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "VSIM" });
+
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "VSIM_result_20181228.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/all/all_VSIM.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+
+		List<Contract> contractList = new ArrayList<>();
+		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
+		// テストデータに最初から「作成済み」のレコード1件あり
+		Assert.assertEquals("7件の契約が作成済みになっていること", 7, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
+		// テストデータに最初から「作成済み」としているレコードは作成日時設定なし
+		Assert.assertEquals("6件の契約の作成日時が設定されていること", 6, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力できること_有償交換_音声SIM() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("all/InsertContractDataPaidExchange_VSIM.sql");
+		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "VSIM" });
+
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "VSIM_result_20181228.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/all/all_VSIM.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+
+		List<Contract> contractList = new ArrayList<>();
+		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
+		// テストデータに最初から「作成済み」のレコード1件あり
+		Assert.assertEquals("7件の契約が作成済みになっていること", 7, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
+		// テストデータに最初から「作成済み」としているレコードは作成日時設定なし
+		Assert.assertEquals("6件の契約の作成日時が設定されていること", 6, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+	}
+
+	@Test
+	public void 正常系_CSVファイルを出力できること_全解約_音声SIM() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("all/InsertCancelContract_VSIM.sql");
+		context.getBean(DBConfig.class).initTargetTestData("resetSequence.sql");
+		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "VSIM" });
+
+		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "VSIM_result_20181228.csv"));
+		byte[] expected = Files.readAllBytes(Paths.get("src/test/resources/all/cancel_VSIM.csv"));
+		Assert.assertArrayEquals(expected, actuals);
+
+		List<Contract> contractList = new ArrayList<>();
+		contractRepository.findAll().iterator().forEachRemaining(contractList::add);
+		Assert.assertEquals("1件の契約が「IFS連携用CSV作成状態」=作成済みになっていないこと", 0, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCsvCreateStatus())).count());
+		Assert.assertEquals("1件の契約の「IFS連携用CSV作成日」に作成日時が設定されていないこと", 0, contractList.stream().filter(s -> null != s.getIfsLinkageCsvCreateDate()).count());
+		// テストデータに最初から「作成済み」のレコード1件あり
+		Assert.assertEquals("2件の契約が「IFS連携用解約CSV作成状態」=作成済みになっていること", 2, contractList.stream().filter(s -> IfsLinkageCsvCreateStatus.作成済み.equals(s.getIfsLinkageCancelCsvStatus())).count());
+		// テストデータに最初から「作成済み」としているレコードは作成日時設定なし
+		Assert.assertEquals("1件の契約の「IFS連携用解約CSV作成日」に作成日時が設定されていること", 1, contractList.stream().filter(s -> null != s.getIfsLinkageCancelCsvDate()).count());
+		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
+		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 	}
 
 	@Test
