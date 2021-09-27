@@ -7,4 +7,4 @@
  - [ ] Javaバッチ追加時は起動用シェルもセットで用意しています。
  - [ ] [構成ファイル種類毎のルール](https://mygithub.ritscm.xyz/cotos/BatchLightTemplate/tree/develop#batchlighttemplate)通りにファイルを修正しています。
  - [ ] 例外を握りつぶす場合はLog.Warnでのログ出力およびその理由をコメントで記載しています。
- 
+ - [ ] Date型の比較で時分秒の考慮が不要な場合は、切り捨てた上で比較しています。
