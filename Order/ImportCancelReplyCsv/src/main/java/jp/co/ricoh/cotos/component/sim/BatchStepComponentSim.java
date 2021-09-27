@@ -146,7 +146,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			// 取得した契約から契約番号のリストを作成
 			List<String> contractNumberListFromContract = new ArrayList<>();
 			contractList.stream().forEach(contract -> {
-				contractNumberListFromContract.add(contract.getContractNumber());
+				contractNumberListFromContract.add(contract.getContractNumber() + String.format("%02d", contract.getContractBranchNumber()));
 			});
 
 			// CSVから取得した契約番号に該当しない契約を絞り込む。
