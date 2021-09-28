@@ -140,13 +140,13 @@ public class ExportCSV {
 					if (!CollectionUtils.isEmpty(extendsParameterList)) {
 						csvDto.setNmechNo(Optional.ofNullable(extendsParameterList.get(i).getLineNumber()).filter(s -> s.length() > LINE_NUMBER_LENGTH).map(s -> s.substring(0, LINE_NUMBER_LENGTH)).orElse(extendsParameterList.get(i).getLineNumber()));
 						csvDto.setNhostName(extendsParameterList.get(i).getLineNumber());
-						csvDto.setNserialNo(extendsParameterList.get(i).getSerialNumber());
 						if ("SIM".equals(productClassDiv)) {
-							csvDto.setNconfigName(extendsParameterList.get(i).getDevice());
+							csvDto.setNserialNo(extendsParameterList.get(i).getSerialNumber());
 						}
 						if ("VSIM".equals(productClassDiv)) {
-							csvDto.setNconfigName(extendsParameterList.get(i).getImeiNumber());
+							csvDto.setNserialNo(extendsParameterList.get(i).getImeiNumber());
 						}
+						csvDto.setNconfigName(extendsParameterList.get(i).getDevice());
 					}
 					csvDto.setNpServiceNo(Integer.toString(npServiceNo));
 					npServiceNo++;
