@@ -1,6 +1,7 @@
 package jp.co.ricoh.cotos.component.sim;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	@Autowired
 	BatchUtil batchUtil;
 
+	private long processErrorCnt = 0L;
+
 	public final static String AUDIT_TRAIL_MAIL_ADDRESS = "customer_send_history@cotos.ricoh.co.jp";
 
 	/**
@@ -65,7 +68,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	}
 
 	@Override
-	public void process(List<SearchMailTargetDto> serchMailTargetDtoList, long mailControlMasterId) throws Exception {
+	public boolean process(List<SearchMailTargetDto> serchMailTargetDtoList, long mailControlMasterId) throws Exception {
 		log.info("SIM独自処理");
 
 		MailControlMaster mailControlMaster = mailControlMasterRepository.findOne(mailControlMasterId);
@@ -81,9 +84,11 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				// 対象データの中でメール送信が失敗したデータを「送信区分：エラー」で更新
 				batchUtil.saveMailSendHistory(transactionIdList, mailControlMaster, MailSendType.エラー);
 				log.fatal("メール送信処理に失敗しました。");
+				processErrorCnt++;
 			}
 		});
 
+		return processErrorCnt == 0;
 	}
 
 	/**
@@ -117,6 +122,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			batchUtil.updateMailSendHistory(mailSendHistory, MailSendType.完了, mailAddressList, new ArrayList<String>(), mailAddressBccList);
 		} catch (MessagingException e) {
 			log.fatal("メール送信処理に失敗しました。");
+			log.error(e.toString());
+			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
 			throw new Exception(e);
 		}
 

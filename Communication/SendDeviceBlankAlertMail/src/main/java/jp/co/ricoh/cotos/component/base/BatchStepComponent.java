@@ -95,8 +95,9 @@ public class BatchStepComponent implements IBatchStepComponent {
 	}
 
 	@Override
-	public void process(List<SearchMailTargetDto> serchMailTargetDtoList, long mailControlMasterId) throws Exception {
+	public boolean process(List<SearchMailTargetDto> serchMailTargetDtoList, long mailControlMasterId) throws Exception {
 		// データ加工等の処理を実施
+		return true;
 	}
 
 	@Override
