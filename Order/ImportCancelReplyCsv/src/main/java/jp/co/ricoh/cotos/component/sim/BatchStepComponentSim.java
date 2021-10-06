@@ -104,6 +104,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		return csvlist;
 	}
 
+	/**
+	 * @return true: 処理成功、false: 処理失敗
+	 */
 	@Override
 	@Transactional
 	public boolean process(List<ReplyOrderDto> csvlist) throws JsonProcessingException, FileNotFoundException, IOException {
@@ -129,6 +132,29 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		contractNumberListFromCsv.stream().forEach(conNumLst -> joiner.add(conNumLst));
 		queryParams.put("contractNumberList", joiner.toString());
 		List<Contract> contractList = dbUtil.loadFromSQLFile("sql/findTargetContract.sql", Contract.class, queryParams);
+
+		// 契約が0件の場合、異常終了とする
+		if (contractList.isEmpty()) {
+			log.error("対象契約データが0件のため、異常終了しました。");
+			return false;
+		}
+
+		// CSVから取得した契約番号の数と契約の数が一致していない場合、異常終了とする
+		// 取得できた契約は後続の処理を実行する
+		if (contractList.size() != contractNumberListFromCsv.size()) {
+
+			// 取得した契約から契約番号のリストを作成
+			List<String> contractNumberListFromContract = new ArrayList<>();
+			contractList.stream().forEach(contract -> {
+				contractNumberListFromContract.add(contract.getContractNumber() + String.format("%02d", contract.getContractBranchNumber()));
+			});
+
+			// CSVから取得した契約番号に該当しない契約を絞り込む。
+			contractNumberListFromCsv.stream().filter(e -> !contractNumberListFromContract.contains(e)).forEach(conNumLstFromCsv -> {
+				log.fatal(String.format("文書番号=" + conNumLstFromCsv + "の契約取得に失敗したため、処理をスキップします。", conNumLstFromCsv));
+			});
+			errorList.add(false);
+		}
 
 		// 全解約分の抽出
 		// filter:ライフサイクル=解約予定日待ち
