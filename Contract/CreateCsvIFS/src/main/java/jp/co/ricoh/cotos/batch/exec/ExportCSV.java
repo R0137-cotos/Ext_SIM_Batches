@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -69,8 +68,6 @@ public class ExportCSV {
 	ContractRepository contractRepository;
 
 	private static final String headerFilePath = "file/header.csv";
-
-	private static final int LINE_NUMBER_LENGTH = 11;
 
 	public boolean execute(File tmpFile, File csvFile, String productClassDiv) throws IOException {
 
@@ -135,17 +132,10 @@ public class ExportCSV {
 					csvDto.setNothMechLineNo(String.valueOf(Long.valueOf(dto.getContractDetailId()) * (-1)));
 					csvDto.setNendUserPerson(csvDto.getNendUserPerson().replaceAll(" ", "　"));
 					csvDto.setNuserPerson(csvDto.getNuserPerson().replaceAll(" ", "　"));
-					csvDto.setNmodelCode("RSIM");
 
 					if (!CollectionUtils.isEmpty(extendsParameterList)) {
-						csvDto.setNmechNo(Optional.ofNullable(extendsParameterList.get(i).getLineNumber()).filter(s -> s.length() > LINE_NUMBER_LENGTH).map(s -> s.substring(0, LINE_NUMBER_LENGTH)).orElse(extendsParameterList.get(i).getLineNumber()));
 						csvDto.setNhostName(extendsParameterList.get(i).getLineNumber());
-						if ("SIM".equals(productClassDiv)) {
-							csvDto.setNserialNo(extendsParameterList.get(i).getSerialNumber());
-						}
-						if ("VSIM".equals(productClassDiv)) {
-							csvDto.setNserialNo(extendsParameterList.get(i).getImeiNumber());
-						}
+						csvDto.setNserialNo(extendsParameterList.get(i).getSerialNumber());
 						csvDto.setNconfigName(extendsParameterList.get(i).getDevice());
 					}
 					csvDto.setNpServiceNo(Integer.toString(npServiceNo));
