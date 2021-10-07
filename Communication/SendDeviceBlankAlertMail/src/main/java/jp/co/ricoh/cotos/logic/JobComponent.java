@@ -26,9 +26,11 @@ public class JobComponent {
 
 		try {
 			log.info(messageUtil.createMessageInfo("BatchProcessStartInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
-			batchComponent.execute(args);
+			boolean ret = batchComponent.execute(args);
 			log.info(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
-
+			if (!ret) {
+				System.exit(2);
+			}
 		} catch (ErrorCheckException e) {
 			e.getErrorInfoList().stream().forEach(errorInfo -> log.error(errorInfo.getErrorId() + ":" + errorInfo.getErrorMessage()));
 			e.printStackTrace();

@@ -29,7 +29,7 @@ public class BatchComponent {
 	 * @return
 	 * @throws Exception 
 	 */
-	public void execute(String[] args) throws Exception {
+	public boolean execute(String[] args) throws Exception {
 		// パラメータチェック
 		String serviceTermStart = baseComponent.paramCheck(args);
 
@@ -37,11 +37,7 @@ public class BatchComponent {
 
 		List<SearchMailTargetDto> serchMailTargetDtoList = component.getDataList(serviceTermStart);
 
-		try {
-			component.process(serchMailTargetDtoList, CONTROL_ID);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return component.process(serchMailTargetDtoList, CONTROL_ID);
 	}
 
 	/**

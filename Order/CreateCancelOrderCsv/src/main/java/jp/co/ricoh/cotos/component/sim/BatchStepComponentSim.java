@@ -8,10 +8,10 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,6 +78,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	// CSVヘッダファイル
 	private static final String headerFilePath = "file/header.csv";
 
+	private boolean csvprocessFlg = true;
+
 	/**
 	 * 解約オーダー取得
 	 * @return 解約オーダーリスト
@@ -92,9 +93,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	 * 解約手配CSV作成処理
 	 * @param param バッチ処理引数
 	 * @param cancelOrderList 解約オーダーリスト
+	 * @throws Exception 
 	 */
 	@Override
-	public void process(CreateOrderCsvParameter param, List<CancelOrderEntity> cancelOrderList) throws ParseException, JsonProcessingException, IOException {
+	public void process(CreateOrderCsvParameter param, List<CancelOrderEntity> cancelOrderList) throws Exception {
 		log.info("SIM独自処理");
 
 		// 解約オーダーリスト・処理実行日が存在しない場合は処理を行わない
@@ -265,11 +267,15 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				return;
 			}
 
+
 			csvDtoList.stream().forEach(dto -> {
 				try {
 					mapper.writer(schemaWithOutHeader).writeValues(Files.newBufferedWriter(param.getTmpFile().toPath(), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.APPEND)).write(dto);
 				} catch (Exception e) {
 					log.error(messageUtil.createMessageInfo("BatchCannotCreateFiles", new String[] { String.format("解約手配CSV作成") }).getMsg(), e);
+					log.error(e.toString());
+					Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
+					csvprocessFlg = false;
 				}
 			});
 			try {
@@ -286,6 +292,13 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				Files.deleteIfExists(param.getTmpFile().toPath());
 			} catch (IOException e) {
 				log.error(messageUtil.createMessageInfo("BatchCannotCreateFiles", new String[] { String.format("解約手配CSV作成") }).getMsg(), e);
+				log.error(e.toString());
+				Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
+				csvprocessFlg = false;
+			}
+
+			if (!csvprocessFlg) {
+				throw new Exception();
 			}
 		} else {
 			// 処理対象データ無し
