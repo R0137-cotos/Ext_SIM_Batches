@@ -11,6 +11,7 @@ import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -44,7 +45,10 @@ import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork;
 import jp.co.ricoh.cotos.commonlib.entity.arrangement.ArrangementWork.WorkflowStatus;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.ContractType;
+import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
+import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
+import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementRepository;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementWorkRepository;
@@ -94,6 +98,9 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 	@Autowired
 	ObjectMapper om;
+
+	@Autowired
+	CheckUtil checkUtil;
 
 	private static final String headerFilePath = "file/header.csv";
 
@@ -279,11 +286,17 @@ public class BatchStepComponentSim extends BatchStepComponent {
 										findOrderDataList.add(csvRowData);
 									}
 								} catch (JsonParseException e) {
-									e.printStackTrace();
+									log.error(e.toString());
+									Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
+									throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
 								} catch (JsonMappingException e) {
-									e.printStackTrace();
+									log.error(e.toString());
+									Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
+									throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
 								} catch (IOException e) {
-									e.printStackTrace();
+									log.error(e.toString());
+									Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
+									throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
 								}
 							});
 						});
