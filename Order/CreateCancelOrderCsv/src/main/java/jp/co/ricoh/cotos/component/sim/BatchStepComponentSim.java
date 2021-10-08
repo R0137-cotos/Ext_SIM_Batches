@@ -153,13 +153,16 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						try {
 							extendsParameterIteranceDtoList = readJson(orderData.getExtendsParameterIterance());
 						} catch (JsonParseException e) {
-							e.printStackTrace();
+							log.error(e.toString());
+							Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
 							throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
 						} catch (JsonMappingException e) {
-							e.printStackTrace();
+							log.error(e.toString());
+							Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
 							throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
 						} catch (IOException e) {
-							e.printStackTrace();
+							log.error(e.toString());
+							Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
 							throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
 						}
 					}
@@ -213,13 +216,16 @@ public class BatchStepComponentSim extends BatchStepComponent {
 						// 数量減はSQLでデータ取得する段階で拡張項目繰返を読み込んで検索しているので、拡張項目繰返がJSONでない場合に発生するエラーは基本的に発生しない
 						extendsParameterIteranceDtoList = readJson(orderData.getExtendsParameterIterance());
 					} catch (JsonParseException e) {
-						e.printStackTrace();
+						log.error(e.toString());
+						Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
 						throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
 					} catch (JsonMappingException e) {
-						e.printStackTrace();
+						log.error(e.toString());
+						Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
 						throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
 					} catch (IOException e) {
-						e.printStackTrace();
+						log.error(e.toString());
+						Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
 						throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "FileMappingFailed", new String[] { "JSONデータ" }));
 					}
 				}
