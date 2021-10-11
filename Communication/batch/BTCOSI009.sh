@@ -28,7 +28,10 @@ Log.Info "処理日：${SERVICE_TERM_START}" >> ${LOG_FILE_PATH}
 ################################################
 SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${COMMUNICATION_JAR_PATH}/${BATCH_PG_BTCOSI009} "${SERVICE_TERM_START}" > /dev/null 2>&1
 BATCH_RET=$?
-if [  ${BATCH_RET} != 0 ]; then
+if [  ${BATCH_RET} == 2 ]; then
+  Log.Error "BTCOSI009:デバイス空欄警告メール送信に一部失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
+  exit 2
+elif [  ${BATCH_RET} != 0 ]; then
   Log.Error "BTCOSI009:デバイス空欄警告メール送信に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
   exit 1
 fi

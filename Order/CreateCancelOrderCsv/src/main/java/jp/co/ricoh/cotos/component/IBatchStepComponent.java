@@ -50,7 +50,7 @@ public interface IBatchStepComponent {
 	 * @throws JsonProcessingException
 	 * @throws IOException
 	 */
-	public void process(CreateOrderCsvParameter dto, List<CancelOrderEntity> orderDataList) throws ParseException, JsonProcessingException, IOException;
+	public void process(CreateOrderCsvParameter dto, List<CancelOrderEntity> orderDataList) throws Exception;
 
 	/**
 	 * 事後処理
