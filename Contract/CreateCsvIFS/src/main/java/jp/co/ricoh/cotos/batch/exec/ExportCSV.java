@@ -135,7 +135,7 @@ public class ExportCSV {
 					csvDto.setNothMechLineNo(String.valueOf(Long.valueOf(dto.getContractDetailId()) * (-1)));
 					csvDto.setNendUserPerson(csvDto.getNendUserPerson().replaceAll(" ", "　"));
 					csvDto.setNuserPerson(csvDto.getNuserPerson().replaceAll(" ", "　"));
-					csvDto.setNmodelCode("RSIM");
+					csvDto.setNmodelCode("95PY");
 
 					if (!CollectionUtils.isEmpty(extendsParameterList)) {
 						csvDto.setNmechNo(Optional.ofNullable(extendsParameterList.get(i).getLineNumber()).filter(s -> s.length() > LINE_NUMBER_LENGTH).map(s -> s.substring(0, LINE_NUMBER_LENGTH)).orElse(extendsParameterList.get(i).getLineNumber()));
