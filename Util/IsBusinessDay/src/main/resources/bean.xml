@@ -43,7 +43,7 @@
 				<entry key="hibernate.default_schema" value="${db.default_schema}" />
 			</util:map>
     </property>
-		<property name="packagesToScan" value="jp.co.ricoh.cotos.commonlib.entity.*" />
+		<property name="packagesToScan" value="jp.co.ricoh.cotos.commonlib.*" />
 	</bean>
 
 	<!-- DB接続用の設定 -->

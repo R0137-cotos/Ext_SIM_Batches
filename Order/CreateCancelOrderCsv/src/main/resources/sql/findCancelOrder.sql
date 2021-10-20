@@ -25,16 +25,18 @@ FROM
 WHERE
   pm.product_class_div = 'SIM'
   AND ic.cost_type != '1' 
-  AND ( 
-    c.lifecycle_status = '8'
-    AND c.workflow_status = '3'
-  ) 
-  OR ( 
-    c.lifecycle_status = '2'
-    AND c.workflow_status = '3'
-    AND c.contract_type = '2'
-    AND JSON_EXISTS(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.contractType == "解約")')
-  ) 
+  AND (
+  	(
+    	c.lifecycle_status = '8'
+    	AND c.workflow_status = '3'
+  	)
+  	OR (
+    	c.lifecycle_status = '2'
+    	AND c.workflow_status = '3'
+    	AND c.contract_type = '2'
+    	AND JSON_EXISTS(pc.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.contractType == "解約")')
+  	)
+  )
 ORDER BY
   c.id
   , cd.id

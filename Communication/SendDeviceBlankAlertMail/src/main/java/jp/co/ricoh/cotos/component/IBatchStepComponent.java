@@ -40,7 +40,7 @@ public interface IBatchStepComponent {
 	 * @return
 	 * @throws Exception 
 	 */
-	public void process(List<SearchMailTargetDto> serchMailTargetDtoList, long mailControlMasterId) throws Exception;
+	public boolean process(List<SearchMailTargetDto> serchMailTargetDtoList, long mailControlMasterId) throws Exception;
 
 	/**
 	 * 事後処理
