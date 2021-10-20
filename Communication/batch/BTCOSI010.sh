@@ -34,7 +34,7 @@ Log.Info "件名：${SUBJECT}" >> ${LOG_FILE_PATH}
 ################################################
 FROM=zjc_rmobile_sb_order@jp.ricoh.com
 TO=SBBGRP-RJMobile@g.softbank.co.jp
-CC=sbcs-kitting@fw.softbank.co.jp,SP_Biz-kanri@g.softbank.co.jp,shuu_nishikawa@jp.ricoh.com,masatoshi_kubo@jp.ricoh.com,takuya.imai@jp.ricoh.com,izuru_awata@jp.ricoh.com,takehisa_sohtome@jp.ricoh.com
+CC=zjc_rmobile_sb_order@jp.ricoh.com
 BCC=zjp_cotos_apl_maintenance@jp.ricoh.com
 
 ${COMMON}/executeSendCsvMailCcBcc.sh ${FROM} ${TO} ${CC} ${BCC} ${SUBJECT} ${FILE_PATH}
