@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.4.0 (04/11/2021)
+- [**closed**] #12387 [改善]解約リプライCSVで存在しない契約を指定しても正常終了して処理される [#251](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/251)
+- [**closed**] #12387[改善]解約リプライCSVで存在しない契約を指定しても正常終了して処理される [#248](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/248)
+- [**closed**] #12468 [改善]バッチ異常終了検知対応 計上データ作成バッチ [#246](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/246)
+
+---
+
 ## v4.3.0 (21/09/2021)
 - [**closed**] #12150 手配情報更新処理に失敗した場合、異常終了する処理の追加 [#243](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/243)
 - [**closed**] #12150[改善]解約リプライCSVで一部異常終了しても正常終了して処理される [#240](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/240)
