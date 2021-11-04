@@ -1,5 +1,17 @@
 # Changelog
 
+## v4.5.0 (04/11/2021)
+- [**closed**] #12779 [本番改修]SIMのCC送信メールアドレス追加　追加修正 [#269](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/269)
+- [**closed**] #12779 [本番改修]SIMのCC送信メールアドレス追加 [#268](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/268)
+- [**closed**] #12558 軽量バッチのbean.xml, orm.xmlの設定不正 [#266](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/266)
+- [**closed**] #12350 ExportCSV.csvの機種コードを修正 [#264](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/264)
+- [**closed**] #12589 解約手配CSV作成バッチ 音声SIM分が出力されないよう修正 [#263](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/263)
+- [**closed**] #12589 [改善]バッチ異常終了検知対応 デバイス空欄メール送信、解約手配CSV作成 [#259](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/259)
+- [**closed**] #12589 [改善]バッチ異常終了検知対応 オーダーCSV作成、解約手配CSV作成 [#260](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/260)
+- [**closed**] #12350 SIM IFS（Cforce）連携への連携情報変更 [#262](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/262)
+
+---
+
 ## v4.4.0 (04/11/2021)
 - [**closed**] #12387 [改善]解約リプライCSVで存在しない契約を指定しても正常終了して処理される [#251](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/251)
 - [**closed**] #12387[改善]解約リプライCSVで存在しない契約を指定しても正常終了して処理される [#248](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/248)
