@@ -84,20 +84,28 @@ public class BatchUtil {
 
 		if (MailSendType.未送信 == mailSendType) {
 			transactionIdList.stream().forEach(tranId -> {
-				MailSendHistory mailSendHistory = new MailSendHistory();
-				mailSendHistory.setTargetDataId(tranId);
-				mailSendHistory.setMailControlMaster(mailControlMaster);
-				mailSendHistory.setMailSendType(MailSendType.未送信);
-				mailSendHistoryRepository.save(mailSendHistory);
+				createMailSendHistory(tranId, mailControlMaster);
 			});
 			return;
 		}
 		if (MailSendType.エラー == mailSendType) {
 			List<MailSendHistory> mailSendHistory = mailSendHistoryRepository.findByMailControlMasterAndMailSendType(mailControlMaster, MailSendType.未送信);
 			mailSendHistory.stream().forEach(m -> {
-				m.setMailSendType(MailSendType.エラー);
-				mailSendHistoryRepository.save(m);
+				updateMailSendHistoryError(m);
 			});
+		}
+	}
+
+	@Transactional
+	public void saveMailSendHistory(Long transactionId, MailControlMaster mailControlMaster, MailSendType mailSendType) {
+
+		if (MailSendType.未送信 == mailSendType) {
+			createMailSendHistory(transactionId, mailControlMaster);
+			return;
+		}
+		if (MailSendType.エラー == mailSendType) {
+			MailSendHistory mailSendHistory = mailSendHistoryRepository.findByTargetDataIdAndMailControlMasterAndMailSendType(transactionId, mailControlMaster, MailSendType.未送信);
+			updateMailSendHistoryError(mailSendHistory);
 		}
 	}
 
@@ -112,6 +120,28 @@ public class BatchUtil {
 		mailSendHistory.setContactMailCc(emailCcList.toString().replace("[", "").replace("]", ""));
 		mailSendHistory.setContactMailBcc(emailBccList.toString().replace("[", "").replace("]", ""));
 		mailSendHistory.setSendedAt(new Date());
+		mailSendHistoryRepository.save(mailSendHistory);
+	}
+
+	/**
+	 * メール履歴テーブル作成
+	 * @param transactionId
+	 * @param mailControlMaster
+	 */
+	private void createMailSendHistory(Long transactionId, MailControlMaster mailControlMaster) {
+		MailSendHistory mailSendHistory = new MailSendHistory();
+		mailSendHistory.setTargetDataId(transactionId);
+		mailSendHistory.setMailControlMaster(mailControlMaster);
+		mailSendHistory.setMailSendType(MailSendType.未送信);
+		mailSendHistoryRepository.save(mailSendHistory);
+	}
+
+	/**
+	 * メール履歴テーブル更新(エラー)
+	 * @param mailSendHistory
+	 */
+	private void updateMailSendHistoryError(MailSendHistory mailSendHistory) {
+		mailSendHistory.setMailSendType(MailSendType.エラー);
 		mailSendHistoryRepository.save(mailSendHistory);
 	}
 }
