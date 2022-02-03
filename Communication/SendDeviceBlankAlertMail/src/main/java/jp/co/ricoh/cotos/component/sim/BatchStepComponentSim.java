@@ -82,7 +82,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 				sendMailAndSaveHistory(serchMailTargetDto, mailControlMaster);
 			} catch (Exception e) {
 				// 対象データの中でメール送信が失敗したデータを「送信区分：エラー」で更新
-				batchUtil.saveMailSendHistory(transactionIdList, mailControlMaster, MailSendType.エラー);
+				batchUtil.saveMailSendHistory(serchMailTargetDto.getContractId(), mailControlMaster, MailSendType.エラー);
 				log.fatal("メール送信処理に失敗しました。");
 				log.error(e.toString());
 				Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));

@@ -183,4 +183,35 @@ public class BatchStepComponentSimTest extends TestBase {
 			Assert.fail("エラー");
 		}
 	}
+
+	@Test
+	@WithMockCustomUser
+	public void 正常系_メール送信テスト_正常アンドエラー() throws IOException {
+		context.getBean(DBConfig.class).initTargetTestData("sql/SendDeviceBlankAlertMailTests_正常アンドエラー.sql");
+		List<SearchMailTargetDto> serchMailTargetDtoList = new ArrayList<SearchMailTargetDto>();
+		SearchMailTargetDto serchMailTargetDto = new SearchMailTargetDto();
+		serchMailTargetDto.setSeqNo(1L);
+		serchMailTargetDto.setProductGrpMasterId(300L);
+		serchMailTargetDto.setContractId(140L);
+		serchMailTargetDtoList.add(serchMailTargetDto);
+		serchMailTargetDto = new SearchMailTargetDto();
+		serchMailTargetDto.setSeqNo(2L);
+		serchMailTargetDto.setProductGrpMasterId(300L);
+		serchMailTargetDto.setMailAddress("test@example.com");
+		serchMailTargetDto.setContractId(200L);
+		serchMailTargetDtoList.add(serchMailTargetDto);
+		long controlId = 3100;
+		try {
+			batchStepComponent.process(serchMailTargetDtoList, controlId);
+			mailSendHistoryRepository.count();
+			List<MailSendHistory> mailHistorytList = (List<MailSendHistory>) mailSendHistoryRepository.findAll();
+			List<MailSendHistory> mailHistorytTargetList = mailHistorytList.stream().filter(m -> controlId == (m.getMailControlMaster().getId())).collect(Collectors.toList());
+			Assert.assertEquals("履歴が登録されていること：全数", 2, mailHistorytTargetList.size());
+			Assert.assertEquals("履歴が登録されていること：完了", 1, mailHistorytTargetList.stream().filter(m -> MailSendType.完了 == m.getMailSendType()).count());
+			Assert.assertEquals("履歴が登録されていること：エラーのみ", 1, mailHistorytTargetList.stream().filter(m -> MailSendType.エラー == m.getMailSendType()).count());
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("エラー");
+		}
+	}
 }
