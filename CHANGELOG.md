@@ -1,6 +1,11 @@
 # Changelog
 
-## v4.5.0 (21/10/2021)
+## v4.13.0 (21/02/2022)
+- [**closed**] #13763 デバイス空欄警告メール送信で送信エラー時に未送信メールもエラーのステータスになる [#271](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/271)
+
+---
+
+## v4.5.0 (04/11/2021)
 - [**closed**] #12779 [本番改修]SIMのCC送信メールアドレス追加　追加修正 [#269](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/269)
 - [**closed**] #12779 [本番改修]SIMのCC送信メールアドレス追加 [#268](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/268)
 - [**closed**] #12558 軽量バッチのbean.xml, orm.xmlの設定不正 [#266](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/266)
@@ -12,7 +17,7 @@
 
 ---
 
-## v4.4.0 (07/10/2021)
+## v4.4.0 (04/11/2021)
 - [**closed**] #12387 [改善]解約リプライCSVで存在しない契約を指定しても正常終了して処理される [#251](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/251)
 - [**closed**] #12387[改善]解約リプライCSVで存在しない契約を指定しても正常終了して処理される [#248](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/248)
 - [**closed**] #12468 [改善]バッチ異常終了検知対応 計上データ作成バッチ [#246](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/246)
