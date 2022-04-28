@@ -1,5 +1,7 @@
 package jp.co.ricoh.cotos.logic;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +24,7 @@ public class JobComponent {
 
 	/**
 	 * バッチを順次実行するジョブの実行
-	 * 
+	 *
 	 * @param args
 	 *            バッチパラメーターリスト
 	 */
@@ -34,27 +36,33 @@ public class JobComponent {
 			log.info(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
 
 		} catch (DeliveryExpectedDateException e) {
-			e.printStackTrace();
-			log.fatal("リプライCSV取込処理が一部失敗しました。");
+			log.warn(e.toString());
+			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
+			log.warn("リプライCSV取込処理が一部失敗しました。");
 			System.exit(2);
 
 		} catch (ProcessErrorException e) {
-			log.fatal("リプライCSV取込処理が一部失敗しました。", e);
+			log.warn(e.toString());
+			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
+			log.warn("リプライCSV取込処理が一部失敗しました。");
 			System.exit(2);
 
 		} catch (ErrorCheckException e) {
 			e.getErrorInfoList().stream().forEach(errorInfo -> log.error(errorInfo.getErrorId() + ":" + errorInfo.getErrorMessage()));
-			e.printStackTrace();
+			log.error(e.toString());
+			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
 			log.error(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
 			System.exit(1);
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.fatal("リプライCSV取込処理に失敗しました。");
+			log.error(e.toString());
+			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
+			log.error("リプライCSV取込処理に失敗しました。");
 			System.exit(1);
 
 		} catch (Throwable e) {
-			e.printStackTrace();
+			log.fatal(e.toString());
+			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.fatal(s));
 			log.fatal(messageUtil.createMessageInfo("BatchCannotCompleteByUnexpectedError", new String[] { BatchConstants.BATCH_NAME }).getMsg());
 			System.exit(1);
 
