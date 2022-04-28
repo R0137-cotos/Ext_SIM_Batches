@@ -37,13 +37,13 @@ public class JobComponent {
 
 		} catch (DeliveryExpectedDateException e) {
 			log.warn(e.toString());
-			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
+			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.warn(s));
 			log.warn("リプライCSV取込処理が一部失敗しました。");
 			System.exit(2);
 
 		} catch (ProcessErrorException e) {
 			log.warn(e.toString());
-			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
+			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.warn(s));
 			log.warn("リプライCSV取込処理が一部失敗しました。");
 			System.exit(2);
 
