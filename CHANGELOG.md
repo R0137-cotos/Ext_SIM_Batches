@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.0.0 (20/05/2022)
+- [**closed**] #14877 APIを呼んでいるバッチのCommonLibsバージョンアップ対応 [#275](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/275)
+
+---
+
 ## v4.13.0 (21/02/2022)
 - [**closed**] #13763 デバイス空欄警告メール送信で送信エラー時に未送信メールもエラーのステータスになる [#271](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/271)
 
