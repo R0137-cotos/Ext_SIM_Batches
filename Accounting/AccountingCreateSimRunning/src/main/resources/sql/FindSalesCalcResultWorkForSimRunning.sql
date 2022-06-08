@@ -1,6 +1,7 @@
 select
     rownum,
-    target.*
+    target.*,
+    mem.emb_emp_number as emp_number
 from (
     select
         c.rj_manage_number,
@@ -31,7 +32,7 @@ from (
         cc.company_name_kana,
         c.purchase_manage_number,
         pm.product_class_div as accounting_product_class_div,
-        null as emp_number
+        null as sus_sal_mom_shain_cd
     from
         contract c,
         contract_detail cd,
@@ -81,7 +82,7 @@ from (
         null as company_name_kana,
         c.purchase_manage_number,
         pm.product_class_div as accounting_product_class_div,
-        mem.emb_emp_number as emp_number
+        mv_108.sus_sal_mom_shain_cd as sus_sal_mom_shain_cd
     from
         contract c,
         contract_detail cd,
@@ -91,8 +92,7 @@ from (
         item_detail_contract idc,
         MV_WJMOC020_ORG_ALL_INFO_COM wwoaic,
          mv_t_jmci101 mv_101,
-        mv_t_jmci108 mv_108,
-        mv_employee_master mem
+        mv_t_jmci108 mv_108
     where
         c.id = pc.contract_id AND
         c.id = cd.contract_id AND
@@ -107,15 +107,6 @@ from (
         mv_101.original_system_code = c.billing_customer_sp_code AND
         mv_101.sales_unit_code = '3139' AND
         mv_101.customer_site_number = mv_108.customer_site_number AND
-        exists ( 
-            select 
-                1 
-            from 
-                mv_employee_master mem2
-            where 
-                mem2.emp_id = mv_108.sus_sal_mom_shain_cd
-        ) AND
-        mem.emp_id = mv_108.sus_sal_mom_shain_cd AND
         exists (
             select 
                 1 
@@ -127,3 +118,4 @@ from (
                 history.PRODUCT_CLASS_DIV = 'SIM'
         )
 ) target
+left join mv_employee_master mem on mem.emp_id = target.sus_sal_mom_shain_cd
