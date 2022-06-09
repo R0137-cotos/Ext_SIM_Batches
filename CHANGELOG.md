@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.2.0 (09/06/2022)
+- [**closed**] #14542 リプライCSV取込バッチ例外出力修正 [#274](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/274)
+
+---
+
 ## v5.0.0 (20/05/2022)
 - [**closed**] #14877 APIを呼んでいるバッチのCommonLibsバージョンアップ対応 [#275](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/275)
 
