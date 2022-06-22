@@ -219,9 +219,11 @@ public class AccountingExecutionParameterCreate {
 
 		// 75 売上課所設定区分
 		// 76 売上課所コード
-		// 77 売上社員設定区分(データ作成区分:振替の場合のみ設定)
+		// 77 売上社員設定区分(データ作成区分:振替かつ売上社員取得可の場合のみ設定)
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.振替.getCode())) {
-			entity.setFfmSalesEmpType("1");
+			if (StringUtils.isNotEmpty(work.getEmpNumber())) {
+				entity.setFfmSalesEmpType("1");
+			}
 		}
 		// 78 売上社員コード(データ作成区分:振替の場合のみ設定)
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.振替.getCode())) {
