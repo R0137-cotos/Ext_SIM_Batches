@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.3.0 (23/06/2022)
+- [**closed**] #15386 [本番障害]計上データ作成で振替が作成されない [#280](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/280)
+
+---
+
 ## v5.2.0 (09/06/2022)
 - [**closed**] #14542 リプライCSV取込バッチ例外出力修正 [#274](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/274)
 
