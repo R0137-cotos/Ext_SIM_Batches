@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.7.0 (06/09/2022)
+- [**closed**] #15721_CommonLibsのバージョンアップ [#284](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/284)
+
+---
+
 ## v5.3.0 (23/06/2022)
 - [**closed**] #15386 [本番障害]計上データ作成で振替が作成されない [#280](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/280)
 
