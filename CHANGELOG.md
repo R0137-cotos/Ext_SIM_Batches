@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.2.0 (08/12/2022)
+- [**closed**] #16618 SQL更新時更新者、更新日時設定 追加修正 [#287](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/287)
+- [**closed**] #16618 SQL更新時更新者、更新日時設定 [#286](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/286)
+
+---
+
 ## v5.7.0 (06/09/2022)
 - [**closed**] #15721_CommonLibsのバージョンアップ [#284](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/284)
 
