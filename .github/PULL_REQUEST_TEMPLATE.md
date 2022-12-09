@@ -8,3 +8,4 @@
  - [ ] [構成ファイル種類毎のルール](https://mygithub.ritscm.xyz/cotos/BatchLightTemplate/tree/develop#batchlighttemplate)通りにファイルを修正しています。
  - [ ] 例外を握りつぶす場合はLog.Warnでのログ出力およびその理由をコメントで記載しています。
  - [ ] Date型の比較で時分秒の考慮が不要な場合は、切り捨てた上で比較しています。
+ - [ ] 新規コードの場合、既存コードの部分的な修正以外の場合は、日付/日時の型としてLocalDate/LocalDateTimeを使用し、計算/比較/変換処理は[サンプルコード](https://mygithub.ritscm.xyz/cotos/SampleCode/blob/master/src/main/java/dateAndTimeSample/Main.java)を確認して実装しています。
