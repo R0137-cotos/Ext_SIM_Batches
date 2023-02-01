@@ -312,7 +312,7 @@ public class BatchApplicationTests extends TestBase {
 		// 134 納品書要否区分
 		// ※SIMは商流区分=1のみ
 		if (StringUtils.equals(contract.getCommercialFlowDiv(), "1")) {
-			Assert.assertTrue("134 納品書要否区分が0(固定)であること", StringUtils.equals(accounting.getFfmBillOutputFlg(), "0"));
+			Assert.assertNull("134 納品書要否区分がnullであること", accounting.getFfmBillOutputFlg());
 		}
 
 		// 135 納品書出力パターン
