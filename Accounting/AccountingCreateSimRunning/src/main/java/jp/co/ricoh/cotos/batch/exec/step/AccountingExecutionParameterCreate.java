@@ -382,12 +382,12 @@ public class AccountingExecutionParameterCreate {
 
 		// 134 納品書要否区分
 		// 契約.商流区分の値により下記を設定
-		// 商流区分=１ ：直売:""0""固定
+		// 商流区分=１ ：直売:null
 		// それ以外：代売:""1""固定
 		// SIMは商流区分=1のみ
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
 			if (StringUtils.equals(work.getCommercialFlowDiv(), "1")) {
-				entity.setFfmBillOutputFlg("0");
+				entity.setFfmBillOutputFlg(null);
 			}
 		}
 
