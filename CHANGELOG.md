@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.6.0 (07/02/2023)
+- [**closed**] #17450 実装納品書出力要否の区分をNULLにする [#290](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/290)
+
+---
+
 ## v6.2.0 (08/12/2022)
 - [**closed**] #16618 SQL更新時更新者、更新日時設定 追加修正 [#287](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/287)
 - [**closed**] #16618 SQL更新時更新者、更新日時設定 [#286](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/286)
