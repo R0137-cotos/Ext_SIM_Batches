@@ -4,13 +4,13 @@
 ### 機能名：  リプライCSV未配置通知メール送信
 ################################################
 {
-echo "HELO jp.ricoh.com"
-echo "MAIL FROM: zjc_rmobile_sb_order@jp.ricoh.com"
+echo "HELO cotos.ricoh.co.jp"
+echo "MAIL FROM: no-reply@cotos.ricoh.co.jp"
 echo "RCPT TO: zjc_simgyomu@jp.ricoh.com"
 echo "RCPT TO: zjc_rmobile_sb_order@jp.ricoh.com"
 echo "RCPT TO: zjp_cotos_apl_maintenance@jp.ricoh.com"
 echo "DATA"
-echo "From: zjc_rmobile_sb_order@jp.ricoh.com"
+echo "From: no-reply@cotos.ricoh.co.jp"
 echo "TO: zjc_simgyomu@jp.ricoh.com"
 echo "CC: zjc_rmobile_sb_order@jp.ricoh.com"
 echo "BCC: zjp_cotos_apl_maintenance@jp.ricoh.com"
