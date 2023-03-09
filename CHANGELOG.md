@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.8.0 (09/03/2023)
+- [**closed**] #18064 データSIMリプライ未配置ご連絡メールのfrom修正 [#293](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/293)
+
+---
+
 ## v6.6.0 (07/02/2023)
 - [**closed**] #17450 実装納品書出力要否の区分をNULLにする [#290](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/290)
 
