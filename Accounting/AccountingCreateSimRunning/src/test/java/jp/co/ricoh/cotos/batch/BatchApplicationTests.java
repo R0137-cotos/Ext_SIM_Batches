@@ -271,15 +271,13 @@ public class BatchApplicationTests extends TestBase {
 		}
 
 		// 98 RJ売上消費税区分
-		Assert.assertTrue("RJ売上消費税区分が1(固定値)と同じであること", StringUtils.equals(accounting.getFfmRjSalesTaxType(), "1"));
+		Assert.assertNull("RJ売上消費税区分がNullであること", accounting.getFfmRjSalesTaxType());
 
 		// 99 RJ売上消費税率区分
-		Assert.assertTrue("RJ売上消費税率区分が汎用マスタ明細.コード値と同じであること",
-				StringUtils.equals(accounting.getFfmRjSalesTaxRate(), taxRate.getCodeValue()));
+		Assert.assertNull("RJ売上消費税率区分がNullであること", accounting.getFfmRjSalesTaxRate());
 
 		// 100 RJ売上消費税額
-		Assert.assertTrue("RJ売上消費税額が汎用マスタから取得した税率区分とRJ売上金額から算出した額と同じであること", accounting.getFfmRjSalesTaxPrice()
-				.compareTo(消費税額計算_端数四捨五入(accounting.getFfmRjSalesAmt(), taxRate.getCodeValue())) == 0);
+		Assert.assertNull("RJ売上消費税額がNullであること", accounting.getFfmRjSalesTaxPrice());
 
 		// 117 R原価数量
 		Assert.assertTrue("R原価数量が契約明細.数量と同じであること", accounting.getFfmRCostCnt() == contractDetail.getQuantity());
@@ -299,15 +297,13 @@ public class BatchApplicationTests extends TestBase {
 		}
 
 		// 122 R原価消費税区分
-		Assert.assertTrue("R原価消費税区分が1(固定)であること", StringUtils.equals(accounting.getFfmRCostTaxType(), "1"));
+		Assert.assertNull("R原価消費税区分がNullであること", accounting.getFfmRCostTaxType());
 
 		// 123 R原価消費税率区分
-		Assert.assertTrue("R原価消費税率区分が汎用マスタ明細.コード値であること",
-				StringUtils.equals(accounting.getFfmRCostTaxRate(), taxRate.getCodeValue()));
+		Assert.assertNull("R原価消費税率区分がNullであること", accounting.getFfmRCostTaxRate());
 
 		// 124 R原価消費税額
-		Assert.assertTrue("R原価消費税額が汎用マスタから取得した税率区分とR原価金額から算出した額と同じであること", accounting.getFfmRCostTaxPrice()
-				.compareTo(消費税額計算_端数四捨五入(accounting.getFfmRCostAmt(), taxRate.getCodeValue())) == 0);
+		Assert.assertNull("R原価消費税額がNullであること", accounting.getFfmRCostTaxPrice());
 
 		// 134 納品書要否区分
 		// ※SIMは商流区分=1のみ
