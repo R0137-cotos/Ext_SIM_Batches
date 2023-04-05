@@ -16,7 +16,6 @@ import com.ibm.icu.text.Transliterator;
 import jp.co.ricoh.cotos.batch.util.AccountingCreateSimRunningUtil;
 import jp.co.ricoh.cotos.commonlib.dto.result.SalesCalcResultWorkForCspRunning;
 import jp.co.ricoh.cotos.commonlib.entity.accounting.Accounting;
-import jp.co.ricoh.cotos.commonlib.entity.master.CommonMasterDetail;
 import lombok.NoArgsConstructor;
 
 /**
@@ -49,7 +48,7 @@ public class AccountingExecutionParameterCreate {
 	@Autowired
 	AccountingCreateSimRunningUtil appUtil;
 
-	public Accounting createParameter(SalesCalcResultWorkForCspRunning work, String baseDate, Date execDate, CommonMasterDetail tax) {
+	public Accounting createParameter(SalesCalcResultWorkForCspRunning work, String baseDate, Date execDate) {
 
 		Accounting entity = new Accounting();
 

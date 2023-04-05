@@ -37,13 +37,11 @@ import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail.RunningAccount
 import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ItemContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ItemDetailContract;
-import jp.co.ricoh.cotos.commonlib.entity.master.CommonMasterDetail;
 import jp.co.ricoh.cotos.commonlib.entity.master.MvWjmoc020OrgAllInfoCom;
 import jp.co.ricoh.cotos.commonlib.repository.accounting.AccountingRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ItemContractRepository;
-import jp.co.ricoh.cotos.commonlib.repository.master.CommonMasterDetailRepository;
 import jp.co.ricoh.cotos.commonlib.repository.master.MvEmployeeMasterRepository;
 import jp.co.ricoh.cotos.commonlib.repository.master.MvTJmci101MasterRepository;
 import jp.co.ricoh.cotos.commonlib.repository.master.MvTJmci108MasterRepository;
@@ -69,9 +67,6 @@ public class BatchApplicationTests extends TestBase {
 
 	@Autowired
 	ItemContractRepository itemContractRepository;
-
-	@Autowired
-	private CommonMasterDetailRepository commonMasterDetailRepository;
 
 	@Autowired
 	MvWjmoc020OrgAllInfoComRepository mvWjmoc020OrgAllInfoComRepository;
@@ -218,8 +213,6 @@ public class BatchApplicationTests extends TestBase {
 				.filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
 		ItemContract itemContract = contractDetail.getItemContract();
 		CustomerContract customerContract = contract.getCustomerContract();
-		CommonMasterDetail taxRate = commonMasterDetailRepository
-				.findByCommonMasterColumnNameAndAvailablePeriodBetween("sales_tax_rate", baseDate);
 
 		// 22 仕入データパターン
 		Assert.assertTrue("作成データパターンが20(固定値)と同じであること", StringUtils.equals(accounting.getFfmDataPtn(), "20"));
@@ -854,11 +847,6 @@ public class BatchApplicationTests extends TestBase {
 		// 契約明細.ランニング売上計上処理日
 		Assert.assertTrue("契約明細.ランニング売上計上処理日がシステム日付であること",
 				DateUtils.isSameDay(detail.getRunningAccountSalesDate(), new Date()));
-	}
-
-	private BigDecimal 消費税額計算_端数四捨五入(BigDecimal price, String taxrate) {
-		BigDecimal tax = new BigDecimal(taxrate).multiply(new BigDecimal(0.01));
-		return price.multiply(tax).setScale(0, BigDecimal.ROUND_DOWN);
 	}
 
 	private void 値検証(String baseDate) {

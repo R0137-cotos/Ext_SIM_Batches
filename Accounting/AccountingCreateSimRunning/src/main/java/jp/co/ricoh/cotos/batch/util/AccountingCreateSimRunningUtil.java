@@ -6,9 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -86,60 +84,5 @@ public class AccountingCreateSimRunningUtil {
 			return new BigDecimal(0);
 
 		return multiply(target1Dec, new BigDecimal(target2Int));
-	}
-
-	/**
-	 * 消費税率区分のチェック処理
-	 *
-	 * @param cunsumptionTaxRateClass 消費税率区分
-	 * @return boolean チェック結果（true：正常　false：異常）
-	 */
-	public boolean checkCunsumptionTaxRateClass(String cunsumptionTaxRateClass) {
-		if (!StringUtils.isNotEmpty(cunsumptionTaxRateClass)) {
-			return false;
-		}
-		if (cunsumptionTaxRateClass.contains(Pattern.quote("."))) {
-			return false;
-		}
-		try {
-			Integer.parseInt(cunsumptionTaxRateClass);
-		} catch (NumberFormatException e) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * 消費税額合算
-	 * @param ammount 金額
-	 * @param cunsumptionTaxRateClass 消費税率区分（8 または 10）
-	 * @return BigDecimal 指定した金額と消費税額の合算
-	 */
-	public BigDecimal calcConsumptionTaxIncluded(BigDecimal ammount, String cunsumptionTaxRateClass) {
-		if (!checkCunsumptionTaxRateClass(cunsumptionTaxRateClass)) {
-			throw new IllegalArgumentException("cunsumptionTaxRate is invalid");
-		}
-		if (null == ammount) {
-			return null;
-		}
-
-		BigDecimal calcConsumptionTax = calcConsumptionTax(ammount, cunsumptionTaxRateClass);
-		return ammount.add(calcConsumptionTax).setScale(0, RoundingMode.FLOOR);
-	}
-
-	/**
-	 * 消費税額計算
-	 * @param ammount 金額
-	 * @param cunsumptionTaxRateClass 消費税率区分（8 または 10）
-	 * @return BigDecimal 指定した金額の消費税額
-	 */
-	public BigDecimal calcConsumptionTax(BigDecimal ammount, String cunsumptionTaxRateClass) {
-		if (null == ammount) {
-			return null;
-		}
-		BigDecimal cunsumptionTaxRate = new BigDecimal(cunsumptionTaxRateClass);
-		cunsumptionTaxRate = cunsumptionTaxRate.divide(new BigDecimal(100), 2, RoundingMode.DOWN);
-		return ammount.multiply(cunsumptionTaxRate).setScale(0, RoundingMode.FLOOR);
 	}
 }
