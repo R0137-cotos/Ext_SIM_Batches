@@ -14,10 +14,8 @@ import jp.co.ricoh.cotos.batch.exec.step.JobStepResult;
 import jp.co.ricoh.cotos.batch.exec.step.WorkDataGet;
 import jp.co.ricoh.cotos.batch.util.AccountingCreateSimRunningUtil;
 import jp.co.ricoh.cotos.commonlib.dto.result.SalesCalcResultWorkForCspRunning;
-import jp.co.ricoh.cotos.commonlib.entity.master.CommonMasterDetail;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
-import jp.co.ricoh.cotos.commonlib.repository.master.CommonMasterDetailRepository;
 import lombok.extern.log4j.Log4j;
 
 /**
@@ -38,12 +36,6 @@ public class AccountingCreateSimRunning {
 	/** 処理対象データ取得 */
 	@Autowired
 	WorkDataGet workData;
-
-	/**
-	 * 汎用マスタ明細リポジトリ
-	 */
-	@Autowired
-	private CommonMasterDetailRepository commonMasterDetailRepository;
 
 	/** 計上処理のパラメータ作成 */
 	@Autowired
@@ -96,9 +88,8 @@ public class AccountingCreateSimRunning {
 		this.processTargetCnt = workData.getSalesCalcResultWorkForSimRunningList().size();
 		log.info("処理対象件数：" + this.processTargetCnt);
 
-		CommonMasterDetail taxRate = commonMasterDetailRepository.findByCommonMasterColumnNameAndAvailablePeriodBetween("sales_tax_rate", args[0]);
 		workData.getSalesCalcResultWorkForSimRunningList().stream().forEach(work -> {
-			if (executeTransactionProcess(work, args[0], taxRate)) {
+			if (executeTransactionProcess(work, args[0])) {
 				accountingExecution.updateContractDetail(JobStepResult.SUCCESS);
 				log.info(String.format("RJ管理番号%sの計上データ作成に成功しました。", work.getRjManageNumber()));
 				this.processCompleteCnt++;
@@ -129,14 +120,13 @@ public class AccountingCreateSimRunning {
 	 *            処理対象のデータ
 	 * @param baseDate
 	 *            基準日（yyyyMMdd）
-	 * @param taxRate
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean executeTransactionProcess(SalesCalcResultWorkForCspRunning work, String baseDate, CommonMasterDetail taxRate) {
+	private boolean executeTransactionProcess(SalesCalcResultWorkForCspRunning work, String baseDate) {
 		Date execDate = new Date();
 		// 計上処理実行（トランザクション）
-		accountingExecution.setAccounting(accountingExecutionParameterCreate.createParameter(work, baseDate, execDate, taxRate));
+		accountingExecution.setAccounting(accountingExecutionParameterCreate.createParameter(work, baseDate, execDate));
 		JobStepResult result = JobStepResult.FAILURE;
 		try {
 			result = accountingExecution.execute();
