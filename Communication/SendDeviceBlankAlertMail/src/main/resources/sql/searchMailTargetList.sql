@@ -12,4 +12,4 @@ LEFT OUTER JOIN contract_pic_sa_emp cpse
 WHERE pm.product_class_div = 'SIM'
   AND co.LIFECYCLE_STATUS = 6
   AND co.service_term_start <= :serviceTermStart
-  AND JSON_EXISTS(PC.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.device == null)')
+  AND JSON_EXISTS(PC.EXTENDS_PARAMETER_ITERANCE, '$.extendsParameterList?(@.device == "")')
