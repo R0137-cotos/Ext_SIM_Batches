@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.11.1 (02/05/2023)
+- [**closed**] #18519 oracle19cへ移行に伴うクエリ修正 [#299](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/299)
+
+---
+
 ## v6.8.0 (09/03/2023)
 - [**closed**] #18064 データSIMリプライ未配置ご連絡メールのfrom修正 [#293](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/293)
 
