@@ -299,23 +299,9 @@ public class AccountingExecutionParameterCreate {
 		}
 
 		// 97 RJ売上金額（税込）
-
-		// 98 RJ売上消費税区分 1:外税（固定）
-		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
-			entity.setFfmRjSalesTaxType("1");
-		}
-
+		// 98 RJ売上消費税区分
 		// 99 RJ売上消費税率区分
-		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
-			entity.setFfmRjSalesTaxRate(tax.getCodeValue());
-		}
-
 		// 100 RJ売上消費税額
-		// 税率 * RJ売上金額(小数点以下切捨て)
-		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
-			entity.setFfmRjSalesTaxPrice(appUtil.calcConsumptionTax(entity.getFfmRjSalesAmt(), tax.getCodeValue()));
-		}
-
 		// 101 RJ仕入数量
 		// 102 RJ仕入単価
 		// 103 RJ仕入単価（税込）
@@ -351,25 +337,9 @@ public class AccountingExecutionParameterCreate {
 		}
 
 		// 121 R原価金額（税込）
-
-		// 122 R原価消費税区分 1:外税（固定）
-		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
-			entity.setFfmRCostTaxType("1");
-		}
-
+		// 122 R原価消費税区分
 		// 123 R原価消費税率区分
-		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
-			entity.setFfmRCostTaxRate(tax.getCodeValue());
-		}
-
-		// 124 R原価消費税額 "汎用マスタから取得した税率区分とR原価金額から算出。
-		// 例：消費税率区分が8の場合
-		// 0.08 * 1555（R原価金額） = 124
-		// ※小数点以下切捨て
-		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
-			entity.setFfmRCostTaxPrice(appUtil.calcConsumptionTax(entity.getFfmRCostAmt(), tax.getCodeValue()));
-		}
-
+		// 124 R原価消費税額
 		// 125 手数料数量
 		// 126 手数料単価
 		// 127 手数料単価（税込）
