@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.13.0 (23/05/2023)
+- [**closed**] #18243免税対応 5/23リリース暫定対応 [#301](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/301)
+
+---
+
 ## v6.11.1 (02/05/2023)
 - [**closed**] #18519 oracle19cへ移行に伴うクエリ修正 [#299](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/299)
 
