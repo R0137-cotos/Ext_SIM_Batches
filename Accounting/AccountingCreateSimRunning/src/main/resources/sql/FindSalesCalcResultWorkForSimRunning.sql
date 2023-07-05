@@ -84,29 +84,20 @@ from (
         pm.product_class_div as accounting_product_class_div,
         mv_108.sus_sal_mom_shain_cd as sus_sal_mom_shain_cd
     from
-        contract c,
-        contract_detail cd,
-        product_contract pc,
-        product_master pm,
-        item_contract ic,
-        item_detail_contract idc,
-        MV_WJMOC020_ORG_ALL_INFO_COM wwoaic,
-         mv_t_jmci101 mv_101,
-        mv_t_jmci108 mv_108
+        contract c
+        inner join contract_detail cd on c.id = cd.contract_id
+        inner join product_contract pc on c.id = pc.contract_id
+        inner join product_master pm on pc.product_master_id = pm.id
+        inner join item_contract ic on cd.id = ic.contract_detail_id
+        inner join item_detail_contract idc on ic.id = idc.item_contract_id
+        inner join MV_WJMOC020_ORG_ALL_INFO_COM wwoaic on idc.trans_to_service_org_code = wwoaic.org_id
+        left join mv_t_jmci101 mv_101 on mv_101.original_system_code = c.billing_customer_sp_code and mv_101.sales_unit_code = '3139'
+        left join mv_t_jmci108 mv_108 on mv_101.customer_site_number = mv_108.customer_site_number
     where
-        c.id = pc.contract_id AND
-        c.id = cd.contract_id AND
-        pc.product_master_id = pm.id AND
         pm.product_class_div = 'SIM' AND
-        cd.id = ic.contract_detail_id AND
-        ic.id = idc.item_contract_id AND
         (cd.running_account_sales_date is NULL or trunc(cd.running_account_sales_date, 'MONTH') < to_date(substr(:baseDate, 1, 6), 'YYYYMM')) AND
         ic.cost_type in ('2','4') AND
         idc.initial_running_div = '2' AND
-        idc.trans_to_service_org_code = wwoaic.org_id AND
-        mv_101.original_system_code = c.billing_customer_sp_code AND
-        mv_101.sales_unit_code = '3139' AND
-        mv_101.customer_site_number = mv_108.customer_site_number AND
         exists (
             select 
                 1 
