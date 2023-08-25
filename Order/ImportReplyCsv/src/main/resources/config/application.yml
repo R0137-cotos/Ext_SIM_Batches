@@ -29,8 +29,6 @@ spring:
   # メール設定
   mail:
     default-encoding: UTF-8
-    host: shipyard.cotos.ricoh.co.jp
-    port: 1025
 cotos:
   mom:
     system:
@@ -54,7 +52,6 @@ cotos:
       filename: filename
   # Fromメールアドレス
   mail:
-    fromMailAddress: test@example.com
   # 契約APIURL
   contract:
     url: https://dev-api.cotos.ricoh.co.jp/contract/api
