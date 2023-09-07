@@ -1,5 +1,11 @@
 # Changelog
 
+## v7.2.0 (07/09/2023)
+- [**closed**] 20053 CommonLibsバージョン修正 [#305](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/305)
+- [**closed**] #19680 月額計上データ作成バッチ振替情報取得SQL修正 [#304](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/304)
+
+---
+
 ## v6.13.0 (23/05/2023)
 - [**closed**] #18243免税対応 5/23リリース暫定対応 [#301](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/301)
 
