@@ -1,5 +1,10 @@
 # Changelog
 
+## v7.7.0 (21/11/2023)
+- [**closed**] #21183 NSPユニークキー発番処理修正 [#309](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/309)
+
+---
+
 ## v7.2.0 (07/09/2023)
 - [**closed**] 20053 CommonLibsバージョン修正 [#305](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/305)
 - [**closed**] #19680 月額計上データ作成バッチ振替情報取得SQL修正 [#304](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/304)
