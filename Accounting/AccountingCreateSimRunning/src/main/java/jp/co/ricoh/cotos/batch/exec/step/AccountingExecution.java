@@ -92,9 +92,18 @@ public class AccountingExecution {
 	private void saveAccounting() {
 		accountingRepository.save(this.accounting);
 
+		// NSPユニークキーの最大桁数：25
+		final int FFM_NSP_KEY_MAX_LENGTH = 25;
 		// 27 NSPユニークキー
-		// 契約.契約番号(頭5桁除去)＋品種（契約用）.リコー品種コード＋計上ID
-		this.accounting.setFfmNspKey(this.accounting.getFfmContractDocNo().substring(5) + this.accounting.getProductTypeCd() + this.accounting.getId());
+		// 契約.契約番号＋品種（契約用）.リコー品種コード＋計上ID
+		String FfmNspKey = this.accounting.getFfmContractDocNo() + this.accounting.getProductTypeCd() + this.accounting.getId();
+		int FfmNspKeyLength = FfmNspKey.length();
+		if (FfmNspKeyLength > FFM_NSP_KEY_MAX_LENGTH) {
+			// 25桁超過の場合は25桁になるように先頭桁から消す
+			this.accounting.setFfmNspKey(FfmNspKey.substring(FfmNspKeyLength - FFM_NSP_KEY_MAX_LENGTH));
+		} else {
+			this.accounting.setFfmNspKey(FfmNspKey);
+		}
 		accountingRepository.save(this.accounting);
 	}
 
