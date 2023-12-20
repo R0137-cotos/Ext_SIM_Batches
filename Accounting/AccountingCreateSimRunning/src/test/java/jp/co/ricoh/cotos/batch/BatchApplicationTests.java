@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.transaction.Transactional;
 
@@ -90,6 +91,7 @@ public class BatchApplicationTests extends TestBase {
 		context = injectContext;
 		context.getBean(DBConfig.class).clearData();
 		context.getBean(DBConfig.class).initTargetTestData("sql/CreateAccountingBaseData.sql");
+		context.getBean(DBConfig.class).initTargetTestData("sql/計上シーケンス1開始に変更.sql");
 	}
 
 	@AfterClass
@@ -210,6 +212,26 @@ public class BatchApplicationTests extends TestBase {
 			Assert.fail("パラメータ不正：異常終了しませんでした。");
 		} catch (ExitException e) {
 		}
+	}
+
+	@Test
+	@Transactional
+	public void 正常系_計上シーケンス開始位置変更_NSPユニークキーの桁数調整処理が正しいこと() throws ParseException {
+
+		context.getBean(DBConfig.class).initTargetTestData("sql/計上シーケンス100000000開始に変更.sql");
+
+		// 検証
+		final String baseDate = "20190101";
+		try {
+			バッチ起動(baseDate);
+		} catch (ExitException e) {
+			Assert.fail("異常終了しました。試験失敗です。");
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("異常終了しました。試験失敗です。");
+		}
+
+		NSPユニークキーの桁数が25を超過した場合の桁数調整処理が正しいことを確認();
 	}
 
 	private void データ作成区分_20_売上請求チェック(Accounting accounting, String baseDate) {
@@ -428,7 +450,7 @@ public class BatchApplicationTests extends TestBase {
 		// 27 NSPユニークキー
 		Assert.assertTrue("NSPユニークキーが契約.契約番号＋品種（契約用）.リコー品種コード＋計上IDと同じであること",
 				StringUtils.equals(accounting.getFfmNspKey(),
-						accounting.getFfmContractDocNo().substring(5) + itemContract.getRicohItemCode() + accounting.getId()));
+						accounting.getFfmContractDocNo() + itemContract.getRicohItemCode() + accounting.getId()));
 		// 28 案件番号
 		Assert.assertTrue("案件番号がRJ管理番号と同じであること",
 				StringUtils.equals(accounting.getFfmProjectNo(), accounting.getRjManageNumber()));
@@ -925,5 +947,21 @@ public class BatchApplicationTests extends TestBase {
 				Assert.assertEquals("旧契約の契約が処理対象になっていること", LifecycleStatus.旧契約, contract.getLifecycleStatus());
 			});
 		}
+	}
+
+	private void NSPユニークキーの桁数が25を超過した場合の桁数調整処理が正しいことを確認() {
+		Iterable<Accounting> iterableAccounting = accountingRepository.findAll();
+		List<Accounting> actualAccountingList = StreamSupport.stream(iterableAccounting.spliterator(), false).collect(Collectors.toList());
+
+		actualAccountingList.forEach(accounting -> {
+			Contract contract = contractRepository.findOne(accounting.getContractId());
+			ContractDetail contractDetail = contract.getContractDetailList().stream().filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
+			ItemContract itemContract = contractDetail.getItemContract();
+
+			// 27 NSPユニークキー
+			String expectedFfmNspKey = (accounting.getFfmContractDocNo() + itemContract.getRicohItemCode() + accounting.getId()).substring(5);
+			Assert.assertTrue("NSPユニークキーが25桁であること", accounting.getFfmNspKey().length() == 25);
+			Assert.assertEquals("NSPユニークキーが契約.契約番号＋品種（契約用）.リコー品種コード＋計上IDを結合した文字列の桁数調整後と同じであること", expectedFfmNspKey, accounting.getFfmNspKey());
+		});
 	}
 }
