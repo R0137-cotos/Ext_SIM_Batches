@@ -1,5 +1,10 @@
 # Changelog
 
+## v7.9.0 (21/12/2023)
+- [**closed**] #21450 NSPユニークキー桁数調整ロジック実装 [#312](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/312)
+
+---
+
 ## v7.7.0 (21/11/2023)
 - [**closed**] #21183 NSPユニークキー発番処理修正 [#309](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/309)
 
