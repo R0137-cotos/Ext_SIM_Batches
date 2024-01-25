@@ -1,5 +1,10 @@
 # Changelog
 
+## v7.11.0 (25/01/2024)
+- [**closed**] #21919 CommonLibsバージョン修正 [#315](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/315)
+
+---
+
 ## v7.9.0 (21/12/2023)
 - [**closed**] #21450 NSPユニークキー桁数調整ロジック実装 [#312](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/312)
 
