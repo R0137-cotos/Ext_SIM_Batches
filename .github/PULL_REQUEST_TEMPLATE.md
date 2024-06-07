@@ -4,7 +4,7 @@
  - [ ] マイルストーンを設定しました。（topic or releaseブランチでの初回対応時のみ必要、CommonLibs verupのみだけの場合は不要）
  - [ ] ソースコードフォーマットはEclipseでバッチリです。
  - [ ] [プルリクレビュー依頼前のチェック観点](https://ex-redmine-1.cotos.ricoh.co.jp/projects/cotos_root/wiki/%E3%83%97%E3%83%AB%E3%83%AA%E3%82%AF%E3%83%AC%E3%83%93%E3%83%A5%E3%83%BC%E4%BE%9D%E9%A0%BC%E5%89%8D%E3%81%AE%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E8%A6%B3%E7%82%B9)、および[コーディングルール](https://ex-redmine-1.cotos.ricoh.co.jp/projects/cotos_root/wiki/%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%AB)を確認の上、実装しました。
- - [ ] [影響範囲調査wiki](https://ex-redmine-1.cotos.ricoh.co.jp/projects/cotos_root/wiki/%E5%BD%B1%E9%9F%BF%E7%AF%84%E5%9B%B2%E8%AA%BF%E6%9F%BB%E6%96%B9%E6%B3%95)を参照の上、子チケットを作成して親チケットに紐づけました。
+ - [ ] [影響範囲調査wiki](https://ex-redmine-1.cotos.ricoh.co.jp/projects/cotos_root/wiki/%E5%BD%B1%E9%9F%BF%E7%AF%84%E5%9B%B2%E8%AA%BF%E6%9F%BB%E6%96%B9%E6%B3%95)を参照の上、子チケットを作成して親チケットに紐づけました。（調査不要の場合も紐づけて調査不要な理由を記載した上でチェックを付けること）
 
  以下は該当する場合のみ確認しています。
  - [ ] 再構成後のバッチの場合、[構成ファイル種類毎のルール](https://mygithub.ritscm.xyz/cotos/BatchLightTemplate/tree/develop#batchlighttemplate)通りにファイルを修正しています。
