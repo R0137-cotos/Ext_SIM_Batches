@@ -357,7 +357,8 @@ public class BatchApplicationTests extends TestBase {
 		} else {
 			Assert.assertEquals("コメント１が契約.RJ管理番号と同じであること", contract.getRjManageNumber(), accounting.getFfmOutputComment1());
 		}
-
+		// 152 RINGS届先コード(3桁）
+		Assert.assertTrue("RINGS届先コード(3桁）が契約.届先コードと同じであること", StringUtils.equals(accounting.getFfmRingsDstCd(), contract.getDeliveryCd()));
 		// 154 納品場所識別
 		Assert.assertTrue("納品場所識別が11(固定)であること", StringUtils.equals(accounting.getFfmDstType(), "11"));
 	}
@@ -666,8 +667,6 @@ public class BatchApplicationTests extends TestBase {
 		Assert.assertNull("強制フラグがNullであること", accounting.getFfmForcedFlg());
 		// 151 機器設置先部課名
 		Assert.assertNull("機器設置先部課名がNullであること", accounting.getFfmInstalltionDptName());
-		// 152 RINGS届先コード(3桁）
-		Assert.assertNull("RINGS届先コード(3桁）がNullであること", accounting.getFfmRingsDstCd());
 		// 153 OE届先コード(11桁）
 		Assert.assertNull("OE届先コード(11桁）がNullであること", accounting.getFfmOeDstCd());
 		// 155 届先名１（会社名）
