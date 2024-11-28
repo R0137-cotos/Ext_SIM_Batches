@@ -402,6 +402,12 @@ public class AccountingExecutionParameterCreate {
 		// 150 機器設置先名
 		// 151 機器設置先部課名
 		// 152 RINGS届先コード(3桁）
+		// 契約.届先コードを設定
+		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
+			if (StringUtils.isNotEmpty(work.getDeliveryCd())) {
+				entity.setFfmRingsDstCd(work.getDeliveryCd());
+			}
+		}
 		// 153 OE届先コード(11桁）
 
 		// 154 納品場所識別 11(固定)
