@@ -32,7 +32,8 @@ from (
         cc.company_name_kana,
         c.purchase_manage_number,
         pm.product_class_div as accounting_product_class_div,
-        null as sus_sal_mom_shain_cd
+        null as sus_sal_mom_shain_cd,
+        c.delivery_cd
     from
         contract c,
         contract_detail cd,
@@ -82,7 +83,8 @@ from (
         null as company_name_kana,
         c.purchase_manage_number,
         pm.product_class_div as accounting_product_class_div,
-        mv_108.sus_sal_mom_shain_cd as sus_sal_mom_shain_cd
+        mv_108.sus_sal_mom_shain_cd as sus_sal_mom_shain_cd,
+        c.delivery_cd
     from
         contract c
         inner join contract_detail cd on c.id = cd.contract_id
@@ -99,13 +101,13 @@ from (
         ic.cost_type in ('2','4') AND
         idc.initial_running_div = '2' AND
         exists (
-            select 
-                1 
-            from 
+            select
+                1
+            from
                 v_valid_contract_period_history history
-            where 
+            where
                 c.id = history.contract_id AND
-                to_date(:baseDate, 'YYYY/MM/DD') between history.contract_date_start and history.contract_date_end AND 
+                to_date(:baseDate, 'YYYY/MM/DD') between history.contract_date_start and history.contract_date_end AND
                 history.PRODUCT_CLASS_DIV = 'SIM'
         )
 ) target
