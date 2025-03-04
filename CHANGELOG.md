@@ -1,5 +1,10 @@
 # Changelog
 
+## v8.5.0 (04/03/2025)
+*No changelog for this release.*
+
+---
+
 ## v8.2.0 (23/01/2025)
 - [**closed**] #27025　リコーモバイルで届け先CDをFFM計上時に連携したい [#320](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/320)
 
@@ -162,9 +167,3 @@
 ## v3.12.0 (17/12/2020)
 - [**closed**] #8494 メールヘッダーに設定する項目を変更 [#191](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/191)
 - [**closed**] #8494 バウンスメール対応 [#181](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/181)
-
----
-
-## v3.11.0 (03/12/2020)
-- [**closed**] #9382 [本番障害]リプライ取込バッチ_納品予定日フォーマットエラー エラーメッセージ修正 [#188](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/188)
-- [**closed**] #9382 [本番障害]リプライ取込バッチ_納品予定日フォーマットエラー [#187](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/187)
