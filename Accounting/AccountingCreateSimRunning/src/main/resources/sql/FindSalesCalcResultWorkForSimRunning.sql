@@ -33,7 +33,8 @@ from (
         c.purchase_manage_number,
         pm.product_class_div as accounting_product_class_div,
         null as sus_sal_mom_shain_cd,
-        c.delivery_cd
+        c.delivery_cd,
+        null as revenue_costprice
     from
         contract c,
         contract_detail cd,
@@ -84,7 +85,8 @@ from (
         c.purchase_manage_number,
         pm.product_class_div as accounting_product_class_div,
         mv_108.sus_sal_mom_shain_cd as sus_sal_mom_shain_cd,
-        c.delivery_cd
+        c.delivery_cd,
+        null as revenue_costprice
     from
         contract c
         inner join contract_detail cd on c.id = cd.contract_id
