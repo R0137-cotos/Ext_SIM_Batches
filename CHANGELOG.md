@@ -1,5 +1,10 @@
 # Changelog
 
+## v9.0.0 (22/05/2025)
+- [**closed**] #30550_契約データ作成用データ検索SQLの修正 [#328](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/328)
+
+---
+
 ## v8.5.0 (04/03/2025)
 *No changelog for this release.*
 
@@ -161,9 +166,3 @@
 - [**closed**] #9697 SIMメール失敗時ログ出力 追加修正 [#201](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/201)
 - [**closed**] #9697 SIMメール失敗時ログ出力 [#200](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/200)
 - [**closed**] #9312 計上データ作成バッチ(SIM)で作成データパターンが振替の場合に設定する値を追加 [#195](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/195)
-
----
-
-## v3.12.0 (17/12/2020)
-- [**closed**] #8494 メールヘッダーに設定する項目を変更 [#191](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/191)
-- [**closed**] #8494 バウンスメール対応 [#181](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/181)
