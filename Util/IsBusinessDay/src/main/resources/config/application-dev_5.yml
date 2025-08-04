@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@dev-db.cotos.ricoh.co.jp:1521/pdb1
+    url: jdbc:oracle:thin:@dev-db-aws.cotos.ricoh.co.jp:1521/pdb1
     username: cotos_dev_5
     password: cotos_dev_5
     driverClassName: oracle.jdbc.OracleDriver
@@ -15,4 +15,4 @@ spring:
         format_sql: true
         default_schema: cotos_dev_5
 cotos:
-  authentication: https://dev-api-5.cotos.ricoh.co.jp/auth/api/auth
+  authentication: https://dev-api-5-aws.cotos.ricoh.co.jp/auth/api/auth
