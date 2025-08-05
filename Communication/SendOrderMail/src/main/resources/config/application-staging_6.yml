@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@st-db.cotos.ricoh.co.jp:1521/pdb1
+    url: jdbc:oracle:thin:@st-db-aws.cotos.ricoh.co.jp:1521/pdb1
     username: cotos_st_6
     password: cotosst6issharedprocess
     driverClassName: oracle.jdbc.OracleDriver
@@ -15,4 +15,4 @@ spring:
         format_sql: true
         default_schema: cotos_st_6
 cotos:
-  authentication: https://st-api-6.cotos.ricoh.co.jp/auth/api/auth
+  authentication: https://st-api-6-aws.cotos.ricoh.co.jp/auth/api/auth
