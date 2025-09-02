@@ -1,8 +1,6 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +32,7 @@ import jp.co.ricoh.cotos.commonlib.entity.contract.ContractInstallationLocation;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
+import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementPicWorkerEmpRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
 import jp.co.ricoh.cotos.component.BatchUtil;
@@ -60,6 +59,9 @@ public class BatchComponentTest extends TestBase {
 
 	@Autowired
 	ArrangementPicWorkerEmpRepository arrangementPicWorkerEmpRepository;
+	
+	@Autowired
+	BusinessDayUtil businessDayUtil;
 
 	@SpyBean
 	BatchUtil batchUtil;
@@ -259,7 +261,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
-			batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+			batchComponent.execute(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}
@@ -282,7 +284,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(null);
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
-			batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+			batchComponent.execute(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}
@@ -292,7 +294,7 @@ public class BatchComponentTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_CSVファイルを出力しないこと_処理日が処理年月日末営業日2営業日前でない_容量変更() throws Exception {
+	public void 正常系_CSVファイルを出力しないこと_処理日が処理年月日末営業日5営業日前でない_容量変更() throws Exception {
 		テストデータ作成("createOrderTestSuccessDataCapacityChange.sql");
 		fileDeleate(outputPath + "result_initial.csv");
 
@@ -324,7 +326,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
-			batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+			batchComponent.execute(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}

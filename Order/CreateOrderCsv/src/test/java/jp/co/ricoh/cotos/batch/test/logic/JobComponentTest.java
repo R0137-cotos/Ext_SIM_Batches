@@ -1,9 +1,7 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -277,9 +275,10 @@ public class JobComponentTest extends TestBase {
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
-			jobComponent.run(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+			jobComponent.run(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
-			Assert.fail("テスト失敗");
+			e.printStackTrace();
+			Assert.fail("テスト失敗" + e.getMessage());
 		}
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "result_initial.csv"));
@@ -300,7 +299,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
-			jobComponent.run(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+			jobComponent.run(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}
@@ -370,7 +369,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
-			jobComponent.run(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+			jobComponent.run(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}

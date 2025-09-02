@@ -78,8 +78,8 @@ public class BatchStepComponent implements IBatchStepComponent {
 				}
 				LocalDate lastBusinessDay = lastBusinessDayTmp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 				int difference = businessDayUtil.calculateDifferenceBetweenBusinessDates(operationDate, lastBusinessDay);
-				// 2営業日前でなければ処理を終了する
-				if (difference != 2) {
+				// 5営業日前でなければ処理を終了する
+				if (difference != 5) {
 					throw new OperationDateException();
 				}
 			}

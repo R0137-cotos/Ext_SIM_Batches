@@ -137,8 +137,8 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		Date changeOperationDate = null;
 		if ("2".equals(dto.getType())) {
 			changeOperationDate = businessDayUtil.getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(new SimpleDateFormat("YYYYMM").format(operationDate));
-			// 処理日当月の最終営業日-2営業日を設定する
-			changeOperationDate = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(changeOperationDate, Calendar.DAY_OF_MONTH), 2, true);
+			// 処理日当月の最終営業日-5営業日を設定する
+			changeOperationDate = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(changeOperationDate, Calendar.DAY_OF_MONTH), 5, true);
 		}
 
 		// 以下条件の場合オーダーCSV出力する
