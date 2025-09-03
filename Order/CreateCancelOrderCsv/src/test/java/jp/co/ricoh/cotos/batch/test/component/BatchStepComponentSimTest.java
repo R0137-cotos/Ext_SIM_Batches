@@ -52,7 +52,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	@Test
 	public void パラメータチェック_正常系() throws IOException {
 		try {
-			batchStepComponent.paramCheck(new String[] { "20190626", filePath, fileName });
+			batchStepComponent.paramCheck(new String[] { "20190621", filePath, fileName });
 		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
@@ -74,7 +74,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 		try {
 			// パラメータ1つ
-			batchStepComponent.paramCheck(new String[] { "20190626" });
+			batchStepComponent.paramCheck(new String[] { "20190621" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -86,7 +86,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 		try {
 			// パラメータ2つ
-			batchStepComponent.paramCheck(new String[] { "20190626", "output" });
+			batchStepComponent.paramCheck(new String[] { "20190621", "output" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -98,7 +98,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 		try {
 			// パラメータ4つ
-			batchStepComponent.paramCheck(new String[] { "20190626", "output", "test.csv", "dummy" });
+			batchStepComponent.paramCheck(new String[] { "20190621", "output", "test.csv", "dummy" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -112,7 +112,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	@Test
 	public void パラメータチェック_異常系_日付変換失敗() throws Exception {
 		try {
-			batchStepComponent.paramCheck(new String[] { "2019/06/26", "output", "test.csv" });
+			batchStepComponent.paramCheck(new String[] { "2019/06/21", "output", "test.csv" });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -131,7 +131,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		}
 
 		try {
-			batchStepComponent.paramCheck(new String[] { "20190626", filePath, fileName });
+			batchStepComponent.paramCheck(new String[] { "20190621", filePath, fileName });
 			Assert.fail("ファイルが存在する状態で処理が実行された。");
 		} catch (FileAlreadyExistsException e) {
 			// FileAlreadyExistsExceptionが発生していること
@@ -147,7 +147,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		}
 
 		try {
-			batchStepComponent.paramCheck(new String[] { "20190626", filePath, fileName });
+			batchStepComponent.paramCheck(new String[] { "20190621", filePath, fileName });
 			Assert.fail("ファイルが存在する状態で処理が実行された。");
 		} catch (FileAlreadyExistsException e) {
 			// FileAlreadyExistsExceptionが発生していること
@@ -164,7 +164,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		String filePath = "hoge12345678999";
 
 		try {
-			batchStepComponent.paramCheck(new String[] { "20190626", filePath, fileName });
+			batchStepComponent.paramCheck(new String[] { "20190621", filePath, fileName });
 			Assert.fail("ディレクトリが存在しない状態で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -224,7 +224,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		// パラメータセット
 		param.setCsvFile(csvFile);
 		param.setTmpFile(tmpFile);
-		param.setOperationDate(LocalDate.of(2019, 6, 26));
+		param.setOperationDate(LocalDate.of(2019, 6, 21));
 
 		// 解約データ作成
 		List<CancelOrderEntity> cancelOrderEntityList = new ArrayList<CancelOrderEntity>();

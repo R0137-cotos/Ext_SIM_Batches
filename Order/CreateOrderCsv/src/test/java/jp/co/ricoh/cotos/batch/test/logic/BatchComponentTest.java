@@ -32,7 +32,6 @@ import jp.co.ricoh.cotos.commonlib.entity.contract.ContractInstallationLocation;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractPicSaEmp;
 import jp.co.ricoh.cotos.commonlib.entity.contract.CustomerContract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ProductContract;
-import jp.co.ricoh.cotos.commonlib.logic.businessday.BusinessDayUtil;
 import jp.co.ricoh.cotos.commonlib.repository.arrangement.ArrangementPicWorkerEmpRepository;
 import jp.co.ricoh.cotos.commonlib.repository.contract.ContractDetailRepository;
 import jp.co.ricoh.cotos.component.BatchUtil;
@@ -59,9 +58,6 @@ public class BatchComponentTest extends TestBase {
 
 	@Autowired
 	ArrangementPicWorkerEmpRepository arrangementPicWorkerEmpRepository;
-	
-	@Autowired
-	BusinessDayUtil businessDayUtil;
 
 	@SpyBean
 	BatchUtil batchUtil;
@@ -304,7 +300,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
 		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
 		try {
-			batchComponent.execute(new String[] { "20190927", outputPath, "result_initial.csv", "2" });
+			batchComponent.execute(new String[] { "20190919", outputPath, "result_initial.csv", "2" });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (OperationDateException e) {
 			// OperationDateExceptionが発生していること
