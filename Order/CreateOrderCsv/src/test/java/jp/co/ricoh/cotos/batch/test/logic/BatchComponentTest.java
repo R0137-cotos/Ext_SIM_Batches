@@ -1,6 +1,8 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
 
 import java.io.File;
 import java.io.IOException;
