@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import jp.co.ricoh.cotos.BatchConstants;
+import jp.co.ricoh.cotos.ExitHandler;
+import jp.co.ricoh.cotos.IExitHandler;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 
 @Component
@@ -17,6 +20,9 @@ public class JobComponent {
 
 	@Autowired
 	private MessageUtil messageUtil;
+
+	@Setter
+	private static IExitHandler exitHandler = new ExitHandler();
 
 	/**
 	 * バッチを順次実行するジョブの実行
@@ -33,17 +39,17 @@ public class JobComponent {
 			e.getErrorInfoList().stream().forEach(errorInfo -> log.error(errorInfo.getErrorId() + ":" + errorInfo.getErrorMessage()));
 			e.printStackTrace();
 			log.error(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
-			System.exit(1);
+			exitHandler.exit(1);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.fatal("SIMベンダーオーダーメール送信処理に失敗しました。");
-			System.exit(1);
+			exitHandler.exit(1);
 
 		} catch (Throwable e) {
 			e.printStackTrace();
 			log.fatal(messageUtil.createMessageInfo("BatchCannotCompleteByUnexpectedError", new String[] { BatchConstants.BATCH_NAME }).getMsg());
-			System.exit(1);
+			exitHandler.exit(1);
 
 		}
 	}
