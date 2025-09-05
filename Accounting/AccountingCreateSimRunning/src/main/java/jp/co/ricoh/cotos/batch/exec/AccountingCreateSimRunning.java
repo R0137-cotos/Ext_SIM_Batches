@@ -8,6 +8,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import jp.co.ricoh.cotos.ExitHandler;
+import jp.co.ricoh.cotos.IExitHandler;
 import jp.co.ricoh.cotos.batch.exec.step.AccountingExecution;
 import jp.co.ricoh.cotos.batch.exec.step.AccountingExecutionParameterCreate;
 import jp.co.ricoh.cotos.batch.exec.step.JobStepResult;
@@ -18,6 +20,7 @@ import jp.co.ricoh.cotos.commonlib.entity.master.CommonMasterDetail;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorInfo;
 import jp.co.ricoh.cotos.commonlib.logic.check.CheckUtil;
 import jp.co.ricoh.cotos.commonlib.repository.master.CommonMasterDetailRepository;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 
 /**
@@ -62,6 +65,9 @@ public class AccountingCreateSimRunning {
 	/** 処理エラー件数 */
 	private long processErrorCnt = 0L;
 
+	@Setter
+	private static IExitHandler exitHandler = new ExitHandler();
+
 	/**
 	 * 計上データ作成（SIMランニング分）のビジネスロジック実行
 	 * 
@@ -78,14 +84,14 @@ public class AccountingCreateSimRunning {
 		if (false == appUtil.existsDate(args[0])) {
 			List<ErrorInfo> error = checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "SearchParameterError", new String[] { "起動パラメータ", "存在する日付（yyyyMMdd）" });
 			error.stream().forEach(errorInfo -> log.fatal(errorInfo.getErrorId() + ":" + errorInfo.getErrorMessage()));
-			System.exit(1);
+			exitHandler.exit(1);
 		}
 
 		// 対象データ取得
 		workData.setBaseDate(args[0]);
 		if (JobStepResult.SUCCESS != workData.execute()) {
 			log.info("「1 対象データ取得」に失敗しました。");
-			System.exit(1);
+			exitHandler.exit(1);
 		}
 
 		if (0 == workData.getSalesCalcResultWorkForSimRunningList().size()) {
@@ -114,7 +120,7 @@ public class AccountingCreateSimRunning {
 			log.info("!!!! 計上データ作成（SIMランニング分）を正常終了します。 !!!!");
 		} else {
 			log.error("!!!! 計上データ作成（SIMランニング分）を一部正常終了します。 !!!!");
-			System.exit(2);
+			exitHandler.exit(2);
 		}
 
 		return;

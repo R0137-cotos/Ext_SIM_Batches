@@ -4,12 +4,12 @@ spring:
     username: cotos_dev_2
     password: cotos_dev_2
     driverClassName: oracle.jdbc.OracleDriver
-    type: org.apache.tomcat.jdbc.pool.DataSource
-    tomcat:
-      max-active: 5
-      min-idle: 5
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 5
   jpa:
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: none
     properties:

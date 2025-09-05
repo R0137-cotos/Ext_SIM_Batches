@@ -1,9 +1,5 @@
 package jp.co.ricoh.cotos.batch;
 
-import java.security.Permission;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -17,7 +13,6 @@ public class TestBase {
 	@Autowired
 	AccountingCreateSimRunningUtil appUtil;
 
-	private static SecurityManager manager;
 	@Value("${spring.datasource.driverClassName}")
 	String dbDriver;
 	@Value("${spring.datasource.url}")
@@ -37,31 +32,4 @@ public class TestBase {
 			this.status = status;
 		}
 	}
-
-	@BeforeClass
-	public static void rewriteSystemExit() {
-		manager = System.getSecurityManager();
-		System.setSecurityManager(new SecurityManager() {
-			@Override
-			public void checkExit(int status) {
-				if (1 == status) {
-					throw new ExitException(status);
-				}
-				if (2 == status) {
-					throw new ExitException(status);
-				}
-			}
-
-			@Override
-			public void checkPermission(Permission permission) {
-			}
-		});
-	}
-
-	@AfterClass
-	public static void resetSystemExit() {
-		System.setSecurityManager(manager);
-	}
-
-
 }
