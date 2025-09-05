@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import org.junit.AfterClass;
 import org.junit.Assert;

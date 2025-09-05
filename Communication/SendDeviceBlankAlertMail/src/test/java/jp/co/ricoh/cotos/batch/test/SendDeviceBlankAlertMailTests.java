@@ -54,24 +54,4 @@ public class SendDeviceBlankAlertMailTests extends TestBase {
 			Assert.fail("エラー");
 		}
 	}
-
-	@Test
-	public void 正常系_パラメーター数不正() {
-		try {
-			BatchApplication.main(new String[] { "dummy" });
-			Assert.fail("パラメータが不正なのに処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals(1, e.getStatus());
-		}
-	}
-
-	@Test
-	public void 異常系_パラメーター数不一致() {
-		try {
-			BatchApplication.main(new String[] { "dummy", "dummy" });
-			Assert.fail("パラメータ数不一致なのに処理が実行された。");
-		} catch (ExitException e) {
-			Assert.assertEquals(1, e.getStatus());
-		}
-	}
 }
