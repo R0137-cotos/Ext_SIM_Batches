@@ -2,7 +2,7 @@ package jp.co.ricoh.cotos.batch.exec.step;
 
 import java.util.Date;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -114,7 +114,7 @@ public class AccountingExecution {
 	 */
 	@Transactional
 	public void updateContractDetail(JobStepResult result) {
-		ContractDetail contractDetail = contractDetailRepository.findOne(this.accounting.getContractDetailId());
+		ContractDetail contractDetail = contractDetailRepository.findById(this.accounting.getContractDetailId()).orElse(null);
 		if (result == JobStepResult.SUCCESS) {
 			contractDetail.setRunningAccountSalesStatus(RunningAccountSalesStatus.正常);
 			contractDetail.setRunningAccountSalesDate(new Date());
