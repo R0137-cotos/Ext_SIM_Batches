@@ -333,7 +333,7 @@ public class AccountingExecutionParameterCreate {
 
 		// 120 R原価金額
 		if (StringUtils.equals(work.getFfmDataPtn(), DateCreateDiv.売上請求.getCode())) {
-			entity.setFfmRCostAmt(appUtil.multiply(work.getRCost(), work.getQuantity()));
+			entity.setFfmRCostAmt(appUtil.multiply(work.getRCost(), BigDecimal.valueOf(work.getQuantity())));
 		}
 
 		// 121 R原価金額（税込）
