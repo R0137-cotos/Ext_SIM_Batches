@@ -1,7 +1,7 @@
 package jp.co.ricoh.cotos.dto;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

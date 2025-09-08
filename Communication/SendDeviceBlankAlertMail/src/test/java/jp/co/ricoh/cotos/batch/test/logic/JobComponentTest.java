@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.batch.test.TestExitHandler;
 import jp.co.ricoh.cotos.batch.test.mock.WithMockCustomUser;
 import jp.co.ricoh.cotos.component.base.BatchStepComponent;
 import jp.co.ricoh.cotos.logic.JobComponent;
@@ -49,6 +50,7 @@ public class JobComponentTest extends TestBase {
 	@WithMockCustomUser
 	public void 正常系_JOB_メール送信できること() {
 		context.getBean(DBConfig.class).initTargetTestData("sql/SendDeviceBlankAlertMailTests.sql");
+		JobComponent.setExitHandler(new TestExitHandler());
 		jobComponent.run(new String[] { "20200203" });
 	}
 
@@ -60,6 +62,7 @@ public class JobComponentTest extends TestBase {
 		cal.set(2020, 2, 16, 11, 59, 59);
 		Mockito.doReturn(cal.getTime()).when(batchStepComponent).getSysdate();
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] {});
 		} catch (ExitException e) {
 			Assert.fail("エラー");
@@ -69,6 +72,7 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 異常系_JOB_パラメーター数不一致() {
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "dummy", "dummy" });
 			Assert.fail("パラメータ数不一致なのに処理が実行された。");
 		} catch (ExitException e) {
@@ -79,6 +83,7 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 異常系_JOB_日付不正() {
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "dummy" });
 			Assert.fail("パラメータが不正なのに処理が実行された。");
 		} catch (ExitException e) {
@@ -94,6 +99,7 @@ public class JobComponentTest extends TestBase {
 		cal.set(2020, 2, 16, 11, 59, 59);
 		Mockito.doReturn(cal.getTime()).when(batchStepComponent).getSysdate();
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "" });
 		} catch (ExitException e) {
 			Assert.fail("エラー");

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,7 +65,7 @@ public class BatchUtil {
 	 * @return システムID
 	 */
 	public String getSystemId() {
-		AppMaster appMaster = appMasterRepository.findOne(applicationId);
+		AppMaster appMaster = appMasterRepository.findById(applicationId).orElse(null);
 		if (appMaster == null) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "EntityCheckNotNullError", new String[] { "アプリマスタ" }));
 		}
@@ -104,8 +104,10 @@ public class BatchUtil {
 			return;
 		}
 		if (MailSendType.エラー == mailSendType) {
-			MailSendHistory mailSendHistory = mailSendHistoryRepository.findByTargetDataIdAndMailControlMasterAndMailSendType(transactionId, mailControlMaster, MailSendType.未送信);
-			updateMailSendHistoryError(mailSendHistory);
+			List<MailSendHistory> mailSendHistoryList = mailSendHistoryRepository.findByTargetDataIdAndMailControlMasterAndMailSendType(transactionId, mailControlMaster, MailSendType.未送信);
+			for (MailSendHistory mailSendHistory : mailSendHistoryList) {
+				updateMailSendHistoryError(mailSendHistory);
+		    }
 		}
 	}
 
