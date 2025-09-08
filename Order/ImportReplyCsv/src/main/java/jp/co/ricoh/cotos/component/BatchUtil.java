@@ -45,7 +45,7 @@ public class BatchUtil {
 	 * 拡張項目文字列をオブジェクトに変換する
 	 */
 	public List<ExtendsParameterDto> readJson(String extendsParameterIterance) throws JsonParseException, JsonMappingException, IOException {
-		HashMap<String, HashMap<String, Object>> basicContentsJsonMap = om.readValue(extendsParameterIterance, new TypeReference<Object>() {
+		HashMap<String, HashMap<String, Object>> basicContentsJsonMap = (HashMap<String, HashMap<String, Object>>) om.readValue(extendsParameterIterance, new TypeReference<Object>() {
 		});
 
 		String extendsJson = om.writeValueAsString(basicContentsJsonMap.get("extendsParameterList"));
