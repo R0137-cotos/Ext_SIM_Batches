@@ -45,7 +45,7 @@ public class JobComponentTest extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderSuccessTestData.sql");
 
 		// 2019年6月の非営業日は以下を想定
-		// 2019/06/01 
+		// 2019/06/01
 		// 2019/06/02
 		// 2019/06/08
 		// 2019/06/09
@@ -57,9 +57,9 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			jobComponent.run(new String[] { "20190621", filePath, fileName });
 		} catch (ExitException e) {
 			Assert.fail("エラーが発生した。");
 		}
@@ -80,7 +80,7 @@ public class JobComponentTest extends TestBase {
 		// データ投入を行わない
 
 		// 2019年6月の非営業日は以下を想定
-		// 2019/06/01 
+		// 2019/06/01
 		// 2019/06/02
 		// 2019/06/08
 		// 2019/06/09
@@ -92,9 +92,9 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			jobComponent.run(new String[] { "20190621", filePath, fileName });
 		} catch (ExitException e) {
 			Assert.fail("エラーが発生した。");
 		}
@@ -107,7 +107,7 @@ public class JobComponentTest extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderNoTargetTestData.sql");
 
 		// 2019年6月の非営業日は以下を想定
-		// 2019/06/01 
+		// 2019/06/01
 		// 2019/06/02
 		// 2019/06/08
 		// 2019/06/09
@@ -119,9 +119,9 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			jobComponent.run(new String[] { "20190621", filePath, fileName });
 		} catch (ExitException e) {
 			Assert.fail("エラーが発生した。");
 		}
@@ -130,9 +130,9 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
-	public void 異常系_JOB_月末営業日マイナス2営業日以外() {
+	public void 異常系_JOB_月末営業日マイナス5営業日以外() {
 		// 2019年6月の非営業日は以下を想定
-		// 2019/06/01 
+		// 2019/06/01
 		// 2019/06/02
 		// 2019/06/08
 		// 2019/06/09
@@ -144,35 +144,35 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 
-		// 処理不要日付　営業日 月末営業日-2日以降 2019/06/27
+		// 処理不要日付　営業日 月末営業日-5日以降 2019/06/24
 		try {
-			jobComponent.run(new String[] { "20190627", filePath, fileName });
+			jobComponent.run(new String[] { "20190624", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
 		}
 
-		// 処理不要日付　営業日 月末営業日-2日以前 2019/06/25
+		// 処理不要日付　営業日 月末営業日-5日以前 2019/06/20
 		try {
-			jobComponent.run(new String[] { "20190625", filePath, fileName });
+			jobComponent.run(new String[] { "20190620", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
 		}
 
-		// 処理不要日付　非営業日 月末営業日-2日以降 2019/06/29
+		// 処理不要日付　非営業日 月末営業日-5日以降 2019/06/22
 		try {
-			jobComponent.run(new String[] { "20190629", filePath, fileName });
+			jobComponent.run(new String[] { "20190622", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
 		}
 
-		// 処理不要日付　非営業日 月末営業日-2日以前 2019/06/23
+		// 処理不要日付　非営業日 月末営業日-5日以前 2019/06/16
 		try {
-			jobComponent.run(new String[] { "20190623", filePath, fileName });
+			jobComponent.run(new String[] { "20190616", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
@@ -184,7 +184,7 @@ public class JobComponentTest extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonParseErrorTestData1.sql");
 
 		// 2019年6月の非営業日は以下を想定
-		// 2019/06/01 
+		// 2019/06/01
 		// 2019/06/02
 		// 2019/06/08
 		// 2019/06/09
@@ -196,9 +196,9 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			jobComponent.run(new String[] { "20190621", filePath, fileName });
 			Assert.fail("JSON形式のparse失敗エラーが発生しなかった。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -210,7 +210,7 @@ public class JobComponentTest extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonMappingErrorTestData1.sql");
 
 		// 2019年6月の非営業日は以下を想定
-		// 2019/06/01 
+		// 2019/06/01
 		// 2019/06/02
 		// 2019/06/08
 		// 2019/06/09
@@ -222,9 +222,9 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			jobComponent.run(new String[] { "20190621", filePath, fileName });
 			Assert.fail("JSON形式のmapping失敗エラーが発生しなかった。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -236,7 +236,7 @@ public class JobComponentTest extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("createCancelOrderJsonMappingErrorTestData2.sql");
 
 		// 2019年6月の非営業日は以下を想定
-		// 2019/06/01 
+		// 2019/06/01
 		// 2019/06/02
 		// 2019/06/08
 		// 2019/06/09
@@ -248,9 +248,9 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			jobComponent.run(new String[] { "20190621", filePath, fileName });
 			Assert.fail("JSON形式のmapping失敗エラーが発生しなかった。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -269,7 +269,7 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			// パラメータ1つ
-			jobComponent.run(new String[] { "20190626" });
+			jobComponent.run(new String[] { "20190621" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -277,7 +277,7 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			// パラメータ2つ
-			jobComponent.run(new String[] { "20190626", filePath });
+			jobComponent.run(new String[] { "20190621", filePath });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -285,7 +285,7 @@ public class JobComponentTest extends TestBase {
 
 		try {
 			// パラメータ4つ
-			jobComponent.run(new String[] { "20190626", filePath, fileName, "dummy" });
+			jobComponent.run(new String[] { "20190621", filePath, fileName, "dummy" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -295,7 +295,7 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 異常系_JOB_日付変換失敗() {
 		try {
-			jobComponent.run(new String[] { "2019/06/26", filePath, fileName });
+			jobComponent.run(new String[] { "2019/06/21", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -310,7 +310,7 @@ public class JobComponentTest extends TestBase {
 		}
 
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			jobComponent.run(new String[] { "20190621", filePath, fileName });
 			Assert.fail("ファイルが存在する状態で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -325,7 +325,7 @@ public class JobComponentTest extends TestBase {
 		}
 
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			jobComponent.run(new String[] { "20190621", filePath, fileName });
 			Assert.fail("ファイルが存在する状態で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
@@ -341,7 +341,7 @@ public class JobComponentTest extends TestBase {
 		String filePath = "hoge12345678999";
 
 		try {
-			jobComponent.run(new String[] { "20190626", filePath, fileName });
+			jobComponent.run(new String[] { "20190621", filePath, fileName });
 			Assert.fail("ディレクトリが存在しない状態で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());
