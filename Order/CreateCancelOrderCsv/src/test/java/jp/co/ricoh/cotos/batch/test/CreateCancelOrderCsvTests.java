@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import jp.co.ricoh.cotos.BatchApplication;
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.logic.JobComponent;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -24,6 +26,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 	static ConfigurableApplicationContext context;
 
 	@Autowired
+	@BeforeEach
 	public void injectContext(ConfigurableApplicationContext injectContext) {
 		context = injectContext;
 		context.getBean(DBConfig.class).clearData();
@@ -56,6 +59,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 		} catch (ExitException e) {
 			Assert.fail("エラーが発生した。");
@@ -91,6 +95,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 		} catch (ExitException e) {
 			Assert.fail("エラーが発生した。");
@@ -118,6 +123,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 		} catch (ExitException e) {
 			Assert.fail("エラーが発生した。");
@@ -145,6 +151,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 
 		// 処理不要日付　営業日 月末営業日-2日以降 2019/06/27
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190627", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
@@ -153,6 +160,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 
 		// 処理不要日付　営業日 月末営業日-2日以前 2019/06/25
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190625", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
@@ -161,6 +169,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 
 		// 処理不要日付　非営業日 月末営業日-2日以降 2019/06/29
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190629", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
@@ -169,6 +178,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 
 		// 処理不要日付　非営業日 月末営業日-2日以前 2019/06/23
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190623", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
@@ -195,6 +205,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 			Assert.fail("JSON形式のparse失敗エラーが発生しなかった。");
 		} catch (ExitException e) {
@@ -221,6 +232,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 			Assert.fail("JSON形式のmapping失敗エラーが発生しなかった。");
 		} catch (ExitException e) {
@@ -247,6 +259,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		// 2019/06/28 月末営業日
 		// 2019/06/26 月末営業日-2日　要処理日付
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 			Assert.fail("JSON形式のmapping失敗エラーが発生しなかった。");
 		} catch (ExitException e) {
@@ -257,6 +270,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 	@Test
 	public void 異常系_パラメーター数不一致() {
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// パラメータ無し
 			BatchApplication.main(new String[] {});
 			Assert.fail("パラメータ数不一致で処理が実行された。");
@@ -265,6 +279,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		}
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// パラメータ1つ
 			BatchApplication.main(new String[] { "20190626" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
@@ -273,6 +288,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		}
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// パラメータ2つ
 			BatchApplication.main(new String[] { "20190626", filePath });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
@@ -281,6 +297,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		}
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// パラメータ4つ
 			BatchApplication.main(new String[] { "20190626", filePath, fileName, "dummy" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
@@ -292,6 +309,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 	@Test
 	public void 異常系_日付変換失敗() {
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "2019/06/26", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
@@ -307,6 +325,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		}
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 			Assert.fail("ファイルが存在する状態で処理が実行された。");
 		} catch (ExitException e) {
@@ -322,6 +341,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		}
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 			Assert.fail("ファイルが存在する状態で処理が実行された。");
 		} catch (ExitException e) {
@@ -338,6 +358,7 @@ public class CreateCancelOrderCsvTests extends TestBase {
 		String filePath = "hoge12345678999";
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20190626", filePath, fileName });
 			Assert.fail("ディレクトリが存在しない状態で処理が実行された。");
 		} catch (ExitException e) {

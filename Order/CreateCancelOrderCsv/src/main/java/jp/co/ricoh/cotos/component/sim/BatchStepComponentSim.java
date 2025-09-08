@@ -321,7 +321,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	 * @throws IOException
 	 */
 	private List<SIMExtendsParameterIteranceDto> readJson(String extendsParameterIterance) throws JsonParseException, JsonMappingException, IOException {
-		HashMap<String, HashMap<String, Object>> basicContentsJsonMap = om.readValue(extendsParameterIterance, new TypeReference<Object>() {
+		HashMap<String, HashMap<String, Object>> basicContentsJsonMap = (HashMap<String, HashMap<String, Object>>) om.readValue(extendsParameterIterance, new TypeReference<Object>() {
 		});
 
 		String extendsJson = om.writeValueAsString(basicContentsJsonMap.get("extendsParameterList"));

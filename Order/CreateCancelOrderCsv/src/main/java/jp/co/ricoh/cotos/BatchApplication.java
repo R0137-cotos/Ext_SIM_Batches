@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -45,6 +46,7 @@ public class BatchApplication {
 	private static CreateJwt createJwt;
 
 	@Autowired
+	@Lazy
 	public void setCreateJwt(CreateJwt createJwt) {
 		BatchApplication.createJwt = createJwt;
 	}
