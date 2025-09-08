@@ -23,9 +23,9 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,7 +187,7 @@ public class ExportCSV {
 	 */
 	@Transactional
 	private void updateContractIfsLinkage(List<Long> contractId, IfsLinkageCsvCreateStatus status) {
-		contractRepository.findAll(contractId).iterator().forEachRemaining(contract -> {
+		contractRepository.findAllById(contractId).iterator().forEachRemaining(contract -> {
 			contract.setIfsLinkageCsvCreateStatus(status);
 			if (IfsLinkageCsvCreateStatus.作成済み.equals(contract.getIfsLinkageCsvCreateStatus())) {
 				contract.setIfsLinkageCsvCreateDate(new Date());
@@ -203,7 +203,7 @@ public class ExportCSV {
 	 */
 	@Transactional
 	private void updateCancelContractIfsLinkage(List<Long> contractId, IfsLinkageCsvCreateStatus status) {
-		contractRepository.findAll(contractId).iterator().forEachRemaining(contract -> {
+		contractRepository.findAllById(contractId).iterator().forEachRemaining(contract -> {
 			contract.setIfsLinkageCancelCsvStatus(status);
 			if (IfsLinkageCsvCreateStatus.作成済み.equals(contract.getIfsLinkageCancelCsvStatus())) {
 				contract.setIfsLinkageCancelCsvDate(new Date());

@@ -2,7 +2,6 @@ package jp.co.ricoh.cotos.batch.exec;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -67,7 +66,7 @@ public class IFSCsvCreateUtil {
 	 * 拡張項目文字列をオブジェクトに変換する
 	 */
 	public List<ExtendsParameterIteranceDto> readJson(String extendsParameterIterance) throws JsonParseException, JsonMappingException, IOException {
-		HashMap<String, HashMap<String, Object>> basicContentsJsonMap = om.readValue(extendsParameterIterance, new TypeReference<Object>() {
+		HashMap<String, HashMap<String, Object>> basicContentsJsonMap = (HashMap<String, HashMap<String, Object>>) om.readValue(extendsParameterIterance, new TypeReference<Object>() {
 		});
 
 		String extendsJson = om.writeValueAsString(basicContentsJsonMap.get("extendsParameterList"));
