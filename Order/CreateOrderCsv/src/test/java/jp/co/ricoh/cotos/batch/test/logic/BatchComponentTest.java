@@ -1,8 +1,6 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,7 +104,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", false)).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 		try {
 			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
@@ -130,7 +128,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(null);
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", false)).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 		try {
 			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
@@ -151,7 +149,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			batchComponent.execute(new String[] { "20191014", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
@@ -171,7 +169,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
@@ -191,7 +189,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("有償交換"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			batchComponent.execute(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
@@ -257,7 +255,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
@@ -280,7 +278,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(null);
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
@@ -300,7 +298,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			batchComponent.execute(new String[] { "20190927", outputPath, "result_initial.csv", "2" });
 			Assert.fail("処理日不正で処理が実行された。");
@@ -322,7 +320,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			batchComponent.execute(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
@@ -342,7 +340,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("有償交換"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			batchComponent.execute(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
 		} catch (Exception e) {
@@ -365,7 +363,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(null);
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			batchComponent.execute(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
 		} catch (Exception e) {
@@ -385,7 +383,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("有償交換"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			batchComponent.execute(new String[] { "20191022", outputPath, "result_initial.csv", "3" });
 		} catch (Exception e) {
@@ -405,7 +403,7 @@ public class BatchComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			batchComponent.execute(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
 		} catch (Exception e) {
