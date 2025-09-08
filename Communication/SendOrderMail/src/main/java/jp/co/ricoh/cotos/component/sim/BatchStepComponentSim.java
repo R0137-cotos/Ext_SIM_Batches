@@ -2,7 +2,7 @@ package jp.co.ricoh.cotos.component.sim;
 
 import java.util.ArrayList;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

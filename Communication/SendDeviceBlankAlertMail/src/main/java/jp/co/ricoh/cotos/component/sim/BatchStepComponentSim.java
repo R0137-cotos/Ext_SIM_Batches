@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -71,7 +71,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 	public boolean process(List<SearchMailTargetDto> serchMailTargetDtoList, long mailControlMasterId) throws Exception {
 		log.info("SIM独自処理");
 
-		MailControlMaster mailControlMaster = mailControlMasterRepository.findOne(mailControlMasterId);
+		MailControlMaster mailControlMaster = mailControlMasterRepository.findById(mailControlMasterId).orElse(null);
 
 		// メール送信対象のデータを送信履歴テーブルへ登録する
 		List<Long> transactionIdList = serchMailTargetDtoList.stream().map(e -> e.getContractId().longValue()).collect(Collectors.toList());
@@ -111,7 +111,7 @@ public class BatchStepComponentSim extends BatchStepComponent {
 
 		// バウンスメールのヘッダーDTO
 		BounceMailHeaderDto bouncemailHeaderDto = new BounceMailHeaderDto();
-		Contract contract = contractRepository.findOne(serchMailTargetDto.getContractId());
+		Contract contract = contractRepository.findById(serchMailTargetDto.getContractId()).orElse(null);
 		bouncemailHeaderDto.setContractId(contract.getRjManageNumber());
 		bouncemailHeaderDto.setDocNumber(contract.getContractNumber());
 		bouncemailHeaderDto.setContractNumber(contract.getImmutableContIdentNumber());
@@ -120,8 +120,10 @@ public class BatchStepComponentSim extends BatchStepComponent {
 			commonSendMail.findMailTemplateMasterAndSendMail(ServiceCategory.契約, "17", serchMailTargetDto.getProductGrpMasterId(), mailAddressList, new ArrayList<String>(), mailAddressBccList, new ArrayList<String>(), mailTextRepalceValueList, null, bouncemailHeaderDto);
 
 			// 送信履歴を更新
-			MailSendHistory mailSendHistory = mailSendHistoryRepository.findByTargetDataIdAndMailControlMasterAndMailSendType(serchMailTargetDto.getContractId(), mailControlMaster, MailSendType.未送信);
-			batchUtil.updateMailSendHistory(mailSendHistory, MailSendType.完了, mailAddressList, new ArrayList<String>(), mailAddressBccList);
+			List<MailSendHistory> mailSendHistoryList = mailSendHistoryRepository.findByTargetDataIdAndMailControlMasterAndMailSendType(serchMailTargetDto.getContractId(), mailControlMaster, MailSendType.未送信);
+			for (MailSendHistory mailSendHistory : mailSendHistoryList) {
+				batchUtil.updateMailSendHistory(mailSendHistory, MailSendType.完了, mailAddressList, new ArrayList<String>(), mailAddressBccList);
+			}
 		} catch (MessagingException e) {
 			log.fatal("メール送信処理に失敗しました。");
 			log.error(e.toString());

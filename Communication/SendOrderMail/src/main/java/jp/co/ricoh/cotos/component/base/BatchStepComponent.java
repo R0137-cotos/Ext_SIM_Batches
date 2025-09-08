@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +56,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "ArrangementInvalidParameterError", new String[] { "商品グループマスタID" }));
 		}
 
-		ProductGrpMaster productGrpMaster = productGrpMasterRepository.findOne(productGrpMasterId);
+		ProductGrpMaster productGrpMaster = productGrpMasterRepository.findById(productGrpMasterId).orElse(null);
 		if (productGrpMaster == null) {
 			throw new ErrorCheckException(checkUtil.addErrorInfo(new ArrayList<ErrorInfo>(), "EntityCheckNotNullError", new String[] { "商品グループ情報" }));
 		}
