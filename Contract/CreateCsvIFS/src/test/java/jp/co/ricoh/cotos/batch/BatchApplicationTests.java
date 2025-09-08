@@ -20,6 +20,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.BatchApplication;
+import jp.co.ricoh.cotos.batch.exec.CsvFileGenerator;
 import jp.co.ricoh.cotos.batch.exec.IFSCsvCreateUtil;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.IfsLinkageCsvCreateStatus;
@@ -60,6 +61,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
@@ -83,6 +85,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
@@ -104,6 +107,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
@@ -127,6 +131,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
@@ -148,6 +153,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
@@ -171,6 +177,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
@@ -192,6 +199,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
@@ -213,6 +221,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "SIM_result_20181228.csv"));
@@ -237,6 +246,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
 		context.getBean(DBConfig.class).initTargetTestData("flgE/InsertContractData.sql");
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "SIM" });
 
 		Assert.assertEquals("処理対象データがないのでファイルが作成されていないこと", 0, checkFileExistence());
@@ -254,6 +264,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "VSIM" });
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "VSIM_result_20181228.csv"));
@@ -277,6 +288,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "VSIM" });
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "VSIM_result_20181228.csv"));
@@ -300,6 +312,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/SIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/VSIM_result_20181228.csv"));
 		Files.deleteIfExists(Paths.get("output/tmp_SIM_result_20181228.csv"));
+		CsvFileGenerator.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { "result_20181228.csv", outputPath, "VSIM" });
 
 		byte[] actuals = Files.readAllBytes(Paths.get(outputPath + "VSIM_result_20181228.csv"));
@@ -321,6 +334,7 @@ public class BatchApplicationTests extends TestBase {
 	@Test
 	public void 引数無しで実行すると失敗すること() {
 		try {
+			CsvFileGenerator.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] {});
 			Assert.fail("引数無しで実行したのに異常終了しなかった");
 		} catch (ExitException e) {
@@ -333,6 +347,7 @@ public class BatchApplicationTests extends TestBase {
 			Files.createFile(Paths.get("output/SIM_duplicate_20181228.csv"));
 		}
 		try {
+			CsvFileGenerator.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "duplicate_20181228.csv", "output", "SIM" });
 			Assert.fail("既存ファイルがあるのに異常終了しなかった");
 		} catch (ExitException e) {
@@ -343,6 +358,7 @@ public class BatchApplicationTests extends TestBase {
 	@Test
 	public void パラメータ不正_実行日付() throws IOException {
 		try {
+			CsvFileGenerator.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "param.csv", "output", "2018/12/23", "SIM" });
 			Assert.fail("パラメータが不正なのに異常終了しなかった");
 		} catch (ExitException e) {
@@ -355,6 +371,7 @@ public class BatchApplicationTests extends TestBase {
 		Files.deleteIfExists(Paths.get("output/dummy/SIM_result_20181228.csv"));
 
 		try {
+			CsvFileGenerator.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "result_20181228.csv", outputPath + "dummy", "SIM" });
 			Assert.fail("CSVファイルが書き込めないのに異常終了しなかった");
 		} catch (ExitException e) {
