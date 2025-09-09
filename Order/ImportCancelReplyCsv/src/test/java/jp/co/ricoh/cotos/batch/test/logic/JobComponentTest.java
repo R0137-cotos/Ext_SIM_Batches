@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.batch.test.TestExitHandler;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.security.CotosAuthenticationDetails;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
@@ -74,6 +75,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertCancelReplySuccessTestData.sql");
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { filePath, fileName });
 		} catch (Exception e) {
 			Assert.fail("エラーが発生した。");
@@ -83,6 +85,7 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 異常系_JOB_パラメーター数不一致() {
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// パラメータ無し
 			jobComponent.run(new String[] {});
 			Assert.fail("パラメータ数不一致で処理が実行された。");
@@ -91,6 +94,7 @@ public class JobComponentTest extends TestBase {
 		}
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// パラメータ1つ
 			jobComponent.run(new String[] { filePath });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
@@ -99,6 +103,7 @@ public class JobComponentTest extends TestBase {
 		}
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// パラメータ3つ
 			jobComponent.run(new String[] { filePath, fileName, "dummy" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
@@ -113,6 +118,7 @@ public class JobComponentTest extends TestBase {
 		String filePath = "hoge12345678999";
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { filePath, fileName });
 			Assert.fail("ディレクトリが存在しない状態で処理が実行された。");
 		} catch (ExitException e) {
@@ -126,6 +132,7 @@ public class JobComponentTest extends TestBase {
 		String fileName = "hoge12345678999.csv";
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { filePath, fileName });
 			Assert.fail("ファイルが存在しない状態で処理が実行された。");
 		} catch (ExitException e) {
@@ -146,6 +153,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(batchUtil).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertCancelReplyFailTestData_NoExtendsParameterIterance.sql");
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { filePath, fileName });
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が1であること", 1, e.getStatus());

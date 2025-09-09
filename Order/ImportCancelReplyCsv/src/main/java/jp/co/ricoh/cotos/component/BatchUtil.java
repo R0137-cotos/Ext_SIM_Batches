@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -97,7 +97,7 @@ public class BatchUtil {
 	 * @throws IOException
 	 */
 	public List<ExtendsParameterDto> readJson(String extendsParameterIterance) throws JsonParseException, JsonMappingException, IOException {
-		HashMap<String, HashMap<String, Object>> basicContentsJsonMap = om.readValue(extendsParameterIterance, new TypeReference<Object>() {
+		HashMap<String, HashMap<String, Object>> basicContentsJsonMap = (HashMap<String, HashMap<String, Object>>) om.readValue(extendsParameterIterance, new TypeReference<Object>() {
 		});
 
 		String extendsJson = om.writeValueAsString(basicContentsJsonMap.get("extendsParameterList"));

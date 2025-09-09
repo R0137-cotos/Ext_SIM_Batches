@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.batch.test.TestExitHandler;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.LifecycleStatus;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
@@ -90,12 +91,13 @@ public class JobComponentTest extends TestBase {
 	public void 正常系_リプライCSV取込_新規() {
 		テストデータ作成("sql/insertTestData.sql");
 
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(dummyContractList("新規"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
-		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
 		} catch (ExitException e) {
 			Assert.assertEquals(e.getStatus(), 1);
@@ -108,12 +110,13 @@ public class JobComponentTest extends TestBase {
 	public void 正常系_リプライCSV取込_容量変更() {
 		テストデータ作成("sql/insertTestData.sql");
 
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("容量変更"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(dummyContractList("容量変更"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("容量変更"));
-		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "src/test/resources/csv", "test2.csv" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -124,12 +127,13 @@ public class JobComponentTest extends TestBase {
 	public void 正常系_リプライCSV取込_有償交換() {
 		テストデータ作成("sql/insertTestData.sql");
 
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("有償交換"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(dummyContractList("有償交換"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("有償交換"));
-		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -139,6 +143,7 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 正常系_空ファイル_処理終了() {
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "src/test/resources/csv", "empty.csv" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -150,12 +155,13 @@ public class JobComponentTest extends TestBase {
 
 		テストデータ作成("sql/insertTestDataExtendsParameterError.sql");
 
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(null);
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(null);
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(null);
-		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
 		} catch (ExitException e) {
 			Assert.assertEquals("意図した通りエラーが発生した", e.getStatus(), 2);
@@ -170,12 +176,13 @@ public class JobComponentTest extends TestBase {
 
 		テストデータ作成("sql/insertTestDataExtendsParameterError.sql");
 
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("失敗"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(dummyContractList("失敗"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("失敗"));
-		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
 		} catch (ExitException e) {
 			Assert.assertEquals("意図した通りエラーが発生した", e.getStatus(), 2);
@@ -187,6 +194,7 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 異常系_JOB_パラメーター数不一致() {
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "dummy" });
 			Assert.fail("パラメータがないのに処理が実行された。");
 		} catch (ExitException e) {
@@ -199,6 +207,7 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 異常系_JOB_存在しないファイル() {
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "src/test/resources/csv", "dummy.csv" });
 			Assert.fail("パラメータが不正なのに処理が実行された。");
 		} catch (ExitException e) {
@@ -210,12 +219,13 @@ public class JobComponentTest extends TestBase {
 
 	@Test
 	public void 異常系_納品日設定無し() throws Exception {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(dummyContractList("新規"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
-		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.anyObject());
+		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any());
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "src/test/resources/csv", "NoDeliveryExpectedDate.csv" });
 		} catch (ExitException e) {
 			Assert.assertEquals("意図した通りエラーが発生した", e.getStatus(), 2);
@@ -228,6 +238,7 @@ public class JobComponentTest extends TestBase {
 	public void 異常系_Exception発生() throws Exception {
 		Mockito.doThrow(new Exception()).when(batchComponent).execute(Mockito.any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
 		} catch (ExitException e) {
 			Assert.assertEquals("意図した通りエラーが発生した", e.getStatus(), 1);
@@ -240,6 +251,7 @@ public class JobComponentTest extends TestBase {
 	public void 異常系_Throwable発生() throws Exception {
 		Mockito.doThrow(new Error()).when(batchComponent).execute(Mockito.any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "src/test/resources/csv", "test.csv" });
 		} catch (ExitException e) {
 			Assert.assertEquals("意図した通りエラーが発生した", e.getStatus(), 1);

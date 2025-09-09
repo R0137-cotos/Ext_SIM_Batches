@@ -20,6 +20,7 @@ import jp.co.ricoh.cotos.batch.TestBase;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractDetail;
 import jp.co.ricoh.cotos.commonlib.util.BatchMomInfoProperties;
 import jp.co.ricoh.cotos.component.RestApiClient;
+import jp.co.ricoh.cotos.logic.JobComponent;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -66,6 +67,7 @@ public class CreateOrderCsvTests extends TestBase {
 	@Test
 	public void 異常系_ジョブテスト_パラメータ無し() {
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] {});
 		} catch (ExitException e) {
 			System.out.println(e);
@@ -77,6 +79,7 @@ public class CreateOrderCsvTests extends TestBase {
 	public void 正常系_パラメーター日付不正() {
 		fileDeleate(outputPath + "result_initial.csv");
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "dummy", outputPath, "result_initial.csv", "1" });
 			Assert.fail("パラメータが不正なのに処理が実行された。");
 		} catch (ExitException e) {
@@ -89,6 +92,7 @@ public class CreateOrderCsvTests extends TestBase {
 	public void 正常系_パラメーターパス不正() {
 		fileDeleate(outputPath + "result_initial.csv");
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20191018", "dummy", "result_initial.csv", "1" });
 			Assert.fail("パラメータが不正なのに処理が実行された。");
 		} catch (ExitException e) {
@@ -101,6 +105,7 @@ public class CreateOrderCsvTests extends TestBase {
 	public void 正常系_パラメーター種別不正() {
 		fileDeleate(outputPath + "result_initial.csv");
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "20191018", outputPath, "result_initial.csv", "dummy" });
 			Assert.fail("パラメータが不正なのに処理が実行された。");
 		} catch (ExitException e) {
@@ -113,6 +118,7 @@ public class CreateOrderCsvTests extends TestBase {
 	public void 異常系_パラメーター数不一致() {
 		fileDeleate(outputPath + "result_initial.csv");
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			BatchApplication.main(new String[] { "dummy", "dummy" });
 			Assert.fail("パラメータ数不一致なのに処理が実行された。");
 		} catch (ExitException e) {
