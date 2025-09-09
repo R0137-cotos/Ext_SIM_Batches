@@ -106,7 +106,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	// 以下processのテスト
 	@Test
 	public void 正常系_新規() {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(契約検索結果作成());
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(契約詳細作成("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"\"},{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"\"},{\"id\":3,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"追加1\",\"invoiceNumber\":\"\"}]}"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any());
 		Mockito.doReturn(手配詳細作成()).when(arrangementRepository).findByContractIdAndDisengagementFlg(Mockito.anyLong(), Mockito.anyInt());
@@ -127,7 +127,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 正常系_容量変更() {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(契約検索結果作成());
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(契約詳細作成("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"容量変更\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"\"},{\"id\":2,\"contractType\":\"容量変更\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"\"},{\"id\":3,\"contractType\":\"容量変更\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"\",\"device\":\"追加1\",\"invoiceNumber\":\"\"}]}"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any());
 		Mockito.doReturn(手配詳細作成()).when(arrangementRepository).findByContractIdAndDisengagementFlg(Mockito.anyLong(), Mockito.anyInt());
@@ -148,7 +148,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 正常系_有償交換() {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(契約検索結果作成());
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(契約詳細作成("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"0000000000\",\"serialNumber\":\"\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"\"},{\"id\":2,\"contractType\":\"有償交換\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"08012345670\",\"serialNumber\":\"\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"123456\"},{\"id\":3,\"contractType\":\"有償交換\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345671\",\"serialNumber\":\"\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"123457\"},{\"id\":4,\"contractType\":\"有償交換\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"08012345672\",\"serialNumber\":\"\",\"device\":\"追加1\",\"invoiceNumber\":\"123458\"}]}"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any());
 		Mockito.doReturn(手配詳細作成()).when(arrangementRepository).findByContractIdAndDisengagementFlg(Mockito.anyLong(), Mockito.anyInt());
@@ -169,7 +169,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 異常系_納入予定日スラッシュあり() {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(契約検索結果作成());
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(契約詳細作成(""));
 
 		try {
@@ -187,7 +187,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 異常系_CSVに納入予定日無し() {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(契約検索結果作成());
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(契約詳細作成(""));
 
 		try {
@@ -203,7 +203,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 異常系_契約検索APIエラー() {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenThrow(new RuntimeException());
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenThrow(new RuntimeException());
 
 		boolean successFlg = false;
 		try {
@@ -220,7 +220,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 異常系_契約詳細取得APIエラー() {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(契約検索結果作成());
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenThrow(new RuntimeException());
 
 		boolean successFlg = false;
@@ -238,7 +238,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 異常系_拡張項目取込エラー() {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(契約検索結果作成());
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(契約詳細作成("{test}"));
 
 		boolean successFlg = false;
@@ -256,7 +256,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 異常系_契約更新APIエラー() {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(契約検索結果作成());
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(契約詳細作成("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"\"},{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"\"},{\"id\":3,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"追加1\",\"invoiceNumber\":\"\"}]}"));
 		Mockito.doThrow(new RuntimeException()).when(restApiClient).callUpdateContract(Mockito.any());
 
@@ -275,7 +275,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 異常系_手配情報取得エラー() {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(契約検索結果作成());
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(契約詳細作成("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"\"},{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"\"},{\"id\":3,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"追加1\",\"invoiceNumber\":\"\"}]}"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any());
 		Mockito.doReturn(null).when(arrangementRepository).findByContractIdAndDisengagementFlg(Mockito.anyLong(), Mockito.anyInt());
@@ -295,7 +295,7 @@ public class BatchStepComponentSimTest extends TestBase {
 
 	@Test
 	public void 異常系_手配業務完了APIエラー() {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(契約検索結果作成());
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(契約検索結果作成());
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(契約詳細作成("{\"extendsParameterList\":[{\"id\":1,\"contractType\":\"新規\",\"productCode\":\"SI0001\",\"productName\":\"データSIM Type-C 2GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"TESTDATA\",\"invoiceNumber\":\"\"},{\"id\":2,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"qqANDROID\",\"invoiceNumber\":\"\"},{\"id\":3,\"contractType\":\"新規\",\"productCode\":\"SI0002\",\"productName\":\"データSIM Type-C 5GB\",\"lineNumber\":\"\",\"serialNumber\":\"\",\"device\":\"追加1\",\"invoiceNumber\":\"\"}]}"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any());
 		Mockito.doReturn(手配詳細作成()).when(arrangementRepository).findByContractIdAndDisengagementFlg(Mockito.anyLong(), Mockito.anyInt());

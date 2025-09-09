@@ -4,11 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.Permission;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Value;
 
 import lombok.Data;
@@ -17,7 +14,6 @@ import lombok.EqualsAndHashCode;
 @Data
 public class TestBase {
 
-	private static SecurityManager manager;
 	@Value("${spring.datasource.driverClassName}")
 	String dbDriver;
 	@Value("${spring.datasource.url}")
@@ -62,27 +58,4 @@ public class TestBase {
 			this.status = status;
 		}
 	}
-
-	@BeforeClass
-	public static void rewriteSystemExit() {
-		manager = System.getSecurityManager();
-		System.setSecurityManager(new SecurityManager() {
-			@Override
-			public void checkExit(int status) {
-				if (1 == status || 2 == status) {
-					throw new ExitException(status);
-				}
-			}
-
-			@Override
-			public void checkPermission(Permission permission) {
-			}
-		});
-	}
-
-	@AfterClass
-	public static void resetSystemExit() {
-		System.setSecurityManager(manager);
-	}
-
 }

@@ -1,5 +1,5 @@
 SELECT
-  *
+  c.*
 FROM
   contract c 
   INNER JOIN product_contract pc 
