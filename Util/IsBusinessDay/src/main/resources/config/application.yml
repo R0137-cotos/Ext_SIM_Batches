@@ -1,18 +1,18 @@
 spring:
   datasource:
     url: jdbc:oracle:thin:@dev-db-aws.cotos.ricoh.co.jp:1521/pdb1
-    username: cotos_local_batch
-    password: cotos_local_batch
+    username: cotos_local_aws_eosl
+    password: cotos_local_aws_eosl
     driverClassName: oracle.jdbc.OracleDriver
-    type: org.apache.tomcat.jdbc.pool.DataSource
-    tomcat:
-      max-active: 5
-      min-idle: 5
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 5
   main:
-     web-environment: false
+     web-application-type: none
   jpa:
     show_sql: true
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: none
     properties:
@@ -20,19 +20,19 @@ spring:
         show_sql: true
         use_sql_comments: true
         format_sql: true
-        default_schema: cotos_local_batch
+        default_schema: cotos_local_aws_eosl
   jackson:
     time-zone: Asia/Tokyo
   messages:
     basename: Messages
-    defaultEncoding: UTF-8
+    encoding: UTF-8
 cotos:
   mom:
     system:
       momEmpId: COTOS_BATCH_USER
       operatorName: dummy_batch_operator
       operatorOrgName: dummy_batch_operator_org
-  authentication: https://dev-api.cotos.ricoh.co.jp/auth/api/auth
+  authentication: https://dev-api-2-aws.cotos.ricoh.co.jp/auth/api/auth
   auth:
     jwt:
       secretKey: cotosSecretKey
@@ -49,4 +49,4 @@ cotos:
       filename: filename
   # マスタAPIURL
   master:
-    url: https://dev-api.cotos.ricoh.co.jp/master/api
+    url: https://dev-api-2-aws.cotos.ricoh.co.jp/master/api

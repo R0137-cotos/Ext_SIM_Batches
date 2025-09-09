@@ -4,8 +4,9 @@ spring:
     username: cotos_dev_4
     password: cotos_dev_4
     driverClassName: oracle.jdbc.OracleDriver
+    type: com.zaxxer.hikari.HikariDataSource
   jpa:
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: none
     properties:

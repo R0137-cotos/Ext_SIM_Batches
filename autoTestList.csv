@@ -2,9 +2,9 @@ run-test,targer-path
 0,Accounting/AccountingCreateSimRunning
 0,Communication/SendDeviceBlankAlertMail
 0,Communication/SendOrderMail
-1,Contract/CreateCsvIFS
+0,Contract/CreateCsvIFS
 0,Order/CreateCancelOrderCsv
 0,Order/CreateOrderCsv
 0,Order/ImportCancelReplyCsv
 0,Order/ImportReplyCsv
-0,Util/IsBusinessDay
+1,Util/IsBusinessDay
