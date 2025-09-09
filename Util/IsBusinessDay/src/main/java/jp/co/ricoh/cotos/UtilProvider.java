@@ -64,7 +64,7 @@ public class UtilProvider {
 
 		MessageUtil messageUtil = new MessageUtil();
 		Map<String, String> messageProperties = LoadConfigulation.getMessageProperties();
-		messageUtil.setMessageSource(messageProperties.get("basename"), messageProperties.get("defaultEncoding"));
+		messageUtil.setMessageSource(messageProperties.get("basename"), messageProperties.get("encoding"));
 
 		return messageUtil;
 	}
@@ -77,7 +77,7 @@ public class UtilProvider {
 
 		CheckUtil checkUtil = new CheckUtil();
 		Map<String, String> messageProperties = LoadConfigulation.getMessageProperties();
-		checkUtil.setMessageUtil(messageProperties.get("basename"), messageProperties.get("defaultEncoding"));
+		checkUtil.setMessageUtil(messageProperties.get("basename"), messageProperties.get("encoding"));
 
 		return checkUtil;
 	}

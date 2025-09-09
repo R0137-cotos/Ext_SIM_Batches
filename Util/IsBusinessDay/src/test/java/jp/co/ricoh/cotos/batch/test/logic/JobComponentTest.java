@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.batch.test.TestExitHandler;
 import jp.co.ricoh.cotos.logic.JobComponent;
 
 public class JobComponentTest extends TestBase {
@@ -15,6 +16,7 @@ public class JobComponentTest extends TestBase {
 		auth();
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// 非営業日カレンダーマスタに20191028が共通の非営業日として定義されていないこと
 			jobComponent.run(new String[] { "20191028" });
 		} catch (ExitException e) {
@@ -22,6 +24,7 @@ public class JobComponentTest extends TestBase {
 		}
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// スラッシュ区切りでも営業日判定可能であること
 			jobComponent.run(new String[] { "2019/10/28" });
 		} catch (ExitException e) {
@@ -36,6 +39,7 @@ public class JobComponentTest extends TestBase {
 		auth();
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// 非営業日カレンダーマスタに20191027が共通の非営業日として定義されていること
 			jobComponent.run(new String[] { "20191027" });
 			Assert.fail("営業日として判定された。");
@@ -51,6 +55,7 @@ public class JobComponentTest extends TestBase {
 		auth();
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// 非営業日カレンダーマスタに20191025がベンダ固有の非営業日として定義されていること
 			jobComponent.run(new String[] { "20191025" });
 		} catch (ExitException e) {
@@ -58,6 +63,7 @@ public class JobComponentTest extends TestBase {
 		}
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			// スラッシュ区切りでも営業日判定可能であること
 			jobComponent.run(new String[] { "2019/10/25" });
 		} catch (ExitException e) {
@@ -69,6 +75,7 @@ public class JobComponentTest extends TestBase {
 	public void 異常系_標準_パラメーター数不一致() {
 		JobComponent jobComponent = new JobComponent();
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "dummy", "dummy" });
 			Assert.fail("パラメータが不正なのに処理が実行された。");
 		} catch (ExitException e) {
@@ -80,6 +87,7 @@ public class JobComponentTest extends TestBase {
 	public void 異常系_標準_パラメーター不正() {
 		JobComponent jobComponent = new JobComponent();
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "dummy" });
 			Assert.fail("パラメータが不正なのに処理が実行された。");
 		} catch (ExitException e) {
@@ -87,6 +95,7 @@ public class JobComponentTest extends TestBase {
 		}
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "a20201028" });
 			Assert.fail("パラメータが不正なのに処理が実行された。");
 		} catch (ExitException e) {

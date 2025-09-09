@@ -176,7 +176,7 @@ public class LoadConfigulation {
 		LinkedHashMap<String, Object> springOrg = (LinkedHashMap<String, Object>) configOrg.get("spring");
 		LinkedHashMap<String, String> messagesOrg = (LinkedHashMap<String, String>) springOrg.get("messages");
 		messageProperties.put("basename", messagesOrg.get("basename"));
-		messageProperties.put("defaultEncoding", messagesOrg.get("defaultEncoding"));
+		messageProperties.put("encoding", messagesOrg.get("encoding"));
 
 		// アクティブymlのノード取得に失敗した場合は、すべてaplication.ymlの値を返す
 		LinkedHashMap<String, String> messages = null;
@@ -193,7 +193,7 @@ public class LoadConfigulation {
 		} catch (Exception ignored) {
 		}
 		try {
-			messageProperties.put("defaultEncoding", messages.get("defaultEncoding"));
+			messageProperties.put("encoding", messages.get("encoding"));
 		} catch (Exception ignored) {
 		}
 

@@ -1,6 +1,6 @@
 package jp.co.ricoh.cotos;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;

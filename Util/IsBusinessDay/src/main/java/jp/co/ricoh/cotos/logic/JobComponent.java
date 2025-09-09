@@ -3,14 +3,20 @@ package jp.co.ricoh.cotos.logic;
 import java.util.Arrays;
 
 import jp.co.ricoh.cotos.BatchConstants;
+import jp.co.ricoh.cotos.ExitHandler;
+import jp.co.ricoh.cotos.IExitHandler;
 import jp.co.ricoh.cotos.UtilProvider;
 import jp.co.ricoh.cotos.commonlib.exception.ErrorCheckException;
 import jp.co.ricoh.cotos.commonlib.logic.message.MessageUtil;
 import jp.co.ricoh.cotos.util.NotBusinessDayException;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
 public class JobComponent {
+
+	@Setter
+	private static IExitHandler exitHandler = new ExitHandler();
 
 	/**
 	 * 営業日判定ジョブの実行
@@ -34,16 +40,16 @@ public class JobComponent {
 			log.error(e.toString());
 			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
 			log.error(messageUtil.createMessageInfo("BatchProcessEndInfo", new String[] { BatchConstants.BATCH_NAME }).getMsg());
-			System.exit(1);
+			exitHandler.exit(1);
 
 		} catch (NotBusinessDayException e) {
-			System.exit(2);
+			exitHandler.exit(2);
 
 		} catch (Throwable e) {
 			log.error(e.toString());
 			Arrays.asList(e.getStackTrace()).stream().forEach(s -> log.error(s));
 			log.fatal(messageUtil.createMessageInfo("BatchCannotCompleteByUnexpectedError", new String[] { BatchConstants.BATCH_NAME }).getMsg());
-			System.exit(1);
+			exitHandler.exit(1);
 
 		}
 	}
