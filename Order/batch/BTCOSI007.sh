@@ -42,7 +42,7 @@ if [  ${BATCH_RET} == 1 ]; then
   Log.Error "BTCOSI007:[SB]解約手配CSV作成に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
   exit 1
 elif [  ${BATCH_RET} == 2 ]; then
-  Log.Info "BTCOSI007:処理対象日付ではありませんでした。解約手配CSV作成処理は「月末営業日-2営業日」のみ処理を実行します。" >> ${LOG_FILE_PATH};
+  Log.Info "BTCOSI007:処理対象日付ではありませんでした。解約手配CSV作成処理は「月末営業日-5営業日」のみ処理を実行します。" >> ${LOG_FILE_PATH};
   exit 2
 fi
 
