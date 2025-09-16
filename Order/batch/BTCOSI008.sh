@@ -33,7 +33,7 @@ Log.Info "ファイル名：${FILE_NAME}" >> ${LOG_FILE_PATH}
 ################################################
 ### 処理実行
 ################################################
-SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI008} "${DIR_PATH}" "${FILE_NAME}" > /dev/null 2>&1
+SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file.name=${PROCESS_LOG_FILE_PATH} -jar ${ORDER_JAR_PATH}/${BATCH_PG_BTCOSI008} "${DIR_PATH}" "${FILE_NAME}" > /dev/null 2>&1
 BATCH_RET=$?
 if [  ${BATCH_RET} != 0 ]; then
   Log.Error "BTCOSI008:[SB]リプライCSV取込解約に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};

@@ -30,7 +30,7 @@ Log.Info "処理日：${PROCESS_DATE}" >> ${LOG_FILE_PATH}
 ################################################
 ### 処理実行
 ################################################
-SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${UTIL_JAR_PATH}/${BATCH_PG_BTCOSI012} "${PROCESS_DATE}"
+SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file.name=${PROCESS_LOG_FILE_PATH} -jar ${UTIL_JAR_PATH}/${BATCH_PG_BTCOSI012} "${PROCESS_DATE}"
 BATCH_RET=$?
 if [  ${BATCH_RET} == 1 ]; then
   Log.Error "BTCOSI012:営業日判定に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
