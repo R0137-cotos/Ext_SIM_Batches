@@ -59,7 +59,6 @@ logging:
     org:
       hibernate:
         SQL: debug
-        type:
-          descriptor:
-            sql:
-              BasicBinder: trace
+        orm:
+          jdbc:
+            bind: trace

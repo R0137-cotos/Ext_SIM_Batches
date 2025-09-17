@@ -8,7 +8,7 @@
 
     <!-- hibernate のログ出力 -->
     <logger name="org.hibernate.SQL" level="DEBUG" />
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />
+    <logger name="org.hibernate.orm.jdbc.bind" level="TRACE" />
 
     <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/spring.log}"/>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
