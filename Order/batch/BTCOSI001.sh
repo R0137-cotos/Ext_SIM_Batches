@@ -45,7 +45,7 @@ if [  ${BATCH_RET} == 1 ]; then
   Log.Error "BTCOSI001:[SB]オーダーCSV作成に失敗しました。処理を終了します。" >> ${LOG_FILE_PATH};
   exit 1
 elif [  ${BATCH_RET} == 2 ]; then
-  Log.Info "BTCOSI001:処理対象日付ではありませんでした。容量変更のオーダーCSV作成処理は「月末営業日-2営業日」のみ処理を実行します。" >> ${LOG_FILE_PATH};
+  Log.Info "BTCOSI001:処理対象日付ではありませんでした。容量変更のオーダーCSV作成処理は「月末営業日-5営業日」のみ処理を実行します。" >> ${LOG_FILE_PATH};
   exit 2
 elif [  ${BATCH_RET} == 3 ]; then
   Log.Info "BTCOSI001:一部処理が正常に終了しませんでした。ログを確認してください。" >> ${LOG_FILE_PATH};

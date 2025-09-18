@@ -595,11 +595,11 @@ public class BatchStepComponentSimTest extends TestBase {
 		// バッチ起動引数
 		// 20191031 ← 処理日当月最終営業日
 		// 20191030 ← 処理日当月最終営業日 - 1営業日
-		// 20191029 ← 処理日当月最終営業日 - 2営業日(容量変更オーダー対象日)
+		// 20191024 ← 処理日当月最終営業日 - 5営業日(容量変更オーダー対象日)
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
 		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191029");
+		dto.setOperationDate("20191024");
 		dto.setType("2");
 
 		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -643,7 +643,7 @@ public class BatchStepComponentSimTest extends TestBase {
 	}
 
 	@Test
-	public void 正常系_オーダーCSV作成_容量変更_処理日当月最終営業日マイナス2営業日以内にSBのみ非営業日が含まれる() throws IOException, ParseException {
+	public void 正常系_オーダーCSV作成_容量変更_処理日当月最終営業日マイナス5営業日以内にSBのみ非営業日が含まれる() throws IOException, ParseException {
 		String outputFileName = "result_initial.csv";
 		String tempFileName = "temp.csv";
 
@@ -661,11 +661,11 @@ public class BatchStepComponentSimTest extends TestBase {
 		// 納入希望日 = 20191201
 		// 20191130 ← 処理日当月最終営業日
 		// 20191129 ← 処理日当月最終営業日 - 1営業日 ベンダー略称=SBのみ非営業日
-		// 20191128 ← 処理日当月最終営業日 - 2営業日(容量変更オーダー対象日)
+		// 20191125 ← 処理日当月最終営業日 - 5営業日(容量変更オーダー対象日)
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
 		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191128");
+		dto.setOperationDate("20191125");
 		dto.setType("2");
 
 		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -726,12 +726,12 @@ public class BatchStepComponentSimTest extends TestBase {
 		// バッチ起動引数
 		// 20191031 ← 処理日当月最終営業日
 		// 20191030 ← 処理日当月最終営業日 - 1営業日
-		// 20191029 ← 処理日当月最終営業日 - 2営業日(容量変更オーダー対象日)
-		// 20191028 ← 処理日当月最終営業日 - 3営業日
+		// 20191026 ← 処理日当月最終営業日 - 5営業日(容量変更オーダー対象日)
+		// 20191025 ← 処理日当月最終営業日 - 6営業日
 		CreateOrderCsvDto dto = new CreateOrderCsvDto();
 		dto.setCsvFile(Paths.get(outputPath + outputFileName).toFile());
 		dto.setTmpFile(Paths.get(outputPath + tempFileName).toFile());
-		dto.setOperationDate("20191028");
+		dto.setOperationDate("20191025");
 		dto.setType("2");
 
 		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");

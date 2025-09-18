@@ -137,14 +137,14 @@ public class BatchStepComponentSim extends BatchStepComponent {
 		Date changeOperationDate = null;
 		if ("2".equals(dto.getType())) {
 			changeOperationDate = businessDayUtil.getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(new SimpleDateFormat("YYYYMM").format(operationDate));
-			// 処理日当月の最終営業日-2営業日を設定する
-			changeOperationDate = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(changeOperationDate, Calendar.DAY_OF_MONTH), 2, true);
+			// 処理日当月の最終営業日-5営業日を設定する
+			changeOperationDate = businessDayUtil.findShortestBusinessDay(DateUtils.truncate(changeOperationDate, Calendar.DAY_OF_MONTH), 5, true);
 		}
 
 		// 以下条件の場合オーダーCSV出力する
 		// １．オーダーCSV作成状態:0(未作成)である
 		// ２．契約種別：新規 かつ 処理日付が営業日である
-		// または 契約種別：容量変更 かつ 処理日当月最終営業日 - 2営業日
+		// または 契約種別：容量変更 かつ 処理日当月最終営業日 - 5営業日
 		// または 契約種別：有償交換 かつ 処理日付が営業日である
 		// ３．種別：新規 かつ 契約.契約種別が新規である
 		// または 種別：容量変更 かつ 契約種別が契約変更である
