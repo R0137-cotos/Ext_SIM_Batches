@@ -33,7 +33,7 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web:3.5.0')
 	implementation('com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.19.0-rc2')
 
-	implementation('jp.co.ricoh.cotos:common-libraries:0.0.669')
+	implementation('jp.co.ricoh.cotos:common-libraries:0.0.696')
 	
 	implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
 

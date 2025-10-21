@@ -1,5 +1,20 @@
 # Changelog
 
+## v9.3.0 (04/07/2025)
+*No changelog for this release.*
+
+---
+
+## v9.0.0 (22/05/2025)
+- [**closed**] #30550_契約データ作成用データ検索SQLの修正 [#328](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/328)
+
+---
+
+## v8.5.0 (04/03/2025)
+*No changelog for this release.*
+
+---
+
 ## v8.2.0 (23/01/2025)
 - [**closed**] #27025　リコーモバイルで届け先CDをFFM計上時に連携したい [#320](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/320)
 
@@ -148,23 +163,3 @@
 ## v3.16.0 (08/03/2021)
 - [**closed**] #9976 SIMランニングSQLのパフォーマンス改善 [#210](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/210)
 - [**closed**] #9868 課金開始日を考慮するようにSQL修正 [#209](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/209)
-
----
-
-## v3.15.0 (04/02/2021)
-- [**closed**] #8276 郵便番号に応じて最短納期日数を修正CSV読み取り [#203](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/203)
-- [**closed**] #9697 SIMメール失敗時ログ出力 追加修正 [#201](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/201)
-- [**closed**] #9697 SIMメール失敗時ログ出力 [#200](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/200)
-- [**closed**] #9312 計上データ作成バッチ(SIM)で作成データパターンが振替の場合に設定する値を追加 [#195](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/195)
-
----
-
-## v3.12.0 (17/12/2020)
-- [**closed**] #8494 メールヘッダーに設定する項目を変更 [#191](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/191)
-- [**closed**] #8494 バウンスメール対応 [#181](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/181)
-
----
-
-## v3.11.0 (03/12/2020)
-- [**closed**] #9382 [本番障害]リプライ取込バッチ_納品予定日フォーマットエラー エラーメッセージ修正 [#188](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/188)
-- [**closed**] #9382 [本番障害]リプライ取込バッチ_納品予定日フォーマットエラー [#187](https://mygithub.ritscm.xyz/cotos/Ext_SIM_Batches/pull/187)
