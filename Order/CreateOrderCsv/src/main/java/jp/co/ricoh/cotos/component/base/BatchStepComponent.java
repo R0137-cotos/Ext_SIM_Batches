@@ -67,7 +67,7 @@ public class BatchStepComponent implements IBatchStepComponent {
 
 		try {
 			operationDate = LocalDate.parse(operationDateStr, formatter);
-			// 容量変更の場合、処理日：月末営業日-2営業日か確認する
+			// 容量変更の場合、処理日：月末営業日-5営業日か確認する
 			if ("2".equals(args[3])) {
 				// 処理日付から"yyyyMM"を文字列で取得
 				String yyyyMM = operationDate.format(yyyyMMformatter);
@@ -78,8 +78,8 @@ public class BatchStepComponent implements IBatchStepComponent {
 				}
 				LocalDate lastBusinessDay = lastBusinessDayTmp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 				int difference = businessDayUtil.calculateDifferenceBetweenBusinessDates(operationDate, lastBusinessDay);
-				// 2営業日前でなければ処理を終了する
-				if (difference != 2) {
+				// 5営業日前でなければ処理を終了する
+				if (difference != 5) {
 					throw new OperationDateException();
 				}
 			}

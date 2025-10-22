@@ -286,8 +286,9 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			JobComponent.setExitHandler(new TestExitHandler());
-			jobComponent.run(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+			jobComponent.run(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
+			e.printStackTrace();
 			Assert.fail("テスト失敗");
 		}
 
@@ -310,7 +311,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			JobComponent.setExitHandler(new TestExitHandler());
-			jobComponent.run(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+			jobComponent.run(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}
@@ -320,9 +321,9 @@ public class JobComponentTest extends TestBase {
 	}
 
 	@Test
-	public void 異常系_CSVファイルを出力しないこと_容量変更_月末営業日マイナス2営業日以外() {
+	public void 異常系_CSVファイルを出力しないこと_容量変更_月末営業日マイナス5営業日以外() {
 		// 2019年6月の非営業日は以下を想定
-		// 2019/06/01 
+		// 2019/06/01
 		// 2019/06/02
 		// 2019/06/08
 		// 2019/06/09
@@ -334,39 +335,39 @@ public class JobComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 
-		// 処理不要日付　営業日 月末営業日-2日以降 2019/06/27
+		// 処理不要日付　営業日 月末営業日-5日以降 2019/06/24
 		try {
 			JobComponent.setExitHandler(new TestExitHandler());
-			jobComponent.run(new String[] { "20190627", outputPath, "result_initial.csv", "2" });
+			jobComponent.run(new String[] { "20190624", outputPath, "result_initial.csv", "2" });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
 		}
 
-		// 処理不要日付　営業日 月末営業日-2日以前 2019/06/25
+		// 処理不要日付　営業日 月末営業日-5日以前 2019/06/20
 		try {
 			JobComponent.setExitHandler(new TestExitHandler());
-			jobComponent.run(new String[] { "20190625", outputPath, "result_initial.csv", "2" });
+			jobComponent.run(new String[] { "20190620", outputPath, "result_initial.csv", "2" });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
 		}
 
-		// 処理不要日付　非営業日 月末営業日-2日以降 2019/06/29
+		// 処理不要日付　非営業日 月末営業日-5日以降 2019/06/22
 		try {
 			JobComponent.setExitHandler(new TestExitHandler());
-			jobComponent.run(new String[] { "20190629", outputPath, "result_initial.csv", "2" });
+			jobComponent.run(new String[] { "20190622", outputPath, "result_initial.csv", "2" });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
 		}
 
-		// 処理不要日付　非営業日 月末営業日-2日以前 2019/06/23
+		// 処理不要日付　非営業日 月末営業日-5日以前 2019/06/16
 		try {
 			JobComponent.setExitHandler(new TestExitHandler());
-			jobComponent.run(new String[] { "20190623", outputPath, "result_initial.csv", "2" });
+			jobComponent.run(new String[] { "20190616", outputPath, "result_initial.csv", "2" });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
 			Assert.assertEquals("ジョブの戻り値が2であること", 2, e.getStatus());
@@ -385,7 +386,7 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
 			JobComponent.setExitHandler(new TestExitHandler());
-			jobComponent.run(new String[] { "20190926", outputPath, "result_initial.csv", "2" });
+			jobComponent.run(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
 		}

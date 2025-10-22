@@ -66,9 +66,9 @@ public class BatchComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			batchComponent.execute(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190621", filePath, fileName });
 		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
@@ -101,9 +101,9 @@ public class BatchComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			batchComponent.execute(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190621", filePath, fileName });
 		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
@@ -128,9 +128,9 @@ public class BatchComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			batchComponent.execute(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190621", filePath, fileName });
 		} catch (ErrorCheckException e) {
 			Assert.fail("エラーが発生した。");
 		}
@@ -153,30 +153,20 @@ public class BatchComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 
-		// 処理不要日付　営業日 月末営業日-2日以降 2019/06/27
+		// 処理不要日付　営業日 月末営業日-5日以降 2019/06/24
 		try {
-			batchComponent.execute(new String[] { "20190627", filePath, fileName });
+			batchComponent.execute(new String[] { "20190624", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (OperationDateException e) {
 			// OperationDateExceptionが発生していること
 			Assert.assertNotEquals(null, e);
 		}
 
-		// 処理不要日付　営業日 月末営業日-2日以前 2019/06/25
+		// 処理不要日付　営業日 月末営業日-5日以前 2019/06/20
 		try {
-			batchComponent.execute(new String[] { "20190625", filePath, fileName });
-			Assert.fail("処理日不正で処理が実行された。");
-		} catch (OperationDateException e) {
-			// OperationDateExceptionが発生していること
-			Assert.assertNotEquals(null, e);
-		}
-
-
-		// 処理不要日付　非営業日 月末営業日-2日以降 2019/06/29
-		try {
-			batchComponent.execute(new String[] { "20190629", filePath, fileName });
+			batchComponent.execute(new String[] { "20190620", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (OperationDateException e) {
 			// OperationDateExceptionが発生していること
@@ -184,9 +174,19 @@ public class BatchComponentTest extends TestBase {
 		}
 
 
-		// 処理不要日付　非営業日 月末営業日-2日以前 2019/06/23
+		// 処理不要日付　非営業日 月末営業日-5日以降 2019/06/22
 		try {
-			batchComponent.execute(new String[] { "20190623", filePath, fileName });
+			batchComponent.execute(new String[] { "20190622", filePath, fileName });
+			Assert.fail("処理日不正で処理が実行された。");
+		} catch (OperationDateException e) {
+			// OperationDateExceptionが発生していること
+			Assert.assertNotEquals(null, e);
+		}
+
+
+		// 処理不要日付　非営業日 月末営業日-5日以前 2019/06/16
+		try {
+			batchComponent.execute(new String[] { "20190616", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (OperationDateException e) {
 			// OperationDateExceptionが発生していること
@@ -211,9 +211,9 @@ public class BatchComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			batchComponent.execute(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190621", filePath, fileName });
 			Assert.fail("JSON形式のparse失敗エラーが発生しなかった。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -241,9 +241,9 @@ public class BatchComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			batchComponent.execute(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190621", filePath, fileName });
 			Assert.fail("JSON形式のmapping失敗エラーが発生しなかった。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -271,9 +271,9 @@ public class BatchComponentTest extends TestBase {
 		// 2019/06/30
 
 		// 2019/06/28 月末営業日
-		// 2019/06/26 月末営業日-2日　要処理日付
+		// 2019/06/21 月末営業日-5日　要処理日付
 		try {
-			batchComponent.execute(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190621", filePath, fileName });
 			Assert.fail("JSON形式のmapping失敗エラーが発生しなかった。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -300,7 +300,7 @@ public class BatchComponentTest extends TestBase {
 
 		try {
 			// パラメータ1つ
-			batchComponent.execute(new String[] { "20190626" });
+			batchComponent.execute(new String[] { "20190621" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -312,7 +312,7 @@ public class BatchComponentTest extends TestBase {
 
 		try {
 			// パラメータ2つ
-			batchComponent.execute(new String[] { "20190626", filePath });
+			batchComponent.execute(new String[] { "20190621", filePath });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -324,7 +324,7 @@ public class BatchComponentTest extends TestBase {
 
 		try {
 			// パラメータ4つ
-			batchComponent.execute(new String[] { "20190626", filePath, fileName, "dummy" });
+			batchComponent.execute(new String[] { "20190621", filePath, fileName, "dummy" });
 			Assert.fail("パラメータ数不一致で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -338,7 +338,7 @@ public class BatchComponentTest extends TestBase {
 	@Test
 	public void 異常系_日付変換失敗() throws Exception {
 		try {
-			batchComponent.execute(new String[] { "2019/06/26", filePath, fileName });
+			batchComponent.execute(new String[] { "2019/06/21", filePath, fileName });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得
@@ -357,7 +357,7 @@ public class BatchComponentTest extends TestBase {
 		}
 
 		try {
-			batchComponent.execute(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190621", filePath, fileName });
 			Assert.fail("ファイルが存在する状態で処理が実行された。");
 		} catch (FileAlreadyExistsException e) {
 			// FileAlreadyExistsExceptionが発生していること
@@ -373,7 +373,7 @@ public class BatchComponentTest extends TestBase {
 		}
 
 		try {
-			batchComponent.execute(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190621", filePath, fileName });
 			Assert.fail("ファイルが存在する状態で処理が実行された。");
 		} catch (FileAlreadyExistsException e) {
 			// FileAlreadyExistsExceptionが発生していること
@@ -390,7 +390,7 @@ public class BatchComponentTest extends TestBase {
 		String filePath = "hoge12345678999";
 
 		try {
-			batchComponent.execute(new String[] { "20190626", filePath, fileName });
+			batchComponent.execute(new String[] { "20190621", filePath, fileName });
 			Assert.fail("ディレクトリが存在しない状態で処理が実行された。");
 		} catch (ErrorCheckException e) {
 			// エラーメッセージ取得

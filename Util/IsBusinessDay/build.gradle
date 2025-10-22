@@ -29,7 +29,7 @@ repositories {
 
 
 dependencies {
-	implementation('jp.co.ricoh.cotos:common-libraries:0.0.669')
+	implementation('jp.co.ricoh.cotos:common-libraries:0.0.696')
 	implementation ('org.yaml:snakeyaml:2.4')
 
 	runtimeOnly files('libs/ojdbc7.jar')
