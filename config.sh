@@ -29,17 +29,11 @@ export UTIL_JAR_PATH=${BATCH_BASE_PATH}/Util
 # BTCOSI001 [SB]オーダーCSV作成
 export BATCH_PG_BTCOSI001=CreateOrderCsv-0.0.1-SNAPSHOT.jar
 
-# BTCOSI002 [SB]オーダーメール送信
-export BATCH_PG_BTCOSI002=SendOrderMail-0.0.1-SNAPSHOT.jar
-
 # BTCOSI003 [SB]リプライCSV取込
 export BATCH_PG_BTCOSI003=ImportReplyCsv-0.0.1-SNAPSHOT.jar
 
 # BTCOSI004 計上データ作成(SIMランニング分)
 export BATCH_PG_BTCOSI004=AccountingCreateSimRunning-0.0.1-SNAPSHOT.jar
-
-# BTCOSI005 [RUCCS]IFSその他機器情報CSV作成
-export BATCH_PG_BTCOSI005=CreateCsvIFS-0.0.1-SNAPSHOT.jar
 
 # BTCOSI007 [SB]解約手配CSV作成
 export BATCH_PG_BTCOSI007=CreateCancelOrderCsv-0.0.1-SNAPSHOT.jar
