@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:oracle:thin:@prdst-db-aws.cotos.ricoh.co.jp:1521/pdb1
-    username: cotos_st
-    password: cotosstissharedprocess
+    username: cotos_product
+    password: cotosissharedprocess
     driverClassName: oracle.jdbc.OracleDriver
     type: com.zaxxer.hikari.HikariDataSource
   jpa:
@@ -14,9 +14,9 @@ spring:
         show_sql: true
         use_sql_comments: true
         format_sql: true
-        default_schema: cotos_st
+        default_schema: cotos_product
 cotos:
-  authentication: https://st-api-aws.cotos.ricoh.co.jp/auth/api/auth
+  authentication: https://prdst-api-aws.cotos.ricoh.co.jp/auth/api/auth
   disp:
     urls:
       domain: https://st.cotos.ricoh.co.jp/
