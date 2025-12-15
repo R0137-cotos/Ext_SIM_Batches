@@ -15,9 +15,12 @@ spring:
         use_sql_comments: true
         format_sql: true
         default_schema: cotos_product
+  mail:
+    host: st.shipyard.cotos.ricoh.co.jp
+    port: 1025
 cotos:
   authentication: https://prdst-api-aws.cotos.ricoh.co.jp/auth/api/auth
   disp:
     urls:
-      domain: https://st.cotos.ricoh.co.jp/
+      domain: https://prdst-aws.cotos.ricoh.co.jp/
       screenName: ContractScreen

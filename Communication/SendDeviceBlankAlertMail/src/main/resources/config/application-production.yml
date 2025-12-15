@@ -17,7 +17,7 @@ spring:
         default_schema: cotos_product
   # メール設定
   mail:
-    host: 225.smtp1.ty1.rwan.unics.ricoh.com
+    host: mail.ricoh.co.jp
     port: 25
 cotos:
   authentication: https://api-aws.cotos.ricoh.co.jp/auth/api/auth

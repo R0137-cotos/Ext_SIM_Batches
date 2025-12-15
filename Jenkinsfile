@@ -5,8 +5,7 @@ pipeline {
       when {
         expression {
           def isJobNameMatch = "${env.JOB_NAME}".contains("PullRequestBuild")
-          def isTargetBranchMatch = "${env.CHANGE_TARGET}" == "topic/aws_eosl"
-          return isJobNameMatch && isTargetBranchMatch
+          return isJobNameMatch
         }
       }
       steps {
