@@ -15,6 +15,9 @@ spring:
         use_sql_comments: true
         format_sql: true
         default_schema: cotos_st_1
+  mail:
+    host: st.shipyard.cotos.ricoh.co.jp
+    port: 1025
 cotos:
   authentication: https://st-api-1-aws.cotos.ricoh.co.jp/auth/api/auth
   disp:
