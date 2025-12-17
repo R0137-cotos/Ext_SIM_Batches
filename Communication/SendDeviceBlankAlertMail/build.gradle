@@ -24,7 +24,7 @@ java {
 
 repositories {
 	mavenCentral()
-	maven { url = 'https://mygithub.ritscm.xyz/raw/cotos/LibsRepo/release/20251218/repository/CommonLibs' }
+	maven { url = 'https://mygithub.ritscm.xyz/raw/cotos/LibsRepo/master/repository/CommonLibs' }
 }
 
 
@@ -33,7 +33,7 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web:3.5.0')
 	implementation('com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.19.0-rc2')
 
-	implementation('jp.co.ricoh.cotos:common-libraries:0.0.705')
+	implementation('jp.co.ricoh.cotos:common-libraries:0.0.678')
 
 	runtimeOnly ('org.springframework.boot:spring-boot-devtools:3.5.0')
 	runtimeOnly('com.h2database:h2:2.3.232')
