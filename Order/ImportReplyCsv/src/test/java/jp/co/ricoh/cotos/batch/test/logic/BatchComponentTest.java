@@ -86,7 +86,7 @@ public class BatchComponentTest extends TestBase {
 	@Test
 	public void 正常系_新規() throws IOException {
 
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(dummyContractList("新規"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any(Contract.class));
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
@@ -100,7 +100,7 @@ public class BatchComponentTest extends TestBase {
 
 	@Test
 	public void 正常系_容量変更() throws IOException {
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("容量変更"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(dummyContractList("容量変更"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("容量変更"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any(Contract.class));
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
@@ -115,7 +115,7 @@ public class BatchComponentTest extends TestBase {
 	@Test
 	public void 正常系_有償交換() throws IOException {
 
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("有償交換"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(dummyContractList("有償交換"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("有償交換"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any(Contract.class));
 		Mockito.doNothing().when(restApiClient).callCompleteArrangement(Mockito.anyLong());
@@ -169,9 +169,9 @@ public class BatchComponentTest extends TestBase {
 	@Test
 	public void 異常系_新規_API失敗_callFindTargetContractList() throws IOException {
 
-		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindTargetContractList(Mockito.anyObject());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindTargetContractList(Mockito.any());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindContract(Mockito.anyLong());
-		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callUpdateContract(Mockito.anyObject());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callUpdateContract(Mockito.any());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertTestData.sql");
 		try {
@@ -186,9 +186,9 @@ public class BatchComponentTest extends TestBase {
 	@Test
 	public void 異常系_新規_API失敗_callFindContract() throws IOException {
 
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(dummyContractList("新規"));
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindContract(Mockito.anyLong());
-		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callUpdateContract(Mockito.anyObject());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callUpdateContract(Mockito.any());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertTestData.sql");
 		try {
@@ -203,9 +203,9 @@ public class BatchComponentTest extends TestBase {
 	@Test
 	public void 異常系_新規_API失敗_callUpdateContract() throws IOException {
 
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(dummyContractList("新規"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
-		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callUpdateContract(Mockito.anyObject());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callUpdateContract(Mockito.any());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callCompleteArrangement(Mockito.anyLong());
 		テストデータ作成("sql/insertTestData.sql");
 		try {
@@ -220,7 +220,7 @@ public class BatchComponentTest extends TestBase {
 	@Test
 	public void 異常系_新規_API失敗_callCompleteArrangement() throws IOException {
 
-		Mockito.when(restApiClient.callFindTargetContractList(Mockito.anyObject())).thenReturn(dummyContractList("新規"));
+		Mockito.when(restApiClient.callFindTargetContractList(Mockito.any())).thenReturn(dummyContractList("新規"));
 		Mockito.when(restApiClient.callFindContract(Mockito.anyLong())).thenReturn(dummyContract("新規"));
 		Mockito.doNothing().when(restApiClient).callUpdateContract(Mockito.any(Contract.class));
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callCompleteArrangement(Mockito.anyLong());

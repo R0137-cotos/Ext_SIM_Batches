@@ -1,11 +1,12 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@dev-db.cotos.ricoh.co.jp:1521/pdb1
+    url: jdbc:oracle:thin:@dev-db-aws.cotos.ricoh.co.jp:1521/pdb1
     username: cotos_dev_3
     password: cotos_dev_3
     driverClassName: oracle.jdbc.OracleDriver
+    type: com.zaxxer.hikari.HikariDataSource
   jpa:
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: none
     properties:
@@ -15,8 +16,8 @@ spring:
         format_sql: true
         default_schema: cotos_dev_3
 cotos:
-  authentication: https://dev-api-3.cotos.ricoh.co.jp/auth/api/auth
+  authentication: https://dev-api-3-aws.cotos.ricoh.co.jp/auth/api/auth
   disp:
     urls:
-      domain: https://dev-3.cotos.ricoh.co.jp/
+      domain: https://dev-3-aws.cotos.ricoh.co.jp/
       screenName: ContractScreen

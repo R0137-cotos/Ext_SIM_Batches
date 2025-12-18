@@ -8,22 +8,21 @@
 
     <!-- hibernate のログ出力 -->
     <logger name="org.hibernate.SQL" level="DEBUG" />
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />
+    <logger name="org.hibernate.orm.jdbc.bind" level="TRACE" />
 
     <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/spring.log}"/>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <encoder>
             <pattern>${FILE_LOG_PATTERN}</pattern>
         </encoder>
-        <file>${logging.file}</file>
+        <file>${logging.file.name}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${logging.file}-%d{yyyyMM}</fileNamePattern>
+            <fileNamePattern>${logging.file.name}-%d{yyyyMM}</fileNamePattern>
             <maxHistory>6</maxHistory>
         </rollingPolicy>
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>
 

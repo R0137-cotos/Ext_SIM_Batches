@@ -1,11 +1,12 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@dev-db.cotos.ricoh.co.jp:1521/pdb1
+    url: jdbc:oracle:thin:@dev-db-aws.cotos.ricoh.co.jp:1521/pdb1
     username: cotos_dev_6
     password: cotos_dev_6
     driverClassName: oracle.jdbc.OracleDriver
+    type: com.zaxxer.hikari.HikariDataSource
   jpa:
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: none
     properties:
@@ -15,4 +16,4 @@ spring:
         format_sql: true
         default_schema: cotos_dev_6
 cotos:
-  authentication: https://dev-api-6.cotos.ricoh.co.jp/auth/api/auth
+  authentication: https://dev-api-6-aws.cotos.ricoh.co.jp/auth/api/auth

@@ -1,0 +1,8 @@
+run-test,targer-path
+1,Accounting/AccountingCreateSimRunning
+1,Communication/SendDeviceBlankAlertMail
+1,Order/CreateCancelOrderCsv
+1,Order/CreateOrderCsv
+1,Order/ImportCancelReplyCsv
+1,Order/ImportReplyCsv
+1,Util/IsBusinessDay

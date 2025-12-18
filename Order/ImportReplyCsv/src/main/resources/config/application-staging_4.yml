@@ -1,11 +1,11 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@st-db.cotos.ricoh.co.jp:1521/pdb1
+    url: jdbc:oracle:thin:@st-db-aws.cotos.ricoh.co.jp:1521/pdb1
     username: cotos_st_4
     password: cotosst4issharedprocess
     driverClassName: oracle.jdbc.OracleDriver
   jpa:
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: none
     properties:
@@ -15,10 +15,10 @@ spring:
         format_sql: true
         default_schema: cotos_st_4
 cotos:
-  authentication: https://st-api-4.cotos.ricoh.co.jp/auth/api/auth
+  authentication: https://st-api-4-aws.cotos.ricoh.co.jp/auth/api/auth
   # 契約APIURL
   contract:
-    url: https://st-api-4.cotos.ricoh.co.jp/contract/api
+    url: https://st-api-4-aws.cotos.ricoh.co.jp/contract/api
   # 手配APIURL
   arrangement:
-    url: https://st-api-4.cotos.ricoh.co.jp/arrangement/api
+    url: https://st-api-4-aws.cotos.ricoh.co.jp/arrangement/api

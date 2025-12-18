@@ -1,8 +1,5 @@
 package jp.co.ricoh.cotos.batch;
 
-import java.security.Permission;
-
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,8 +15,6 @@ import lombok.EqualsAndHashCode;
 
 @Data
 public class TestBase {
-
-	private static SecurityManager manager;
 
 	private static String dbDriver;
 	private static String dbURL;
@@ -44,28 +39,6 @@ public class TestBase {
 		dbURL = datasourceProperties.getUrl();
 		dbUser = datasourceProperties.getUsername();
 		dbPassword = datasourceProperties.getPassword();
-	}
-
-	@BeforeClass
-	public static void rewriteSystemExit() {
-		manager = System.getSecurityManager();
-		System.setSecurityManager(new SecurityManager() {
-			@Override
-			public void checkExit(int status) {
-				if (1 == status || 2 == status) {
-					throw new ExitException(status);
-				}
-			}
-
-			@Override
-			public void checkPermission(Permission permission) {
-			}
-		});
-	}
-
-	@AfterClass
-	public static void resetSystemExit() {
-		System.setSecurityManager(manager);
 	}
 
 	public void auth() {

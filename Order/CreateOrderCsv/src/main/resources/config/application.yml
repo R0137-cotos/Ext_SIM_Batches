@@ -1,18 +1,18 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@dev-db.cotos.ricoh.co.jp:1521/pdb1
+    url: jdbc:oracle:thin:@dev-db-aws.cotos.ricoh.co.jp:1521/pdb1
     username: cotos_local_batch
     password: cotos_local_batch
     driverClassName: oracle.jdbc.OracleDriver
-    type: org.apache.tomcat.jdbc.pool.DataSource
-    tomcat:
-      max-active: 5
-      min-idle: 5
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 5
   main:
-    web-environment: false
+    web-application-type: none
   jpa:
     show_sql: true
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: none
     properties:
@@ -25,7 +25,7 @@ spring:
     time-zone: Asia/Tokyo
   messages:
     basename: Messages
-    defaultEncoding: UTF-8
+    encoding: UTF-8
 cotos:
   mom:
     system:
@@ -33,7 +33,7 @@ cotos:
       operatorName: dummy_batch_operator
       operatorOrgName: dummy_batch_operator_org
     superUserId: SIM_AUTOARRANGEMENT_USER
-  authentication: https://dev-api.cotos.ricoh.co.jp/auth/api/auth
+  authentication: https://dev-api-2-aws.cotos.ricoh.co.jp/auth/api/auth
   auth:
     jwt:
       secretKey: cotosSecretKey
@@ -50,16 +50,15 @@ cotos:
       filename: filename
   # 手配APIURL
   arrangement:
-    url: https://dev-api.cotos.ricoh.co.jp/arrangement/api
+    url: https://dev-api-2-aws.cotos.ricoh.co.jp/arrangement/api
   # 契約APIURL
   contract:
-    url: https://dev-api.cotos.ricoh.co.jp/contract/api
+    url: https://dev-api-2-aws.cotos.ricoh.co.jp/contract/api
 logging:
   level:
     org:
       hibernate:
         SQL: debug
-        type:
-          descriptor:
-            sql:
-              BasicBinder: trace
+        orm:
+          jdbc:
+            bind: trace

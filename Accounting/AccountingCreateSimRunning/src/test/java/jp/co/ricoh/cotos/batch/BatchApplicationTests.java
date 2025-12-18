@@ -11,15 +11,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -28,6 +29,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.ibm.icu.text.Transliterator;
 
 import jp.co.ricoh.cotos.BatchApplication;
+import jp.co.ricoh.cotos.batch.exec.AccountingCreateSimRunning;
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;
 import jp.co.ricoh.cotos.commonlib.entity.EnumType.InitialRunningDiv;
 import jp.co.ricoh.cotos.commonlib.entity.accounting.Accounting;
@@ -94,6 +96,9 @@ public class BatchApplicationTests extends TestBase {
 		context.getBean(DBConfig.class).initTargetTestData("sql/計上シーケンス1開始に変更.sql");
 	}
 
+	@Mock
+	AccountingCreateSimRunning accountingCreateSimRunning;
+
 	@AfterClass
 	public static void stopAPServer() throws InterruptedException {
 		if (null != context) {
@@ -103,6 +108,7 @@ public class BatchApplicationTests extends TestBase {
 	}
 
 	private void バッチ起動(String baseDate) {
+		AccountingCreateSimRunning.setExitHandler(new TestExitHandler());
 		BatchApplication.main(new String[] { baseDate });
 	}
 
@@ -235,7 +241,7 @@ public class BatchApplicationTests extends TestBase {
 	}
 
 	private void データ作成区分_20_売上請求チェック(Accounting accounting, String baseDate) {
-		Contract contract = contractRepository.findOne(accounting.getContractId());
+		Contract contract = contractRepository.findById(accounting.getContractId()).orElse(null);
 		ContractDetail contractDetail = contract.getContractDetailList().stream()
 				.filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
 		ItemContract itemContract = contractDetail.getItemContract();
@@ -364,7 +370,7 @@ public class BatchApplicationTests extends TestBase {
 	}
 
 	private void データ作成区分_31_振替の個別チェック(Accounting accounting) {
-		Contract contract = contractRepository.findOne(accounting.getContractId());
+		Contract contract = contractRepository.findById(accounting.getContractId()).orElse(null);
 		ContractDetail contractDetail = contract.getContractDetailList().stream()
 				.filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
 		ItemContract itemContract = contractDetail.getItemContract();
@@ -409,7 +415,7 @@ public class BatchApplicationTests extends TestBase {
 	}
 
 	private void 課金計上テーブル登録データ共通チェック(Accounting accounting) throws ParseException {
-		Contract contract = contractRepository.findOne(accounting.getContractId());
+		Contract contract = contractRepository.findById(accounting.getContractId()).orElse(null);
 		ContractDetail contractDetail = contract.getContractDetailList().stream()
 				.filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
 		ItemContract itemContract = contractDetail.getItemContract();
@@ -866,7 +872,7 @@ public class BatchApplicationTests extends TestBase {
 	}
 
 	private void 契約明細の更新チェック(Long contractDetailId) {
-		ContractDetail detail = contractDetailRepository.findOne(contractDetailId);
+		ContractDetail detail = contractDetailRepository.findById(contractDetailId).orElse(null);
 
 		// 契約明細.ランニング売上計上処理状態
 		Assert.assertTrue("契約明細.ランニング売上計上処理状態が0:正常であること",
@@ -942,7 +948,7 @@ public class BatchApplicationTests extends TestBase {
 			Assert.fail("想定外のデータが対象になっている、あるいは対象データ無しとなっている。");
 		} else {
 			accountingListContractId200.stream().forEach(accounting -> {
-				Contract contract = contractRepository.findOne(accounting.getContractId());
+				Contract contract = contractRepository.findById(accounting.getContractId()).orElse(null);
 				Assert.assertEquals("旧契約の契約が処理対象になっていること", LifecycleStatus.旧契約, contract.getLifecycleStatus());
 			});
 		}
@@ -953,7 +959,7 @@ public class BatchApplicationTests extends TestBase {
 		List<Accounting> actualAccountingList = StreamSupport.stream(iterableAccounting.spliterator(), false).collect(Collectors.toList());
 
 		actualAccountingList.forEach(accounting -> {
-			Contract contract = contractRepository.findOne(accounting.getContractId());
+			Contract contract = contractRepository.findById(accounting.getContractId()).orElse(null);
 			ContractDetail contractDetail = contract.getContractDetailList().stream().filter(d -> d.getId() == accounting.getContractDetailId()).findFirst().get();
 			ItemContract itemContract = contractDetail.getItemContract();
 

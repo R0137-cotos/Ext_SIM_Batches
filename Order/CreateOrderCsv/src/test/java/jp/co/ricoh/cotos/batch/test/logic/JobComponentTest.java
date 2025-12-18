@@ -1,9 +1,7 @@
 package jp.co.ricoh.cotos.batch.test.logic;
 
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +30,7 @@ import org.springframework.web.client.RestClientException;
 
 import jp.co.ricoh.cotos.batch.DBConfig;
 import jp.co.ricoh.cotos.batch.TestBase;
+import jp.co.ricoh.cotos.batch.test.TestExitHandler;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract;
 import jp.co.ricoh.cotos.commonlib.entity.contract.Contract.ContractType;
 import jp.co.ricoh.cotos.commonlib.entity.contract.ContractAddedEditorEmp;
@@ -120,9 +119,10 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -143,9 +143,10 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(null);
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -164,8 +165,9 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191014", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -184,8 +186,9 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -204,8 +207,9 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("有償交換"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -218,6 +222,7 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void 引数無しで実行すると失敗すること() {
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] {});
 			Assert.fail("引数無しで実行したのに異常終了しなかった");
 		} catch (ExitException e) {
@@ -231,12 +236,13 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		fileDeleate(outputPath + "duplicate.csv");
 		if (!Files.exists(Paths.get("output/duplicate.csv"))) {
 			Files.createFile(Paths.get("output/duplicate.csv"));
 		}
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191018", outputPath, "duplicate.csv", "1" });
 			Assert.fail("既存ファイルがあるのに異常終了しなかった");
 		} catch (ExitException e) {
@@ -250,6 +256,7 @@ public class JobComponentTest extends TestBase {
 		Files.deleteIfExists(Paths.get("output/dummy/result_initial.csv"));
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191018", outputPath + "dummy", "result_initial.csv", "1" });
 			Assert.fail("CSVファイルが書き込めないのに異常終了しなかった");
 		} catch (ExitException e) {
@@ -259,6 +266,7 @@ public class JobComponentTest extends TestBase {
 	@Test
 	public void パラメータ不正_処理年月日不正() throws IOException {
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "不正データ", outputPath, "result_initial.csv", "1" });
 			Assert.fail("処理年月日のフォーマットが不正なのに異常終了しなかった");
 		} catch (ExitException e) {
@@ -275,8 +283,9 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -299,8 +308,9 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("容量変更"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -329,6 +339,7 @@ public class JobComponentTest extends TestBase {
 
 		// 処理不要日付　営業日 月末営業日-5日以降 2019/06/24
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20190624", outputPath, "result_initial.csv", "2" });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
@@ -337,6 +348,7 @@ public class JobComponentTest extends TestBase {
 
 		// 処理不要日付　営業日 月末営業日-5日以前 2019/06/20
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20190620", outputPath, "result_initial.csv", "2" });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
@@ -345,6 +357,7 @@ public class JobComponentTest extends TestBase {
 
 		// 処理不要日付　非営業日 月末営業日-5日以降 2019/06/22
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20190622", outputPath, "result_initial.csv", "2" });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
@@ -353,6 +366,7 @@ public class JobComponentTest extends TestBase {
 
 		// 処理不要日付　非営業日 月末営業日-5日以前 2019/06/16
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20190616", outputPath, "result_initial.csv", "2" });
 			Assert.fail("処理日不正で処理が実行された。");
 		} catch (ExitException e) {
@@ -369,8 +383,9 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20190920", outputPath, "result_initial.csv", "2" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -389,8 +404,9 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("有償交換"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -412,8 +428,9 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("有償交換"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -431,8 +448,9 @@ public class JobComponentTest extends TestBase {
 		// モック
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191022", outputPath, "result_initial.csv", "3" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -451,8 +469,9 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
-		Mockito.doNothing().when(restApiClient).callContractApi(anyObject());
+		Mockito.doNothing().when(restApiClient).callContractApi(any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191028", outputPath, "result_initial.csv", "3" });
 		} catch (Exception e) {
 			Assert.fail("テスト失敗");
@@ -471,10 +490,11 @@ public class JobComponentTest extends TestBase {
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callAssignWorker(anyList());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callAcceptWorkApi(anyList());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindOneContractApi(anyLong());
-		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (ExitException e) {
 			Assert.assertEquals("意図した通りExceptionが発生した", e.getStatus(), 3);
@@ -493,10 +513,11 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract("新規"));
-		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (ExitException e) {
 			Assert.assertEquals("意図した通りExceptionが発生した", e.getStatus(), 3);
@@ -515,10 +536,11 @@ public class JobComponentTest extends TestBase {
 		Mockito.doNothing().when(restApiClient).callAssignWorker(anyList());
 		Mockito.doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callFindOneContractApi(anyLong());
-		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(anyObject());
+		doThrow(new RestClientException("何らかの失敗")).when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "1" });
 		} catch (ExitException e) {
 			Assert.assertEquals("意図した通りExceptionが発生した", e.getStatus(), 3);
@@ -532,6 +554,7 @@ public class JobComponentTest extends TestBase {
 	public void 異常系_意図しないエラー発生_Exception() throws FileAlreadyExistsException {
 		Mockito.doThrow(new RuntimeException()).when(businessDayUtil).getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(Mockito.any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "2" });
 		} catch (ExitException e) {
 			Assert.assertEquals("意図した通りExceptionが発生した", e.getStatus(), 1);
@@ -545,6 +568,7 @@ public class JobComponentTest extends TestBase {
 	public void 異常系_意図しないエラー発生_Throwable() {
 		Mockito.doThrow(new ThreadDeath()).when(businessDayUtil).getLastBusinessDayOfTheMonthFromNonBusinessCalendarMaster(Mockito.any());
 		try {
+			JobComponent.setExitHandler(new TestExitHandler());
 			jobComponent.run(new String[] { "20191018", outputPath, "result_initial.csv", "2" });
 		} catch (ExitException e) {
 			Assert.assertEquals("意図した通りThrowableが発生した", e.getStatus(), 1);

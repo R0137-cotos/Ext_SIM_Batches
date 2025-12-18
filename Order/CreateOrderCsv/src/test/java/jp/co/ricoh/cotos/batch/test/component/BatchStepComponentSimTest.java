@@ -1,9 +1,7 @@
 package jp.co.ricoh.cotos.batch.test.component;
 
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -111,7 +109,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -173,7 +171,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -235,7 +233,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -297,7 +295,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -358,7 +356,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// ベンダ共通の営業日
@@ -434,7 +432,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -511,7 +509,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SCの営業日
@@ -589,7 +587,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -654,7 +652,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -720,7 +718,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -786,7 +784,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -850,7 +848,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -914,7 +912,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -997,7 +995,7 @@ public class BatchStepComponentSimTest extends TestBase {
 			Assert.fail("処理が正常に終了してしまった。");
 		} else {
 			Assert.assertTrue("意図した通りエラーが発生した。", true);
-			ContractDetail contractDetail = contractDetailRepository.findOne(11L);
+			ContractDetail contractDetail = contractDetailRepository.findById(11L).orElse(null);
 			Assert.assertEquals("拡張項目が更新されていること", "{\"orderCsvCreationStatus\":\"2\",\"orderCsvCreationDate\":\"\"}", contractDetail.getExtendsParameter());
 		}
 	}
@@ -1086,7 +1084,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(Mockito.any());
 		doNothing().when(restApiClient).callAcceptWorkApi(Mockito.any());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenThrow(new RuntimeException());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -1125,7 +1123,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(Mockito.any());
 		doNothing().when(restApiClient).callAcceptWorkApi(Mockito.any());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		Mockito.doThrow(new RuntimeException()).when(restApiClient).callContractApi(anyObject());
+		Mockito.doThrow(new RuntimeException()).when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -1164,7 +1162,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		Mockito.doThrow(new RuntimeException()).when(restApiClient).callAssignWorker(Mockito.any());
 		Mockito.doThrow(new RuntimeException()).when(restApiClient).callAcceptWorkApi(Mockito.any());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数
@@ -1202,7 +1200,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("1", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// ベンダ共通の営業日
@@ -1277,7 +1275,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("3日以上", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// ベンダ共通の営業日
@@ -1354,7 +1352,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("不能", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// ベンダ共通の営業日
@@ -1431,7 +1429,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("離島は問合せ", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// ベンダ共通の営業日
@@ -1508,7 +1506,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("1", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -1583,7 +1581,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("3日以上", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -1661,7 +1659,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("不能", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -1739,7 +1737,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("離島は問合せ", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -1817,7 +1815,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("1", "2")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -1894,7 +1892,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("1", "失敗")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -1969,7 +1967,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("失敗", "失敗")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -2047,7 +2045,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("1", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -2123,7 +2121,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -2200,7 +2198,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("3日以上", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -2278,7 +2276,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("不能", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -2355,7 +2353,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("離島は問合せ", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// SBの営業日
@@ -2435,7 +2433,7 @@ public class BatchStepComponentSimTest extends TestBase {
 		doNothing().when(restApiClient).callAssignWorker(anyList());
 		doNothing().when(restApiClient).callAcceptWorkApi(anyList());
 		Mockito.when(restApiClient.callFindOneContractApi(anyLong())).thenReturn(dummyContract());
-		doNothing().when(restApiClient).callContractApi(anyObject());
+		doNothing().when(restApiClient).callContractApi(any());
 		Mockito.doReturn(ContractInstallationLocationMock("2", "無")).when(batchUtil).findContractInstallationLocation(Mockito.anyLong());
 
 		// バッチ起動引数

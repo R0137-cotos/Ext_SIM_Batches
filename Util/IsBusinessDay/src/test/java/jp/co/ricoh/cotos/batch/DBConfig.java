@@ -2,7 +2,7 @@ package jp.co.ricoh.cotos.batch;
 
 import java.util.Arrays;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import jp.co.ricoh.cotos.EntityManagerProvider;
 import jp.co.ricoh.cotos.commonlib.db.DBUtil;

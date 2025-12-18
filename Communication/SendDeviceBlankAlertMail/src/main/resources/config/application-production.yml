@@ -4,8 +4,9 @@ spring:
     username: cotos_product
     password: cotosissharedprocess
     driverClassName: oracle.jdbc.OracleDriver
+    type: com.zaxxer.hikari.HikariDataSource
   jpa:
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: none
     properties:
@@ -16,7 +17,7 @@ spring:
         default_schema: cotos_product
   # メール設定
   mail:
-    host: 225.smtp1.ty1.rwan.unics.ricoh.com
+    host: mail.ricoh.co.jp
     port: 25
 cotos:
   authentication: https://api.cotos.ricoh.co.jp/auth/api/auth

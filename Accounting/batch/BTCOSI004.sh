@@ -31,7 +31,7 @@ Log.Info "処理年月日[yyyymmdd]：${EXECUTE_DATE}" >> ${LOG_FILE_PATH}
 ### 処理実行
 ################################################
 
-SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file=${PROCESS_LOG_FILE_PATH} -jar ${ACCOUNTING_JAR_PATH}/${BATCH_PG_BTCOSI004} "${EXECUTE_DATE}" > /dev/null 2>&1
+SPRING_PROFILES_ACTIVE=${ENVIRONMENT_NAME} /usr/bin/java -Dlogging.file.name=${PROCESS_LOG_FILE_PATH} -jar ${ACCOUNTING_JAR_PATH}/${BATCH_PG_BTCOSI004} "${EXECUTE_DATE}" > /dev/null 2>&1
 BATCH_RET=$?
 if [  ${BATCH_RET} == 2 ]; then
   Log.Error "BTCOSI004:計上データ作成（SIMランニング分）に一部失敗しました。処理を終了します。" >> ${LOG_FILE_PATH}
