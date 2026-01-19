@@ -33,7 +33,6 @@ logging:
     org:
       hibernate:
         SQL: off
-        type:
-          descriptor:
-            sql:
-              BasicBinder: off
+        orm:
+          jdbc:
+            bind: off
